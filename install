@@ -1,0 +1,36 @@
+#! /bin/bash
+# Install script for Ubuntu
+
+# Run as root
+if [ "$EUID" -ne 0 ];
+  then echo "Please run as root"
+  exit 1
+fi
+
+apt-get update
+apt-get install libdbi-perl sqlite3 libsqlite3-dev libtie-ixhash-perl liblist-allutils-perl libmoo-perl libalgorithm-combinatorics-perl libdigest-sha-perl libsql-abstract-perl libev-perl libdbd-sqlite3-perl libmojolicious-perl -y
+cpan -if AnyEvent::ReadLine::Gnu 
+
+cp -R ./mojopoker-0.9.8 /usr/local/share
+ln -s /usr/local/share/mojopoker-0.9.8 /usr/local/share/mojopoker 
+cd /usr/local/share/mojopoker/db
+
+sqlite3 fb.db < fb.schema
+sqlite3 poker.db < poker.schema
+chmod 666 *
+
+echo
+echo "Installation complete!"
+echo
+echo "To start the server:"
+echo "sudo /usr/local/share/mojopoker/script/mojopoker.pl"
+echo
+echo "To start the server in production mode:"
+echo "sudo /usr/local/share/mojopoker/script/mojopoker.pl -p"
+echo
+echo "To load a few sample games:" 
+echo "sudo /usr/local/share/mojopoker/script/wsshell.pl < /usr/local/share/mojopoker/db/example_games"
+echo
+echo "To load a few sample games in production mode:" 
+echo "sudo /usr/local/share/mojopoker/script/wsshell.pl -p < /usr/local/share/mojopoker/db/example_games"
+

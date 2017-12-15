@@ -1,0 +1,36 @@
+% layout 'default';
+% title 'Welcome';
+
+<script src="js/jquery-1.9.1.js"></script>
+<script src="js/jquery-ui-1.10.3.custom.js"></script>
+
+<h2><%= $msg %></h2>
+
+<script>
+  var ws = new WebSocket("<%= url_for('websocket')->to_abs %>");
+
+  // Incoming messages
+  ws.onmessage = function(event) {
+    // $('#result').append(event.data);
+    document.body.innerHTML += event.data + '<br/>';
+  };
+
+  function insert() {
+    var stuff = $('#stuff');
+    // ws.send(JSON.stringify([ stuff.val() ]));
+    ws.send(stuff.val());
+    stuff.val('');
+  }
+</script>
+
+<textarea id="stuff" cols="50" rows="10">
+</textarea>
+<br />
+<input type="submit" value="Add" onclick="insert()">
+<br />
+  
+<div>
+  <textarea cols="50" rows="10" id="result>
+  </textarea>
+</div>
+

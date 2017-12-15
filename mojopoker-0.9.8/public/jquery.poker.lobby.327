@@ -1,0 +1,1221 @@
+;(function ( $, window, document, undefined ) {
+  $.widget('poker.lobby', {
+
+    options: {
+      heightToWidth: 9 / 16,
+      windowRatio: 15 / 16,
+      epochDiff: 0,
+      inchan: {},
+      colData: { 
+        1: [ 'Id', 'int' ],
+        2: [ 'Stakes', 'string' ],
+        3: [ 'Limit', 'string' ],
+        4: [ 'Seats', 'int' ],
+        5: [ 'Plrs', 'string' ],
+        6: [ 'Wait', 'int' ],
+        7: [ 'Avg Pot', 'int' ],
+        8: [ 'Plrs/Flop', 'int' ],
+        9: [ 'H/hr', 'int' ],
+        10: [ 'Date', 'int' ],
+        11: [ 'Game', 'string' ],
+        12: [ 'Buy-In', 'int' ],
+        13: [ 'State', 'string' ],
+        14: [ 'Enrolled', 'int' ],
+        15: [ 'ID', 'int' ],
+        16: [ 'Speed', 'string' ],
+        17: [ 'Login', 'string' ],
+        18: [ 'Name', 'string' ],
+        19: [ 'Location', 'string' ],
+        20: [ 'Player', 'string' ],
+        21: [ 'Chips', 'int' ],
+        22: [ 'Seat', 'int' ],
+        23: [ 'Block', 'int' ],
+        24: [ 'Player Pool', 'int' ]
+      },
+      ringCols: [ 1,11,2,3,4,5,7,8,9 ],
+      tourCols: [ 15,10,11,12,13,14 ],
+      socialCols: [ 17,18,19 ],
+      hydraCols: [ 1,11,2,3,4,24 ],
+      loginData: {},
+      ringData: {},
+      tourData: {},
+      fastData: {},
+      gameTabs: {
+        dealers: [ "Dealer's Choice", 1 ],
+        holdem: [ "Hold'em", 1 ],
+        holdemjokers: [ "Hold'em (Jokers Wild)", 1],
+        pineapple: [ "Pineapple", 1],
+        crazypine: [ "Crazy Pineapple", 1],
+        omaha: [ "Omaha", 1],
+        omahahilo: [ "Omaha Hi-Lo", 1],
+        omahafive: [ "5 Card Omaha", 2],
+        omahafivehilo: [ "5 Card Omaha Hi-Lo", 2],
+        courcheval: [ "Courcheval", 2],
+        courchevalhilo: [ "Courcheval Hi-Lo", 2],
+        fivedraw: [ "5 Card Draw", 2],
+        drawjokers: [ "5 Card Draw (Jokers Wild)", 2],
+        drawdeuces: [ "5 Card Draw (Deuces)", 3],
+        singledraw27: [ "2-7 Single Draw", 3],
+        tripledraw27: [  "2-7 Triple Draw", 3],
+        singledrawa5: [ "A-5 Single Draw", 3],
+        tripledrawa5: [ "A-5 Triple Draw", 3],
+        sevenstud: [ "7 Card Stud", 3],
+        razz: [ "Razz", 3],
+        sevenstudhilo: [ "7 Card Stud Hi-Lo", 4],
+        sevenstudjokers: [ "7 Card Stud (Jokers)", 4],
+        highchicago: [ "High Chicago", 4],
+        ftq: [ "Follow the Queen", 4],
+        bitch: [ "The Bitch", 4],
+        badugi: [ "Badugi", 4],
+        badacey: [ "Badacey", 4 ],
+        badeucy: [ "Badeucy", 4]
+      }
+    },
+
+    _create: function() {
+
+      var self = this,
+          o = self.options,
+          el = self.element;
+    
+      var tabs = $("<div />").attr("id", "tabs");
+      var main_tabs = $("<div />").attr({
+        id: "main-tabs",
+        type: "main"
+      });
+
+      var game_tabs1 = $("<div />").attr({
+        id: "game-tabs1",
+        type: "game"
+      });
+
+      var game_tabs2 = $("<div />").attr({
+        id: "game-tabs2",
+        type: "game"
+      });
+
+      var game_tabs3 = $("<div />").attr({
+        id: "game-tabs3",
+        type: "game"
+      });
+
+      var game_tabs4 = $("<div />").attr({
+        id: "game-tabs4",
+        type: "game"
+      });
+
+      var money_tabs = $("<div />").attr({
+        id: "money-tabs",
+        type: "money"
+      });
+
+      var social_tabs = $("<div />").attr({
+        id: "social-tabs",
+        type: "social"
+      });
+
+      var about_tabs = $("<div />").attr({
+        id: "about-tabs",
+        type: "about"
+      });
+
+      var ring_box = $("<div />").attr("id", "ring-box").addClass("main-box").append(
+        $("<div />").addClass("box-header"),
+        self._buildTable([22, 20, 21]),
+        $("<button />").addClass("box-footer").html("Go to Table")
+        .click(function() {
+          $("#poker-main").main('watch_table', { table_id: $(this).attr("tid") });
+        })
+      );
+
+      var tour_box = $("<div />").attr("id", "tour-box").addClass("main-box").append(
+        $("<div />").addClass("box-header"),
+        $("<button />").attr("id", "reg-tour").html("Register")
+        .click(function() {
+          $("#poker-main").main('tour_info', { tour_id: $(this).attr("tid") });
+        }),
+        $("<button />").attr("id","lob-tour").html("Tournament Lobby")
+        .click(function() {
+          $("#poker-main").main('tour_info', { tour_id: $(this).attr("tid") });
+        })
+      );
+
+      var hydra_box = $("<div />").attr("id", "hydra-box").addClass("main-box").append(
+        $("<div />").addClass("box-header"),
+        $("<button />").addClass("box-footer").html("Join Pool")
+        .click(function() {
+          $("#poker-main").main('hydra_info', { hydra_id: $(this).attr("tid") });
+        })
+      );
+
+      var social_input = $("<input />").attr({id: 'social-input', type: 'text', maxlength: 30});
+
+      var m = el.addClass("ui-widget").append(
+        //$("<div />").attr("id", "table-ring"),
+        //$("<div />").attr("id", "table-tour"),
+        //$("<div />").attr("id", "table-fast"),
+        $("<div />").attr("id", "lobby-header"),
+        $("<div />").attr("id", "lobby-logo"),
+        $("<div />").attr("id", "lobby-clock"),
+        $("<div/>").attr("id", "welcome"),
+        $("<button />)").attr("id", "lobby-red")
+        .html("Log-In").click(function() {
+          $("#login-box").show();
+        }),
+        $("<div />").attr("id", "login-box").addClass("lobby-modal"),
+        $("<div />").attr("id", "modal-box").addClass("lobby-modal"),
+        $("<div />").attr("id", "new-account").addClass("lobby-modal"),
+        //ring_box.hide(),
+        ring_box,
+        tour_box,
+        hydra_box,
+        $("<div />").attr("id", "ring-info").addClass("tab-info games").append(
+          self._buildTable(o.ringCols)
+        ),
+// TOURNEY TABLE
+        $("<div />").attr("id", "tour-info").addClass("tab-info games").append(
+          self._buildTable(o.tourCols)
+        ),
+// SITNGO TABLE
+        $("<div />").attr("id", "sit-info").addClass("tab-info games").append(
+          self._buildTable(o.tourCols)
+        ),
+// HYDRA TABLE
+        $("<div />").attr("id", "hydra-info").addClass("tab-info games").append(
+          $("<div />").attr("id", "hydra-detail")
+          .html("HYDRA is an experimental form of poker played between two people, each of whom controls half the seats at the table. Never worry about collusion again!"),
+          self._buildTable(o.hydraCols)
+        ),
+// SOCIAL DETAIL
+        $("<div />").attr("id", "social-info").addClass("tab-info").append(
+          self._buildTable([18, 23]),
+          $("<div />").attr("id", "help-chat").addClass("social-chat"),
+          $("<div />").attr("id", "strat-chat").addClass("social-chat"),
+          $("<div />").attr("id", "unmod-chat").addClass("social-chat"),
+          $("<form />").attr("id", "social-form").append(
+            social_input 
+          ).submit(function(event) {
+            event.preventDefault();
+            var rx = /^[\w\s\.\,\?!@#\$%^&\*\(\)_]{0,30}$/;
+            if(rx.test(social_input.val())) {
+              var chan = el.find("#social-tabs .lobby-tab.select").attr("info");
+              $("#poker-main").main("write_channel", { channel: chan, message: social_input.val() });
+            }
+            social_input.val('');
+          })
+        ),
+        $("<div />").attr("id", "about-info").addClass("tab-info").append(
+          $("<iframe />").attr({ 
+            id: "soft-info", 
+            src: "software.html"
+          }).addClass("about-box"), 
+          $("<iframe />").attr({ 
+            id: "contact-info", 
+            src: "contact.html"
+          }).addClass("about-box")
+        ),
+
+// MAIN TABS
+        tabs.append(
+          main_tabs.append(
+            $("<button />").attr({ id: "ring-tab", info: "ring" })
+            .addClass("lobby-tab").html("Ring").click(function() {
+              ring_box.show();
+              tour_box.hide();
+              hydra_box.hide();
+              game_tabs1.show();
+              game_tabs2.show();
+              game_tabs3.show();
+              game_tabs4.show();
+              money_tabs.attr("info", "ring").show();
+              social_tabs.hide();
+              about_tabs.hide();
+            }),
+            $("<button />").attr({ id: "tour-tab", info: "tour" })
+            .addClass("lobby-tab").html("Tourney").click(function() {
+              ring_box.hide();
+              hydra_box.hide();
+              tour_box.show();
+              game_tabs1.hide();
+              game_tabs2.hide();
+              game_tabs3.hide();
+              game_tabs4.hide();
+              money_tabs.attr("info", "tour").show();
+              about_tabs.hide();
+            }),
+            $("<button />").attr({ id: "sit-tab", info: "sit" })
+            .addClass("lobby-tab").html("Sit & Go").click(function() {
+              ring_box.hide();
+              hydra_box.hide();
+              tour_box.show();
+              game_tabs1.hide();
+              game_tabs2.hide();
+              game_tabs3.hide();
+              game_tabs4.hide();
+              money_tabs.attr("info", "sit").show();
+              social_tabs.hide();
+              about_tabs.hide();
+            }),
+            $("<button />").attr({ id: "hydra-tab", info: "hydra" })
+            .addClass("lobby-tab").html("Hydra").click(function() {
+              ring_box.hide();
+              tour_box.hide();
+              hydra_box.show();
+              game_tabs1.hide();
+              game_tabs2.hide();
+              game_tabs3.hide();
+              game_tabs4.hide();
+              money_tabs.attr("info", "hydra").show();
+              social_tabs.hide();
+              about_tabs.hide();
+            }),
+            $("<button />").attr({ id: "social-tab", info: "social" })
+           .addClass("lobby-tab").html("Social").click(function() {
+              ring_box.hide();
+              tour_box.hide();
+              hydra_box.hide();
+              game_tabs1.hide();
+              game_tabs2.hide();
+              game_tabs3.hide();
+              game_tabs4.hide();
+              money_tabs.hide();
+              about_tabs.hide();
+              social_tabs.show();
+            }),
+            $("<button />").attr({ id: "about-tab", info: "about" })
+           .addClass("lobby-tab").html("About").click(function() {
+              ring_box.hide();
+              tour_box.hide();
+              hydra_box.hide();
+              game_tabs1.hide();
+              game_tabs2.hide();
+              game_tabs3.hide();
+              game_tabs4.hide();
+              money_tabs.hide();
+              social_tabs.hide();
+              about_tabs.show();
+            })
+          ),
+          game_tabs1.append(
+            $("<button />").attr({ id: "all-tab", info: "all" }).addClass("lobby-tab").html("All")
+          ),
+          game_tabs2,
+          game_tabs3,
+          game_tabs4,
+          money_tabs,
+          social_tabs,
+          about_tabs
+        )
+      );
+      
+// GAME TABS
+      $.each( o.gameTabs, function(k,v) {
+        el.find("#game-tabs" + v[1]).append(
+          $("<button />").attr({ id: k + "-tab", info: k }).addClass("lobby-tab").html(v[0])
+        );
+      });
+
+// MONEY TABS
+      money_tabs.append(
+        $("<button />").attr({id: "play-tab", info: "play"}).addClass("lobby-tab").html("Play Money"),
+        $("<button />").attr({id: "real-tab", info: "real"}).addClass("lobby-tab").html("Other Money")
+      );
+
+// SOCIAL TABS
+      social_tabs.append(
+        $("<button />").attr({id: "strat-tab", info: "strat"}).addClass("lobby-tab").html("Main Chat"),
+        $("<button />").attr({id: "unmod-tab", info: "unmod"}).addClass("lobby-tab").html("Unmoderated"),
+        $("<button />").attr({id: "help-tab", info: "help"}).addClass("lobby-tab").html("Help")
+      );
+
+// ABOUT TABS
+      about_tabs.append(
+        $("<button />").attr({id: "soft-tab", info: "soft"}).addClass("lobby-tab").html("Software"),
+        $("<button />").attr({id: "contact-tab", info: "contact"}).addClass("lobby-tab").html("Contact")
+      );
+
+      m.on("click", "#tabs .lobby-tab", function() {
+        var $this = $(this);
+        el.find("#tabs > [type=" + $this.parent().attr("type") + "] .lobby-tab.select").removeClass("select");
+        $this.addClass("select");
+      }).on("click", "#main-tabs .lobby-tab", function() {
+        var info = $(this).attr("info");
+        el.find(".tab-info.select")
+        .removeClass("select")
+        .hide();
+        var info = el.find("#" + info + "-info");
+        info.addClass("select").show();
+
+        // maybe change
+        el.find("#tabs > [type=game] .lobby-tab.select").trigger('click');
+      }).on("click", "#tabs > [type=game] .lobby-tab", function() {
+        var c = $(this).attr("info");
+        var row = el.find(".tab-info.games.select tbody tr");
+        if (c == "all") {
+          row.show(); 
+        }
+        else {
+          row.filter("[game_class=" + c + "]").show();
+          row.filter("[game_class!=" + c + "]").hide();
+        }
+        var v = el.find(".tab-info.games.select tbody tr:visible");
+        var m = el.find("#money-tabs .lobby-tab.select");
+        var t = m.attr("info");
+        if ( t == "real" ) {
+          v.filter("[did!=4]").show();
+          v.filter("[did=4]").hide();
+        }
+        else if ( t == "play" ) {
+          v.filter("[did=4]").show();
+          v.filter("[did!=4]").hide();
+        }
+        v.filter(":first").trigger('click');
+// MONEY TAB
+      }).on("click", "#money-tabs .lobby-tab", function() {
+        $(this).addClass("select");
+        el.find("#tabs > [type=game] .lobby-tab.select").trigger('click');
+// SOCIAL TAB
+      }).on("click", "#social-tabs .lobby-tab", function() {
+        var chan = $(this).attr("info");
+        el.find("#social-info .social-chat").hide();
+        el.find("#" + chan + "-chat").show();
+        if (!o.inchan[chan]) {
+          $("#poker-main").main('join_channel', { channel: chan });
+        }
+      //}).on("click", ".tab-info tbody tr", function() {
+      }).on("click", "#about-tabs .lobby-tab", function() {
+        var i = $(this).attr("info");
+        el.find("#about-info .about-box").hide();
+        el.find("#about-info #" + i + "-info").show();
+// TABLE ROW CLICK
+      }).on("click", ".tab-info tbody tr", function() {
+        var $this = $(this);
+        $this.siblings().removeClass("select");
+        $this.addClass("select");
+      }).on("click", "#ring-info tbody tr", function() {
+        //var $this = $(this);
+        //var tid = $this.children(".table-id").html();
+        var tid = $(this).attr('table_id');
+        //$this.siblings().removeClass("select");
+        //$this.addClass("select");
+        self._buildDetail(tid);
+// TABLE ROW DBL CLICK
+      }).on("dblclick", "#ring-info tbody tr", function() {
+        //var tid = $(this).children(".table-id").html();
+        var tid = $(this).attr('table_id');
+        $("#poker-main").main('watch_table', { table_id: tid });
+// TOURNEY DBL CLICK 
+      }).on("dblclick", "#tour-info tbody tr", function() {
+        var tour_id = $(this).attr('tour_id');
+        $("#poker-main").main('watch_tour', { tour_id: tour_id });
+// MOUSE HOVER ON TAB
+      }).on("mouseenter", "button.lobby-tab", function() {
+        $(this).addClass("tab-hover");
+      }).on("mouseleave", "button.lobby-tab", function() {
+        $(this).removeClass("tab-hover");
+      });
+
+      $(window).resize(function() {
+        self.resizeLobby();
+      });
+      self.resizeLobby();
+      el.find("#ring-tab").trigger("click");
+      el.find("#soft-tab").trigger("click");
+      el.find("#play-tab").trigger("click");
+      self._buildLogin();
+      self._buildReg();
+    },
+    watch_table_res: function (v) {
+      var self = this,
+        o = self.options,
+        el = self.element;
+
+      $("#table-ring").append(
+        $("<div />").attr('id', 'tring' + v.table_id).table_ring(v)
+      );
+    },
+    _destroy: function () {},
+    _buildDetail: function (tid) {
+      var self = this,
+        o = self.options,
+        el = self.element;
+      var det = el.find("#ring-box").attr("tid", tid);
+      var g = o.ringData[tid];
+      var stakes = g.small_blind + '/' + g.big_blind;
+      var limit = g.game_class == "dealers" ? "--" : g.limit;
+      var game = o.gameTabs[ g.game_class ][0];
+      det.find(".box-header").html( '(' + tid + ') ' + stakes + ' ' + limit + ' ' + game );
+      var bod = det.find("table tbody");
+      det.find(".box-footer").attr("tid", tid);
+      bod.children().remove();
+      var myHtml = '';
+      $.each( o.ringData[tid].plr_map, function(k,v) {
+        s = ++k;
+        myHtml += '<tr><td>' + s + '</td><td>' + o.loginData[v.login_id].username + '</td><td>' + v.chips + '</td></tr>';
+      });
+      bod.html(myHtml);
+      det.show();
+    },
+    destroy: function() {
+    },
+    _buildReg: function () {
+      var self = this,
+        o = self.options,
+        el = self.element,
+        un = $("<input />").attr({
+               id: "signup-name",
+               name: "username",
+               placeholder: "Username",
+               type: "text",
+               maxlength: 12, 
+               pattern: "[A-Za-z]([0-9a-zA-Z_]){3,12}"
+             }).prop({autofocus: true, required: true}),
+        em = $("<input />").attr({
+               id: "signup-email",
+               placeholder: "Email (optional)",
+               maxlength: 30,
+               name: "email",
+               type: "email"
+             }).prop({required: true}),
+        pw = $("<input />").attr({
+               id: "signup-pass",
+               placeholder: "Password",
+               maxlength: 12,
+               name: "password",
+               type: "password"
+             }).prop({required: true}),
+        cp = $("<input />").attr({
+               id: "confirm-pass",
+               placeholder: "Confirm Password",
+               maxlength: 12,
+               name: "password",
+               type: "password"
+             }).prop({required: true});
+
+      var f = el.find("#new-account");
+      f.append(
+        $("<div />").addClass("modal-header").html("Create New Account"),
+        $("<form />").attr("id", "signup-form").append(
+          $("<div />").attr("id", "signup-un").html("Username:"),
+          un,
+          $("<div />").attr("id", "signup-pw").html("Password:"),
+          pw,
+          $("<div />").attr("id", "signup-cp").html("Password:"),
+          cp,
+          $("<div />").attr("id", "signup-em").html("Email:"),
+          em
+        )
+        .submit(function(event) {
+          event.preventDefault();
+          f.hide();
+          if (pw.val() !== cp.val()) {
+            self.modal_message("Passwords don't match");
+          }
+          else {
+            var parm = {
+              username: un.val(),
+              password: pw.val()
+            }; 
+            if (em.val() ) {
+              parm['email'] = em.val();
+            }
+            $("#poker-main").main("register", parm);
+          }
+        }),
+        $("<button />").addClass("modal-ok")
+        .html("OK").click(function() {
+          $("#signup-form").submit();
+        }),
+        $("<button />").addClass("modal-cancel")
+        .html("Cancel").click(function() {
+          f.hide();
+        })
+      );
+    },
+    register_res: function (v) {
+      var self = this;
+      var mes;
+      if (v.success) {
+        mes = "Registered! Welcome " + v.username + "!";
+        self.login_success(v);
+      }
+      else {
+        mes = v.message;
+      }
+      this.modal_message(mes);
+    },
+    _buildLogin: function () {
+      var self = this,
+        o = self.options,
+        el = self.element,
+        f = el.find("#login-box"),
+        un = $("<input />").attr({
+               id: "login-name",
+               name: "username",
+               placeholder: "Username",
+               type: "text",
+               maxlength: 12,
+               pattern: "[A-Za-z]([0-9a-zA-Z_]){3,12}"
+             }).prop({autofocus: true, required: true}),
+        pw = $("<input />").attr({
+               id: "login-pass",
+               placeholder: "Password",
+               maxlength: 12,
+               name: "password",
+               type: "password"
+             }).prop({required: true});
+ 
+      f.append(
+        $("<div />").addClass("modal-header").html("Log-In"),
+        $("<form />").attr("id", "login-form").append(
+            $("<div />").attr("id", "label-name").html("Username:"), 
+            un,
+            $("<div />").attr("id", "label-pass").html("Password:"), 
+            pw
+        )
+        .submit(function(event) {
+          event.preventDefault();
+          $("#poker-main").main('login', {
+            username: un.val(),
+            password: pw.val()
+          });
+          f.hide();
+        }),
+        $("<button />").attr({
+          id: "login-create"
+        }).html("Create New Account").click(function() {
+          f.hide();
+          $("#new-account").show();
+        }),
+        $("<button />").addClass("modal-ok")
+        .html("OK").click(function() {
+          $("#login-form").submit();
+        }),
+        $("<button />").addClass("modal-cancel")
+        .html("Cancel").click(function() {
+          f.hide();
+        })
+      );
+    },
+    _updateClock: function () {
+      var self = this,
+        o = self.options,
+        el = self.element;
+      var d = (new Date).toTimeString().split(/\s/);
+      var tz = d[2].replace(/\W/g,'');
+      var tp = d[0].split(':');
+      var hm = tp[0] + ':' + tp[1] + ' ' + tz;
+      el.find("#lobby-clock").html(hm);
+    },
+    _updateNews: function () {
+      var self = this,
+        o = self.options,
+        el = self.element;
+
+      if (!o.news.length) {
+        return;
+      }
+
+      var n = o.news.shift();
+      o.news.push(n);
+      el.find("#news-body").slideUp("slow", function() {
+        $(this).html(n).slideDown("slow"); 
+      });
+    },
+    _buildTable: function (cols) {
+      var self = this,
+          o = self.options,
+          el = self.element;
+
+      var myHtml = '';
+      $.each( cols, function(i,v) {
+        var n = o.colData[v][0]; // name
+        var t = o.colData[v][1]; // typr
+        myHtml += '<th data-sort-dir="asc" data-sort="' + t + '">' + n + '</th>';
+      });
+
+      return $("<div/>").addClass("table-box").append(
+        $("<table />").append(
+          $("<thead />").append(
+            $("<tr>").html(myHtml)
+          ), 
+          $("<tbody />")
+        ) 
+        .stupidtable().bind('aftertablesort', function (event, data) {
+        // data.column - the index of the column sorted after a click
+        // data.direction - the sorting direction (either asc or desc)
+  
+          $this = $(this);
+          $this.find("tbody tr:visible:first").trigger('click');
+          var th = $this.find("th");
+          th.find(".arro").remove();
+          var arrow = data.direction === "asc" ? "↑" : "↓";
+          th.eq(data.column).append('<span class="arro">' + arrow +'</span>');
+        })
+      );
+    },
+    resizeLobby: function ( event ) {
+      var o = this.options,
+        winWidth = window.innerWidth,
+        //newWidth = winWidth * o.windowRatio,
+        //newHeight = newWidth * o.heightToWidth;
+        newHeight = winWidth * o.heightToWidth;
+
+      this.element.css({
+      //$(document).css({
+        //width: (newWidth) + 'px',
+        height: (newHeight) + 'px',
+        fontSize: (winWidth / 800) + 'em'
+        //marginTop: ((winHeight - newHeight) / 2) + 'px',
+        //marginLeft: ((winWidth - newWidth) / 2) + 'px'
+      });
+    },
+    guest_login: function (v) {
+      var self = this,
+        o = self.options,
+        el = self.element;
+
+      o.epochDiff = (new Date).getTime() - (v.epoch * 1000);
+      o.news = v.news;
+      o.myData = {
+        login_id: v.login_id,
+        username: v.username,
+        chips: v.chips
+      };
+      self._updateClock();
+
+// clock timer
+      clearInterval(o.clockTimer);
+      setTimeout(function() {
+        self._updateClock();
+        o.clockTimer = setInterval(function() {
+          self._updateClock();
+        }, 60000);
+      }, (62 - (new Date).getSeconds()));
+
+// news timer
+      if (o.news.length) {
+        el.append(  
+          $("<div />").attr("id", "lobby-news").append(
+            $("<div />").attr("id", "news-head").html("News"),
+            $("<div />").attr("id", "news-body")
+          )
+        );
+
+        self._updateNews();
+        setInterval(function() {
+          self._updateNews();
+        }, 15000);
+      }
+
+      el.find("#welcome").empty().append(
+        $("<div/>").attr("id", "username").html(o.myData.username),
+        $("<div/>").attr("id", "logout").html("&nbsp[ Logout ]").click(function() {
+          $("#poker-main").main("logout");
+        })
+      );
+      el.find("#strat-tab").trigger("click");
+    },
+    modal_message: function (mes) {
+      var self = this,
+          m = this.element.find("#modal-box"),
+          t = $("<div />").addClass("modal-mes").html(mes),
+          b = $("<button />").addClass("modal-ok center").html("OK"),
+          w = m.width();
+      m.append(
+        t,
+        b.click(function() {
+          m.hide();
+        })
+      ).show();
+      setTimeout(function() {
+        m.fadeOut(1200, function() { 
+          $(this).children().remove(); 
+          //self._trigger("modal_done", null, null)
+        });
+      }, 2000);
+    },
+    _buildCashier: function (v) {
+      var self = this,
+        o = self.options,
+        el = self.element;
+ 
+      el.append(
+        $("<div />").attr("id", "cashier")
+        .addClass("big-modal").append(
+          $("<div />").attr("id", "cash-head").html("CASHIER"),
+          $("<div />").attr("id", "cash-close").click(function() {
+            $("#cashier").hide(); 
+          }),
+          $("<div />").attr("id", "cash-one").append(
+            $("<div />").attr("id", "pers-head")
+            .addClass("head").html("Personal Information"),
+            $("<div />").attr("id", "cash-user")
+            .addClass("cash-block").append(
+              $("<div />").addClass("cash-cat").html("Username:"),
+              $("<div />").addClass("cash-det")
+            ),
+            $("<div />").attr("id", "cash-email")
+            .addClass("cash-block").append(
+              $("<div />").addClass("cash-cat").html("Email:"),
+              $("<div />").addClass("cash-det")
+            ),
+            $("<div />").attr("id", "cash-deposit")
+            .addClass("cash-block").append(
+              $("<div />").addClass("cash-cat").html("Deposit Address:"),
+              $("<div />").addClass("cash-det")
+            )
+          ), 
+          $("<div />").attr("id", "cash-two").append(
+            $("<div />").attr("id", "acct-head")
+            .addClass("head").html("Account Balance"),
+            $("<div />").attr("id", "real-head")
+            .addClass("head").html("REAL MONEY"),
+            $("<div />").attr("id", "real-avail")
+            .addClass("cash-block").append(
+              $("<div />").addClass("cash-cat").html("Available:"),
+              $("<div />").addClass("cash-det")
+            ),
+            $("<div />").attr("id", "real-inplay")
+            .addClass("cash-block").append(
+              $("<div />").addClass("cash-cat").html("In Play:"),
+              $("<div />").addClass("cash-det")
+            ),
+            $("<div />").attr("id", "real-total").append(
+              $("<div />").addClass("cash-cat").html("Total:"),
+              $("<div />").addClass("cash-det")
+            ),
+            $("<div />").attr("id", "play-head")
+            .addClass("head").html("PLAY MONEY"),
+            $("<div />").attr("id", "play-avail")
+            .addClass("cash-block").append(
+              $("<div />").addClass("cash-cat").html("Available:"),
+              $("<div />").addClass("cash-det")
+            ),
+            $("<div />").attr("id", "play-inplay")
+            .addClass("cash-block").append(
+              $("<div />").addClass("cash-cat").html("In Play:"),
+              $("<div />").addClass("cash-det")
+            ),
+            $("<div />").attr("id", "play-total").append(
+              $("<div />").addClass("cash-cat").html("Total:"),
+              $("<div />").addClass("cash-det")
+            )
+          ),
+          $("<div />").attr("id", "cash-three").append(
+            $("<button />").attr("id", "cash-buy").html("Buy Chips"),
+            $("<button />").attr("id", "cash-out").html("Cash Out"),
+            $("<button />").attr("id", "cash-hist").html("History"),
+            $("<button />").attr("id", "cash-tran").html("Transfer Chips"),
+            $("<button />").attr("id", "cash-leave").html("Leave Cashier")
+            .click(function() {
+              $("#cashier").hide(); 
+            })
+          )
+        ) 
+      );
+    },
+    _updateCashier: function () {
+      var self = this,
+        o = self.options,
+        el = self.element;
+
+      var fnMap = {
+        username: function(v) {
+          $("#cash-user .cash-det").html(v);
+        },
+        email: function(v) {
+          $("#cash-email .cash-det").html(v);
+        },
+        chips: function(v) {
+          $("#real-avail .cash-det").html(0);
+          $("#play-avail .cash-det").html(v[4]);
+        },
+        ring_play: function(v) {
+          var play_inplay = 0;
+          var real_inplay = 0;
+          $.each(v, function(r,t) {
+            if (o.ringData[r].director_id == 4) {
+              play_inplay += t;
+            }
+            else {
+              real_inplay += t;
+            }
+          });
+          $("#real-inplay .cash-det").html(real_inplay);
+          $("#real-total .cash-det").html(real_inplay);
+          $("#play-inplay .cash-det").html(play_inplay);
+          $("#play-total .cash-det").html(play_inplay + o.myData.chips[4]);
+        }
+      };
+     
+      $.each(o.myData, function(key, value)  {
+        if (key in fnMap) {
+          fnMap[key](value);
+        }
+      });
+    },
+    login_success: function (v) {
+      var self = this,
+        o = self.options,
+        el = self.element;
+
+      o.myData = v;
+      self._buildCashier();
+      //$("#login-box").children().remove();
+      el.find("#lobby-red").html("Cashier")
+      .off("click").click(function() {
+        $("#poker-main").main("login_info");
+      });
+      el.find("#username").html(o.myData.username);
+    },
+    login_res: function (v) {
+      var self = this,
+        o = self.options,
+        el = self.element;
+
+      if (v.success) {
+        //o.myData = v;
+        self.modal_message("Success! Welcome " + v.username + "!");
+        self.login_success(v);
+      }
+      else {
+        self.modal_message(v.message);
+      }
+    },
+    login_update: function (v) {
+      var self = this,
+        o = self.options,
+        el = self.element;
+
+      o.myData = v;
+    },
+    login_info_res: function (v) {
+      var self = this,
+        o = self.options,
+        el = self.element;
+
+      if (v.success) {
+        o.myData = v;
+        self._updateCashier();
+        $("#cashier").show();
+      }
+      else {
+        self.modal_message(v.message);
+      }
+    },
+    join_channel_res: function (v) {
+      var self = this,
+        o = self.options,
+        el = self.element;
+
+      o.inchan[v.channel] = v.success ? true : false;
+    },
+    unjoin_channel_res: function (v) {
+      var self = this,
+        o = self.options,
+        el = self.element;
+
+      o.inchan[v.channel] = v.success ? false : true;
+    },
+    notify_message: function (v) {
+      var self = this,
+        o = self.options,
+        el = self.element;
+
+      // BLOCK
+      if (o.loginData[v.from] && o.loginData[v.from]['block']) {
+        return;
+      }
+      var from = o.loginData[v.from];
+      var handle = from ? from.username : 'Guest' + v.from;
+      var co = from ? from.color : 'black';
+      var cb = el.find("#" + v.channel + "-chat");
+      cb.append(
+        $("<div />").addClass("chat-msg").append(
+          $("<a />").addClass("chat-handle").html(handle).css("color", co),
+          $("<span />").html(': ' + v.message)
+        )
+      );
+      cb.animate({scrollTop: cb[0].scrollHeight});
+    },
+    notify_login: function (v) {
+      var self = this,
+        o = self.options,
+        el = self.element;
+
+      this.notify_logout(v);
+
+      v.color = "rgb(" +
+        Math.floor( Math.random() * 256 ) + "," +
+        Math.floor( Math.random() * 256 ) + "," +
+        Math.floor( Math.random() * 256 ) + ")";
+
+      o.loginData[v.login_id] = v;
+      el.find("#social-info .table-box tbody").append(
+        $("<tr />").attr("login_id", v.login_id).append(
+          $("<td />").html(v.username),
+          $("<td />").addClass("block yes").click(function() {
+            var $this = $(this);
+            $this.toggleClass("yes");
+            if ($this.hasClass("yes")) {
+              o.loginData[v.login_id]['block'] = true;
+              $this.html("Yes");
+            }
+            else {
+              o.loginData[v.login_id]['block'] = false;
+              $this.html("No");
+            }
+          }).click()
+        )
+      );
+/*
+      var log = $("<tr />").attr("id", "login" + v.login_id).addClass("login");
+      log.append(
+        $("<td />").text(v.login_id),
+        $("<td />").text(v.username),
+        $("<td />").text(v.remote_address)
+      ).appendTo( $("#login-list") );
+*/
+    },
+    notify_logout: function (v) {
+      var self = this,
+        o = self.options,
+        el = self.element;
+
+      //el.find('#login' + v.login_id).remove();
+      delete o.loginData[v.login_id];
+      el.find("#social-info .table-box tbody tr[login_id=" + v.login_id + "]").remove();
+    },
+    notify_create_tour: function (v) {
+      var self = this,
+        o = self.options,
+        el = self.element;
+
+      $.extend(o.tourData[v.tour_id], v);
+      el.find("#ltour" + v.tour_id).remove();
+      el.find("#tour-info tbody").append(
+        self._add_tour(v)
+      );
+    },
+    notify_destroy_tour: function (v) {
+      delete this.options.tourData[v.tour_id];
+      this.element.find('#ltour' + v.tour_id).remove();
+    },
+    tour_snap: function (v) {
+      var self = this,
+        o = self.options,
+        el = self.element;
+
+      var tab = el.find("#tour-info tbody");
+      $.each( v, function (i, value) {
+        $.extend(o.tourData[value.tour_id], value);
+        tab.append( self._add_tour(value) );
+      });
+    },
+    _add_tour: function (d) {
+      //var d = o.tourData[tour_id];
+      var self = this,
+        o = self.options,
+        el = self.element;
+
+      return $("<tr />").attr({
+        id: "ltour" + d.tour_id,
+        tour_id: d.tour_id,
+        did: d.director_id,
+        game_class: d.game_class
+      }).append(
+        $("<td />").html(d.tour_id),
+        $("<td />").html(d.start_time),
+        $("<td />").html(o.gameTabs[ d.game_class ][0]),
+        $("<td />").html(d.buy_in),
+        $("<td />").html(d.status),
+        $("<td />").html('a number')
+      );
+    },
+    ring_snap: function (v) {
+      var self = this,
+        o = self.options,
+        el = self.element;
+
+      //var games = {};
+      $.each( v, function (i, value) {
+        o.ringData[value.table_id] = value;
+        //games[value.game_class] = 1;
+      });
+
+      self._build_ring_tab();
+      //el.find("#all-tab").trigger("click");
+      //el.find("#ring-info thead th:eq(5)").trigger("click");
+    },
+    _build_ring_tab: function () {
+      var self = this,
+        o = self.options,
+        el = self.element;
+
+      var tab = el.find("#ring-info tbody");
+      tab.empty();
+      $.each( o.ringData, function (k, v) {
+        var stakes = v.small_blind + '/' + v.big_blind;
+        var limit = v.game_class == "dealers" ? "--" : v.limit
+        $("<tr />").attr({
+          id: "lring" + k, 
+          table_id: v.table_id, 
+          did: v.director_id, 
+          game_class: v.game_class
+        }).addClass("lring")
+        .append(
+          $("<td />").addClass("table-id").html(v.table_id),
+          $("<td />").html(o.gameTabs[ v.game_class ][0]),
+          $("<td />").addClass().html(stakes),
+          $("<td />").addClass().html(limit),
+          $("<td />").addClass().html(v.chair_count),
+          $("<td />").addClass("plr-count"),
+          $("<td />").addClass("avg-pot"),
+          $("<td />").addClass("plrs-flop"),
+          $("<td />").addClass("hhr")
+        ).appendTo( tab );
+        self._update_ring_tab(v);
+      });
+      el.find("#all-tab").trigger("click");
+      el.find("#ring-info thead th:eq(5)").trigger("click");
+    },
+    notify_create_ring: function (v) {
+      var self = this,
+        o = self.options,
+        el = self.element;
+
+      o.ringData[v.table_id] = v;
+      self._build_ring_tab();
+    },
+
+    notify_destroy_ring: function (v) {
+      delete this.options.ringData[v.table_id];
+      this.element.find('#lring' + v.table_id).remove();
+    },
+/*
+    lobby_unjoin_table: function(v) {
+      var self = this,
+        o = self.options,
+        el = self.element;
+
+      if (v.tour_id) {
+
+      }
+      else if (v.table_id) {
+        delete o.ringData[v.table_id].plr_map[v.chair];
+        self._update_ring_player_count(v.table_id);
+      }
+    },
+    _update_ring_player_count: function(table_id) {
+      var o = this.options;
+      var pc = $(this.element).find('#lring' + table_id + ' td:eq(4)');
+      var count = 0;
+      for (k in o.ringData[table_id].plr_map) {
+        count++;
+      }
+      pc.html(count);
+    },
+*/
+    notify_lobby_update: function(v) {
+      var self = this,
+        o = self.options,
+        el = self.element;
+
+      if (v.tour_id) {
+        return;
+      }
+      else { // ring game
+        $.extend(o.ringData[v.table_id], v);
+        self._update_ring_tab(v);
+      }
+    },
+    _update_ring_tab: function(v) {
+      var self = this,
+        o = self.options,
+        el = self.element;
+
+      var t = el.find('#lring' + v.table_id);
+      //if (t.hasClass("select")) {
+      if ( el.find("#ring-box").attr("tid") == v.table_id ) {
+        t.trigger("click");
+      }
+
+      var fnMap = {
+        avg_pot: function(value) { 
+          t.find(".avg-pot").html(value);
+        },
+        plrs_flop: function(value) { 
+          t.find(".plrs-flop").html(value);
+        },
+        hhr: function(value) { 
+          t.find(".hhr").html(value);
+        },
+        plr_map: function(value) {
+          var td = t.find(".plr-count"); 
+          var count = 0;
+          for (k in value) {
+            count++;
+          }
+          td.html(count);
+        }
+      };
+
+      $.each(v, function(key, value) {
+        if (key in fnMap) {
+          fnMap[key](value);
+        }
+      });
+    },
+/*
+    lobby_join_table: function(v) {
+      var self = this,
+        o = self.options,
+        el = self.element;
+
+      if (v.tour_id) {
+
+      }
+      else if (v.table_id) {
+        o.ringData[v.table_id].plr_map[v.chair] = {
+          login_id: v.login_id,
+          chips: v.chips,
+        };
+        self._update_ring_player_count(v.table_id);
+      }
+    },
+*/
+    _msgHandler: function (k, v) {
+      var fnMap = {};
+      if (k in fnMap) {
+        fnMap[k](v);
+      }
+    },
+
+    _setOption: function (key, value) {
+      var self = this,
+        o = self.options,
+        el = self.element;
+
+      var fnMap = {
+/*
+        'epoch': function(v) {
+          o.epochDiff = (new Date).getTime() - v;
+          self._updateClock();
+          clearInterval(o.clockTimer);
+          setTimeout(function() {
+            self._updateClock();
+            o.clockTimer = setInterval(function() {
+              self._updateClock();
+            }, 60000);
+          }, (62 - (new Date).getSeconds()) * 1000);
+        }
+*/
+      };
+      if (key in fnMap) {
+        o[key] = value;
+        fnMap[key](value);
+      }
+    }
+  }); 
+})( jQuery, window, document );

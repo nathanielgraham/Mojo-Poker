@@ -1,0 +1,218 @@
+
+.card {
+  position: absolute;
+  width: 6.75%;
+  height: 12.6%;
+  background-size: 100%;
+  background-repeat: no-repeat;
+}
+
+.ccb {
+  background-image: url(/img/deck/cb.png);
+}
+
+.c2c {
+  background-image: url(/img/deck/2c.png);
+}
+
+.c3c {
+  background-image: url(/img/deck/3c.png);
+}
+
+.c4c {
+  background-image: url(/img/deck/4c.png);
+}
+
+.c5c {
+  background-image: url(/img/deck/5c.png);
+}
+
+.c6c {
+  background-image: url(/img/deck/6c.png);
+}
+
+.c7c {
+  background-image: url(/img/deck/7c.png);
+}
+
+.c8c {
+  background-image: url(/img/deck/8c.png);
+}
+
+.c9c {
+  background-image: url(/img/deck/9c.png);
+}
+
+.cTc {
+  background-image: url(/img/deck/Tc.png);
+}
+
+.cJc {
+  background-image: url(/img/deck/Jc.png);
+}
+
+.cQc {
+  background-image: url(/img/deck/Qc.png);
+}
+
+.cKc {
+  background-image: url(/img/deck/Kc.png);
+}
+
+.cAc {
+  background-image: url(/img/deck/Ac.png);
+}
+
+.c2d {
+  background-image: url(/img/deck/2d.png);
+}
+
+.c3d {
+  background-image: url(/img/deck/3d.png);
+}
+
+.c4d {
+  background-image: url(/img/deck/4d.png);
+}
+
+.c5d {
+  background-image: url(/img/deck/5d.png);
+}
+
+.c6d {
+  background-image: url(/img/deck/6d.png);
+}
+
+.c7d {
+  background-image: url(/img/deck/7d.png);
+}
+
+.c8d {
+  background-image: url(/img/deck/8d.png);
+}
+
+.c9d {
+  background-image: url(/img/deck/9d.png);
+}
+
+.cTd {
+  background-image: url(/img/deck/Td.png);
+}
+
+.cJd {
+  background-image: url(/img/deck/Jd.png);
+}
+
+.cQd {
+  background-image: url(/img/deck/Qd.png);
+}
+
+.cKd {
+  background-image: url(/img/deck/Kd.png);
+}
+
+.cAd {
+  background-image: url(/img/deck/Ad.png);
+}
+
+.c2h {
+  background-image: url(/img/deck/2h.png);
+}
+.c3h {
+  background-image: url(/img/deck/3h.png);
+}
+.c4h {
+  background-image: url(/img/deck/4h.png);
+}
+.c5h {
+  background-image: url(/img/deck/5h.png);
+}
+.c6h {
+  background-image: url(/img/deck/6h.png);
+}
+.c7h {
+  background-image: url(/img/deck/7h.png);
+}
+.c8h {
+  background-image: url(/img/deck/8h.png);
+}
+.c9h {
+  background-image: url(/img/deck/9h.png);
+}
+.cTh {
+  background-image: url(/img/deck/Th.png);
+}
+
+.cJh {
+  background-image: url(/img/deck/Jh.png);
+}
+
+.cQh {
+  background-image: url(/img/deck/Qh.png);
+}
+
+.cKh {
+  background-image: url(/img/deck/Kh.png);
+}
+
+.cAh {
+  background-image: url(/img/deck/Ah.png);
+}
+
+.c2s {
+  background-image: url(/img/deck/2s.png);
+}
+
+.c3s {
+  background-image: url(/img/deck/3s.png);
+}
+
+.c4s {
+  background-image: url(/img/deck/4s.png);
+}
+
+.c5s {
+  background-image: url(/img/deck/5s.png);
+}
+
+.c6s {
+  background-image: url(/img/deck/6s.png);
+}
+
+.c7s {
+  background-image: url(/img/deck/7s.png);
+}
+
+.c8s {
+  background-image: url(/img/deck/8s.png);
+}
+
+.c9s {
+  background-image: url(/img/deck/9s.png);
+}
+
+.cTs {
+  background-image: url(/img/deck/Ts.png);
+}
+
+.cJs {
+  background-image: url(/img/deck/Js.png);
+}
+
+.cQs {
+  background-image: url(/img/deck/Qs.png);
+}
+
+.cKs {
+  background-image: url(/img/deck/Ks.png);
+}
+
+.cAs {
+  background-image: url(/img/deck/As.png);
+}
+
+.cJoker1, .cJoker2 {
+  background-image: url(/img/deck/Joker.png);
+}
+
+

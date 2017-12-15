@@ -1,0 +1,38 @@
+
+body {
+  position: static;
+  width: 100%;
+  background-color: #1a1a1a;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+#main {
+  position: absolute;
+  width: 90%;
+  font-family: "Lucida Grande","Lucida Sans",Arial,sans-serif;
+  left: 5%;
+  padding-top: 1%;
+  color: white;
+}
+
+.par {
+  position: relative;
+  width: 100%;
+  padding-bottom: 2%;
+}
+
+.par.que {
+  font-weight: bold;
+}
+
+.par.ans {
+  margin-left: 3%;
+}
+
+.par li {
+  position: relative;
+  width: 94%;
+  margin-bottom: 2%;
+}
+

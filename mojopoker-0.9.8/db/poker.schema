@@ -1,0 +1,19 @@
+PRAGMA foreign_keys=OFF;
+BEGIN TRANSACTION;
+DROP TABLE IF EXISTS game_option;
+CREATE TABLE game_option (
+        id INTEGER PRIMARY KEY NOT NULL ,
+        name varchar(30) NOT NULL
+);
+INSERT INTO "game_option" VALUES(1,'chair_count');
+INSERT INTO "game_option" VALUES(2,'small_blind');
+INSERT INTO "game_option" VALUES(3,'big_blind');
+INSERT INTO "game_option" VALUES(4,'ante');
+INSERT INTO "game_option" VALUES(5,'turn_clock');
+INSERT INTO "game_option" VALUES(6,'time_bank');
+INSERT INTO "game_option" VALUES(7,'eval_high');
+INSERT INTO "game_option" VALUES(8,'eval_low');
+INSERT INTO "game_option" VALUES(9,'hi_mult');
+INSERT INTO "game_option" VALUES(10,'low_mult');
+INSERT INTO "game_option" VALUES(11,'class');
+COMMIT;

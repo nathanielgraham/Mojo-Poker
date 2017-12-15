@@ -1,0 +1,566 @@
+package FB::Poker::Table::Interface;
+use Moo::Role;
+use Time::Piece;
+use Data::Dumper;
+
+has 'director_id' => (
+  is       => 'rw',
+  required => 1,
+);
+
+has 'scheduler' => (
+  is  => 'rw',
+  isa => sub { die "Not a Scheduler!" unless $_[0]->isa('Scheduler') },
+);
+
+has 'chat' => (
+  is  => 'rw',
+  isa => sub { die "Not a FB::Chat!" unless $_[0]->isa('FB::Chat') },
+);
+
+# Hash of FB::Login objects
+has 'watch_list' => (
+  is      => 'rw',
+  isa     => sub { die "Not an hash!" unless ref( $_[0] ) eq 'HASH' },
+  builder => '_build_watch_list',
+);
+
+sub _build_watch_list {
+  return {};
+}
+
+has 'seated_list' => (
+  is      => 'rw',
+  isa     => sub { die "Not an hash!" unless ref( $_[0] ) eq 'HASH' },
+  builder => '_build_seated_list',
+);
+
+sub _build_seated_list {
+  return {};
+}
+
+sub destroy {
+  my $self = shift;
+  return { table_id => $self->table_id, success => 1 };
+}
+
+sub unjoin {
+  my ( $self, $login ) = @_;
+  return $self->_unjoin($login);
+}
+
+sub _unjoin {
+  my ( $self, $login ) = @_;
+  my $i = $self->seated_list->{ $login->id };
+  my $chair = $self->chairs->[$i] if defined $i;
+  return {
+    success  => 0,
+    table_id => $self->table_id,
+    message  => 'Not seated.'
+    }
+    unless $chair
+      && $chair->has_player
+      && $chair->player->login->id == $login->id;
+
+  if ( $chair->is_in_hand && !$self->game_over ) {
+    $chair->check_fold(1);
+    $chair->stand_flag(1);
+    if ( $self->action == $i ) {
+      $self->timesup;
+    }
+    elsif ( $self->live_chair_count < 2 ) {
+      $self->auto_play;
+    }
+  }
+  else {
+    $self->_unseat_chair( $chair, $login );
+  }
+
+  return { success => 1, table_id => $self->table_id };
+
+  # take next in waiting
+}
+
+sub _unseat_chair {
+  my ( $self, $chair, $login ) = @_;
+  if ( defined $login ) {
+    delete $self->seated_list->{ $login->id };
+    $chair->reset;
+    return 1;
+  }
+}
+
+after 'reset_chairs' => sub {
+  my $self = shift;
+  for my $chair ( @{ $self->chairs } ) {
+    if ( $chair->has_player && $chair->stand_flag ) {
+      $self->_unseat_chair( $chair, $chair->player->login );
+    }
+    $chair->end_game_reset;
+  }
+};
+
+sub watch {
+  my ( $self, $login ) = @_;
+  return $self->_watch($login);
+}
+
+sub _watch {
+  my ( $self, $login ) = @_;
+  $self->watch_list->{ $login->id } = $login;
+  $self->chat->join($login);
+  return {
+    table_id    => $self->table_id,
+    login_id    => $login->id,
+    game_class  => $self->game_class,
+    limit       => $self->limit,
+    chair_count => $self->chair_count,
+    auto_start  => $self->auto_start,
+    time_bank   => $self->time_bank,
+    turn_clock  => $self->turn_clock,
+    small_bet   => $self->small_bet,
+    director_id => $self->director_id,
+    max_raise   => $self->max_raise,
+    pot_cap     => $self->pot_cap,
+    ante        => $self->ante,
+    small_blind => $self->small_blind,
+    big_blind   => $self->big_blind,
+    success     => 1,
+  };
+}
+
+sub unwatch {
+  my ( $self, $login ) = @_;
+  return $self->_unwatch($login);
+}
+
+sub _unwatch {
+  my ( $self, $login ) = @_;
+  delete $self->watch_list->{ $login->id };
+  $self->chat->unjoin($login);
+  return {
+    table_id => $self->table_id,
+    success  => 1
+  };
+}
+
+sub _notify_watch {
+  my ( $self, $response ) = @_;
+  $response->[1]->{table_id} = $self->table_id;
+  for my $log ( values %{ $self->watch_list } ) {
+    $log->send($response);
+  }
+}
+
+sub _player_detail {
+  my ( $self, $index, $login ) = @_;
+  my $chair = $self->chairs->[$index];
+
+  my $res = {
+    handle            => $chair->player->handle,
+    table_id          => $self->table_id,
+    status            => $chair->player->status,
+    chair             => $index,
+    chips             => $chair->player->chips,
+    in_pot            => $chair->in_pot,
+    in_pot_this_round => $chair->in_pot_this_round,
+    is_in_hand        => $chair->is_in_hand,
+    login_id          => $chair->player->login->id,
+    user_id           => $chair->player->login->user_id,
+
+    #cards             => $self->_fetch_hole($chair),
+  };
+
+#$res->{cards} = $login ? $self->_fetch_private($index) : $self->_fetch_hole($index);
+  $res->{cards} =
+      $login && $login->id == $chair->player->login->id
+    ? $self->_fetch_private($index)
+    : $self->_fetch_hole($index);
+  return $res;
+}
+
+sub _table_detail {
+  my $self = shift;
+  my %opts = (
+    table_id     => $self->table_id,
+    game_count   => $self->game_count,
+    player_count => $self->true_count,
+    round        => $self->round,
+    action       => $self->action,
+    pot          => $self->pot,
+    game_over    => $self->game_over,
+    last_bet     => $self->last_bet,
+    community    => $self->_fetch_community,
+    call_amt     => $self->_fetch_call_amt,
+    valid_act    => $self->_fetch_valid_act,
+  );
+
+  #$opts{small_blind} = $self->small_blind if $self->can('small_blind');
+  #$opts{big_blind}   = $self->big_blind   if $self->can('big_blind');
+  if ( $self->legal_action('discard') ) {
+    $opts{max_discards} = $self->max_discards;
+    $opts{min_discards} = $self->min_discards;
+  }
+  $opts{button} = $self->button if $self->can('button');
+  return {%opts};
+}
+
+# notifications
+sub _fetch_hole {
+  my ( $self, $chair ) = @_;
+
+#return [ map { $_->up_flag ? $_->rank . $_->suit : undef } @{ $chair->cards } ];
+  return [ map { $_->up_flag ? $_->rank . $_->suit : undef }
+      @{ $self->chairs->[$chair]->cards } ];
+}
+
+sub _fetch_private {
+  my ( $self, $chair ) = @_;
+  return [ map { $_->rank . $_->suit } @{ $self->chairs->[$chair]->cards } ];
+}
+
+sub _fetch_community {
+  my $self = shift;
+  return [ map { $_->up_flag ? $_->rank . $_->suit : undef }
+      @{ $self->community_cards } ];
+}
+
+#has 'valid_act' => (
+#  is      => 'rw',
+#  isa     => sub { die "Not a hash!" unless ref( $_[0] ) eq 'HASH' },
+#  builder => '_build_valid_act',
+#);
+
+#sub _build_valid_act {
+#  return {};
+#}
+
+sub _fetch_valid_act {
+  my $self    = shift;
+  my %actions = %{ $self->valid_act };
+  my $call    = $self->_fetch_call_amt;
+  if ( $call && $call > 0 ) {
+    delete $actions{check};    # must call or fold
+  }
+  return [ keys %actions ];
+}
+
+after '_notify_fold' => sub {
+  my $self = shift;
+  $self->_notify_watch( [ 'notify_fold', { chair => $self->action } ] );
+};
+
+after '_notify_check' => sub {
+  my $self = shift;
+  $self->_notify_watch( [ 'notify_check', { chair => $self->action } ] );
+};
+
+sub _update_players {
+  my $self = shift;
+  for my $chair ( values %{ $self->seated_list } ) {
+    my $r = {
+      chair => $chair,
+      chips => $self->chairs->[$chair]->chips,
+    };
+    $self->_notify_watch( [ 'player_update', $r ] );
+  }
+}
+
+before 'new_game' => sub {
+  my $self = shift;
+  my $r = { game_count => $self->game_count, };
+  $self->_notify_watch( [ 'new_game', $r ] );
+  $self->chat->write( 'd', { message => 'New hand #' . $self->game_count, } );
+};
+
+around 'bet' => sub {
+  my ( $orig, $self, $chips ) = @_;
+  my $bet = $orig->( $self, $chips );
+  if ($bet) {
+    my $handle = $self->chairs->[ $self->action ]->player->handle;
+    $self->chat->write( 'd', { message => $handle . ' bets ' . $bet, } );
+    return $bet;
+  }
+};
+
+around 'check' => sub {
+  my ( $orig, $self ) = @_;
+  my $success = $orig->($self);
+  if ($success) {
+    my $handle = $self->chairs->[ $self->action ]->player->handle;
+    $self->chat->write( 'd', { message => "$handle checks", } );
+    return $success;
+  }
+};
+
+around 'fold' => sub {
+  my ( $orig, $self ) = @_;
+  my $success = $orig->($self);
+  if ($success) {
+    my $handle = $self->chairs->[ $self->action ]->player->handle;
+    $self->chat->write( 'd', { message => "$handle folds", } );
+    return $success;
+  }
+};
+
+#around 'discard' => sub {
+#  my ( $orig, $self, $cards ) = @_;
+#  my $count = $orig->( $self, $cards );
+#  if (defined $count) {
+#    my $handle = $self->chairs->[$self->action]->player->handle;
+#    $self->chat->write('d', {
+#      message => $handle . ' discards ' . $count,
+#    });
+#  }
+#};
+
+around 'post_small' => sub {
+  my ( $orig, $self, $chair ) = @_;
+  my $bet = $orig->( $self, $chair );
+  my $in_pot = $self->chairs->[$chair]->in_pot_this_round;
+  my $handle = $self->chairs->[$chair]->player->handle;
+  $self->_notify_watch( [ 'notify_post', { chair => $chair, chips => $bet, in_pot => $in_pot } ] );
+  $self->chat->write( 'd',
+    { message => "$handle posts the small blind $bet", } );
+};
+
+around 'post_big' => sub {
+  my ( $orig, $self, $chair ) = @_;
+  my $bet = $orig->( $self, $chair );
+  #$self->_notify_watch( [ 'notify_post', { chair => $chair, chips => $bet } ] );
+  my $in_pot = $self->chairs->[$chair]->in_pot_this_round;
+  $self->_notify_watch( [ 'notify_post', { chair => $chair, chips => $bet, in_pot => $in_pot } ] );
+  my $handle = $self->chairs->[$chair]->player->handle;
+  $self->chat->write( 'd', { message => "$handle posts the big blind $bet", } );
+};
+
+around 'post_ante' => sub {
+  my ( $orig, $self, $chair ) = @_;
+  my $bet = $orig->( $self, $chair );
+  #$self->_notify_watch( [ 'notify_post', { chair => $chair, chips => $bet } ] );
+  my $in_pot = $self->chairs->[$chair]->in_pot_this_round;
+  $self->_notify_watch( [ 'notify_post', { chair => $chair, chips => $bet, in_pot => $in_pot } ] );
+  my $handle = $self->chairs->[$chair]->player->handle;
+  $self->chat->write( 'd', { message => "$handle posts ante $bet", } );
+};
+
+after 'move_button' => sub {
+  my $self = shift;
+  $self->_notify_watch( [ 'move_button', { button => $self->button } ] );
+  my $handle =
+      $self->chairs->[ $self->button ]
+    ? $self->chairs->[ $self->button ]->player->handle
+    : 'Seat #' . $self->button;
+
+  $self->chat->write( 'd', { message => "$handle is the button", } );
+};
+
+#sub _fetch_call_amt {
+#  my $self = shift;
+#  if ( defined $self->action && $self->chairs->[ $self->action ] ) {
+#    return $self->last_bet -
+#      $self->chairs->[ $self->action ]->in_pot_this_round;
+#  }
+#}
+
+#after 'begin_new_round' => sub {
+before 'round_action' => sub {
+  my $self = shift;
+  my $res  = [
+    'begin_new_round',
+    {
+      round  => $self->round,
+      action => $self->action,
+      pot    => $self->pot,
+    }
+  ];
+  $self->_notify_watch($res);
+};
+
+before 'set_next_round' => sub {
+  my $self = shift;
+  $self->_notify_watch( $self->_begin_new_action );
+};
+
+after 'begin_new_action' => sub {
+  my $self = shift;
+  $self->_notify_watch( $self->_begin_new_action );
+};
+
+sub _begin_new_action {
+  my $self = shift;
+  my $res = [
+    'begin_new_action',
+    {
+      round     => $self->round,
+      action    => $self->action,
+      last_bet  => $self->last_bet,
+      call_amt  => $self->_fetch_call_amt,
+      valid_act => $self->_fetch_valid_act,
+    }
+  ];
+  if ( $self->legal_action('discard') ) {
+    $res->[1]->{max_discards} = $self->max_discards;
+    $res->[1]->{min_discards} = $self->min_discards;
+  }
+  return $res;
+}
+
+#after 'begin_new_action' => sub {
+#  my $self = shift;
+#  $self->_your_turn;
+#};
+
+after 'end_game' => sub {
+  my $self = shift;
+  $self->_notify_watch( ['end_game'] );
+};
+
+after 'sweep_pot' => sub {
+  my $self = shift;
+
+  #  $self->_notify_watch( [ 'sweep_pot' { pot => $self->pot } ] );
+};
+
+after 'showdown' => sub {
+  my $self = shift;
+  for my $chair ( grep { $_->is_in_hand } @{ $self->chairs } ) {
+    my $handle = $chair->player->handle;
+    my $cards  = $self->_fetch_hole( $chair->index );
+    my $rec    = {
+      chair => $chair->index,
+      cards => $cards,
+    };
+    if ( $chair->{hi_hand} ) {
+      $rec->{high_name}  = $chair->{hi_hand}->{name};
+      $rec->{high_score} = $chair->{hi_hand}->{score};
+      $self->chat->write(
+        'd',
+        {
+          message => "$handle shows @$cards for " . $chair->{hi_hand}->{name},
+        }
+      );
+    }
+    if ( $chair->{low_hand} ) {
+      $rec->{low_name}  = $chair->{low_hand}->{name};
+      $rec->{low_score} = $chair->{low_hand}->{score};
+      $self->chat->write(
+        'd',
+        {
+          message => "$handle shows @$cards for low "
+            . $chair->{low_hand}->{score},
+        }
+      );
+    }
+    $self->_notify_watch( [ 'showdown', $rec ] );
+  }
+};
+
+after 'high_payout' => sub {
+  my $self = shift;
+
+  for my $winner ( @{ $self->hi_winners } ) {
+    my $seat   = $winner->{winner}->index;
+    my $handle = $self->chairs->[$seat]->player->handle;
+    my $hand   = $self->chairs->[$seat]->hi_hand->{name};
+    my $wins   = $winner->{payout};
+    $self->_notify_watch(
+      [
+        'high_winner',
+        {
+          chair  => $seat,
+          payout => $wins,
+        }
+      ]
+    );
+    my $msg = "$handle wins the high pot ($wins)";
+    $msg .= " with $hand" unless $self->silent;
+    $self->chat->write( 'd', { message => $msg } );
+  }
+};
+
+after 'low_payout' => sub {
+  my $self = shift;
+  for my $winner ( @{ $self->low_winners } ) {
+    my $seat   = $winner->{winner}->index;
+    my $handle = $self->chairs->[$seat]->player->handle;
+    my $hand   = $self->chairs->[$seat]->low_hand->{name};
+    my $wins   = $winner->{payout};
+    $self->_notify_watch(
+      [
+        'low_winner',
+        {
+          chair  => $winner->{winner}->index,
+          payout => $winner->{payout},
+        }
+      ]
+    );
+    $self->chat->write( 'd',
+      { message => "$handle wins low pot ($wins) with a $hand", } );
+  }
+};
+
+after qw(deal_down_all deal_up_all) => sub {
+  my $self = shift;
+
+  #for my $chair ( values %{ $self->seated_list } ) {
+  print Dumper( $self->seated_list );
+
+  while ( my ( $login_id, $chair ) = each %{ $self->seated_list } ) {
+    print "chair: " 
+      . $chair
+      . " in_hand: "
+      . $self->chairs->[$chair]->is_in_hand
+      . "login: "
+      . $self->chairs->[$chair]->player->login->id . "\n";
+    next unless $self->chairs->[$chair]->is_in_hand;
+    my $user_id = $self->chairs->[$chair]->player->login->user_id;
+    my $notice  = [
+      'deal_hole',
+      {
+        user_id  => $user_id,
+        login_id => $login_id,
+        table_id => $self->table_id,
+        chair    => $chair,
+        cards    => $self->_fetch_private($chair)
+      }
+    ];
+    $self->chairs->[$chair]->player->login->send($notice);
+    for my $log ( values %{ $self->watch_list } ) {
+      next if $log->id == $login_id;    #player
+      $notice->[1]->{cards} = $self->_fetch_hole($chair);
+      $log->send($notice);
+    }
+  }
+};
+
+around 'deal_community' => sub {
+  my $orig  = shift;
+  my $self  = shift;
+  my $cards = $orig->( $self, @_ );
+  my $c     = [ map { $_->up_flag ? $_->rank . $_->suit : undef } @$cards ];
+  unless ( $self->silent ) {
+    $self->_notify_watch(
+      [
+        'deal_community',
+        {
+          community => $c,
+          table_id  => $self->table_id
+        }
+      ]
+    );
+    $self->chat->write( 'd', { message => "@$c" } );
+  }
+};
+
+#after 'deal_community' => sub {
+#  my $self = shift;
+#  $self->_notify_watch(
+#    [
+#      'deal_community',
+#      { community => $self->_fetch_community, table_id => $self->table_id }
+#    ]
+#  );
+#};
+
+1;
