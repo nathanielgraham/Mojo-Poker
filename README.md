@@ -1,14 +1,15 @@
 # Mojo-Poker
 Poker Client and Server built with the Mojolicious Framework 
 
-Tested on Ubuntu 16.04
+Tested on Ubuntu 16.04.
+
 As root, issue the following commands in your terminal session:
 
-cd /tmp
-wget https://github.com/mojopoker/Mojo-Poker/archive/master.zip
-unzip master.zip
-cd Mojo-Poker-master
-sudo ./install
+    cd /tmp
+    wget https://github.com/mojopoker/Mojo-Poker/archive/master.zip
+    unzip master.zip
+    cd Mojo-Poker-master
+    sudo ./install
 
 COPYRIGHT AND LICENSE
 Copyright (C) 2016, Nathaniel J. Graham
