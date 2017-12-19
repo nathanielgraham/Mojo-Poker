@@ -7,6 +7,7 @@ if [ "$EUID" -ne 0 ];
   exit 1
 fi
 
+add-apt-repository universe
 apt-get update
 apt-get install libdbi-perl sqlite3 libsqlite3-dev libtie-ixhash-perl liblist-allutils-perl libmoo-perl libalgorithm-combinatorics-perl libdigest-sha-perl libsql-abstract-perl libev-perl libdbd-sqlite3-perl libmojolicious-perl -y
 cpan -if AnyEvent::ReadLine::Gnu 
