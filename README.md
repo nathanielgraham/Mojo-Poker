@@ -30,7 +30,7 @@ Now point your browser at https://localhost (forces https on port 80)
     sudo kill `cat mojopoker.pid`
 
 ## Loading games
-wssshell.pl is a command-line utility for sending JSON encoded WebSocket messages to the server. To load a few sample games, issue the following command in your terminal session:
+wsshell.pl is a command-line utility for sending JSON encoded WebSocket messages to the server. To load a few sample games, issue the following command in your terminal session:
 
     sudo /usr/local/share/mojopoker/script/wsshell.pl < /usr/local/share/mojopoker/db/example_games
 
