@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/usr/bin/env bash
 # Install script for Ubuntu
 
 # Run as root
@@ -7,6 +7,7 @@ if [ "$EUID" -ne 0 ];
   exit 1
 fi
 
+set -eu
 add-apt-repository universe
 apt-get update
 apt-get install libterm-readline-gnu-perl libdbi-perl sqlite3 libsqlite3-dev libtie-ixhash-perl liblist-allutils-perl libmoo-perl libalgorithm-combinatorics-perl libdigest-sha-perl libsql-abstract-perl libev-perl libdbd-sqlite3-perl libmojolicious-perl -y
@@ -19,6 +20,7 @@ cd /usr/local/share/mojopoker/db
 sqlite3 fb.db < fb.schema
 sqlite3 poker.db < poker.schema
 chmod 666 *
+chmod 755 /usr/local/share/mojopoker/script/*
 
 echo
 echo "Installation complete!"
