@@ -44,6 +44,9 @@ To enter the admin shell:
 
     sudo /usr/local/share/mojopoker/script/wsshell.pl 
 
+## Writing a bot
+See [Poker::Robot](https://metacpan.org/pod/Poker::Robot) 
+
 ## COPYRIGHT AND LICENSE
 Copyright (C) 2016, Nathaniel J. Graham
 
