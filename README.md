@@ -16,14 +16,15 @@ Issue the following command in your terminal session:
 
     sudo /usr/local/share/mojopoker/script/mojopoker.pl
 
-Now point your browser at http://localhost:3000
+Now point your browser at http://localhost
 
 ## Starting the server in production mode
 Issue the following command in your terminal session:
 
     sudo /usr/local/share/mojopoker/script/mojopoker.pl -p
 
-Now point your browser at https://localhost (forces https on port 80)
+Now point your browser at https://localhost (forces https on port 80).
+Remember to put cert and key files down /usr/local/share/mojopoker/ssl.
 
 ## Stopping the server
 

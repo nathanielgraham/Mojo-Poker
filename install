@@ -14,7 +14,7 @@ apt-get install libterm-readline-gnu-perl libdbi-perl sqlite3 libsqlite3-dev lib
 cpan -if AnyEvent::ReadLine::Gnu 
 
 cp -R ./mojopoker-0.9.8 /usr/local/share
-ln -s /usr/local/share/mojopoker-0.9.8 /usr/local/share/mojopoker 
+ln -sf /usr/local/share/mojopoker-0.9.8 /usr/local/share/mojopoker 
 cd /usr/local/share/mojopoker/db
 
 sqlite3 fb.db < fb.schema

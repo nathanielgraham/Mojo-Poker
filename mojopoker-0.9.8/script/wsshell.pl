@@ -11,7 +11,7 @@ our $opt_p;
 getopts('p');
 
 my $ua = Mojo::UserAgent->new(inactivity_timeout => 0);
-my $ws = $opt_p ? 'wss://localhost:443/websocket' : 'ws://localhost:3000/websocket';
+my $ws = $opt_p ? 'wss://localhost:443/websocket' : 'ws://localhost:80/websocket';
 
 $ua->websocket(
   $ws => sub {

@@ -11,16 +11,13 @@ use POSIX qw(setsid);
 use Getopt::Std;
 
 our $opt_p;
-my @listen = ('http://*:3000');
+my @listen = ('http://*:80');
 getopts('p');
 
 # PRODUCTION MODE OPTION
 if ($opt_p) {
     $ENV{MOJO_MODE} = 'production';
-    @listen = (
-        'http://*:80',
-'https://*:443?cert=/usr/local/share/mojopoker/ssl/server.crt&key=/usr/local/share/mojopoker/ssl/server.key'
-    );
+    push @listen, 'https://*:443?cert=/usr/local/share/mojopoker/ssl/server.crt&key=/usr/local/share/mojopoker/ssl/server.key';
 }
 
 my $daemon = Mojo::Server::Daemon->new(
