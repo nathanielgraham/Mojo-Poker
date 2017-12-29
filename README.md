@@ -99,8 +99,8 @@ The shell recognizes the following commands and arguments:
 See [Poker::Robot](https://metacpan.org/pod/Poker::Robot) 
 
 ## TODO 
-- [ ] Add support for tournaments.
-- [ ] Use [Poker::Eval](https://metacpan.org/pod/Poker::Eval).
+- [ ] Add support for tournaments
+- [ ] Change hand evaluator to [Poker::Eval](https://metacpan.org/pod/Poker::Eval)
 
 ## COPYRIGHT AND LICENSE
 Copyright (C) 2016, Nathaniel J. Graham
