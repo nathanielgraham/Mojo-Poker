@@ -65,7 +65,7 @@ The shell recognizes the following commands and arguments:
   * handle  
   * password
 * logout
-*  block   
+* block   
   * login_id
 * unblock  
   * login_id 
