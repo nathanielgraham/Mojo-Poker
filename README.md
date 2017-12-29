@@ -47,7 +47,7 @@ Commands should be formatted as follows:
 
     [ "command" , { "arg1": "value", "arg2": "value" } ]
 
-The shell recognizes the following commands and arguements:
+The shell recognizes the following commands and arguments:
  
 * login_book 
   * login_book 
