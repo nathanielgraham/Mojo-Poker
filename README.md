@@ -12,6 +12,12 @@ As root, issue the following commands in your terminal session:
     cd Mojo-Poker-master
     sudo ./install
 
+## Features
+The following 28 poker variants work out-of-the-box:
+Dealer's Choice, Hold'em, Hold'em jokers wild, Pineapple, Crazy Pineapple, Omaha, Omaha Hi-Lo, 5 Card Omaha, 5 Card Omaha Hi-Lo, Courcheval, Courcheval Hi-Lo, 5 Card Draw, 5 Card Draw Deuces Wild, 2-7 Single Draw, 2-7 Triple Draw, A-5 Single Draw, A-5 Triple Draw, 7 Card Stud, 7 Card Stud Jokers Wild, 7 Card Stud Hi-Lo, Razz, High Chicago, Follow the Queen, The Bitch, Badugi, Badacey, Badeucy. See SCREENSHOT.png
+
+Another cool feature is the ability to create custom variants with minimal coding. For example, wildcards could be added to any of the above games. 
+
 ## Starting the server
 Issue the following command in your terminal session:
 
@@ -91,6 +97,10 @@ The shell recognizes the following commands and arguments:
 
 ## Writing a bot
 See [Poker::Robot](https://metacpan.org/pod/Poker::Robot) 
+
+## TODO 
+- [ ] Add support for tournaments.
+- [ ] Use [Poker::Eval](https://metacpan.org/pod/Poker::Eval).
 
 ## COPYRIGHT AND LICENSE
 Copyright (C) 2016, Nathaniel J. Graham
