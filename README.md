@@ -1,8 +1,9 @@
 # Mojo-Poker
-Poker Client and Server built with the Mojolicious Framework.
-Tested on Ubuntu 16.04.
+Poker client and server built with the Mojolicious Framework.
 
 ## Install
+Tested on Ubuntu 16.04. Other distros might require tweaking.
+Begin with a newly installed, "clean" install of Ubuntu 16.04. 
 As root, issue the following commands in your terminal session:
 
     cd /tmp
@@ -31,18 +32,64 @@ Remember to put cert and key files down /usr/local/share/mojopoker/ssl.
     sudo kill `cat mojopoker.pid`
 
 ## Loading games
-wsshell.pl is a command-line utility for sending JSON encoded WebSocket messages to the server. To load a few sample games, issue the following command in your terminal session:
+wsshell.pl is a command-line utility for sending JSON encoded WebSocket messages to the server. To load a few example games, issue the following command in your terminal session:
 
     sudo /usr/local/share/mojopoker/script/wsshell.pl < /usr/local/share/mojopoker/db/example_games
 
-If the server is running in production mode, just add the -p flag:
-
-    sudo /usr/local/share/mojopoker/script/wsshell.pl -p < /usr/local/share/mojopoker/db/example_games
+Add the -p flag if the server is running in production mode.
 
 ## Admin
-To enter the admin shell: 
+To enter the admin shell, issue the following command in your terminal: 
 
     sudo /usr/local/share/mojopoker/script/wsshell.pl 
+
+Commands should be formatted as follows:
+
+    [ "command" , { "arg1": "value", "arg2": "value" } ]
+
+The shell recognizes the following commands and arguements:
+ 
+* login_book 
+  * login_book 
+* login 
+  * username 
+  * password 
+* login_book
+  * login_book 
+* guest_login
+* login_info  
+* update_login  
+  * username 
+  * email  
+  * birthday 
+  * handle  
+  * password
+* logout
+*  block   
+  * login_id
+* unblock  
+  * login_id 
+* join_channel
+  * channel
+* unjoin_channel
+  * channel 
+* write_channel 
+  * channel 
+  * message
+* ping
+* credit_chips
+  * user_id
+  * login_id 
+  * chips
+* logout_all
+* logout_user 
+  * login_id
+* create_channel 
+  * channel 
+* destroy_channel
+  * channel
+* update_news  
+  * news
 
 ## Writing a bot
 See [Poker::Robot](https://metacpan.org/pod/Poker::Robot) 

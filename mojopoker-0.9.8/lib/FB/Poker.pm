@@ -156,7 +156,6 @@ sub _build_poker_command {
       #\&create_tour, { %{ $self->game_option }, %{ $self->tour_option } }, 4
       \&create_tour, $self->tour_option, 4
     ],
-    #'tour_info'    => [ \&tour_info,    { tour_id => 1 } ],
     'watch_tour'   => [ \&watch_tour,   { tour_id => 1 } ],
     'unwatch_tour' => [ \&unwatch_tour, { tour_id => 1 } ],
     'open_tour'    => [ \&open_tour,    { tour_id => 1 } ],
@@ -168,8 +167,6 @@ sub _build_poker_command {
     'pick_game' => [ \&pick_game, { table_id => 1, tour_id => 0, game => 1 } ],
 
     # admin
-    #'add_bot' => [ \&add_bot, { username => 1, table_ids => 0 }, 4 ],
-    #'remove_bot' => [ \&remove_bot, { username => 1 }, 4 ],
   };
 }
 
@@ -187,11 +184,9 @@ sub _build_poker_option {
     chair => qr/^\d{1,2}$/,
     game  => qr/^\d{1,2}$/,
 
-    #chips     => qr/^[\d\.]{1,10}$/,
     chips     => qr/^[-+]?[0-9]*\.?[0-9]+$/,
     fix_limit => qr/^\d{1,10}$/,
 
-    #limit     => qr/^(NL|Pot|Fix)$/,
     limit    => qr/^(NL|PL|FL)$/,
     card_idx => sub {
       my $aref = shift;
@@ -305,8 +300,6 @@ sub unjoin_ring {
     my $res = $table->unjoin( $login, $chair );
     if ( $res->{success} ) {
       push @unseated, $res->{chair};
-
-      #$self->_notify_lobby( [ 'lobby_unjoin_table', $res, ] );
     }
   }
   if ( scalar @unseated ) {
@@ -323,8 +316,6 @@ sub unjoin_ring {
     };
   }
   $login->send($response);
-
-  #$login->send( [ 'login_update', { chips => $login->fetch_all_chips } ] );
 }
 
 sub wait_ring {
@@ -356,8 +347,6 @@ sub unwait_ring {
 #sub watch_ring {
 sub watch_table {
   my ( $self, $login, $opts ) = @_;
-
-  #my $response = ['watch_ring_res'];
   my $response = ['watch_table_res'];
   my $table    = $self->_fetch_table($opts);
 
@@ -371,8 +360,6 @@ sub watch_table {
   if ( $response->[1]->{success} ) {
 
     # If already seated, assume reconnect
-    #if ( exists $table->seated_list->{ $login->id } ) {
-    #my @chairs = $table->_find_chairs($login);
     for my $c ( @{ $table->_find_chairs($login) } ) {
       $c->clear_check_fold;
       $c->clear_stand_flag;
@@ -411,8 +398,6 @@ sub _send_table_summary {
 sub unwatch_table {
   my ( $self, $login, $opts ) = @_;
 
-  #my ( $tour, $table );
-  #my $response = ['unwatch_ring_res'];
   my $response = ['unwatch_table_res'];
   my $table    = $self->_fetch_table($opts);
 
@@ -456,7 +441,6 @@ sub table_chips {
   my ( $self, $login, $opts ) = @_;
   my $response = ['table_chips_res'];
 
-  #my $table    = $self->table_list->{ $opts->{table_id} };
   my $table = $self->_fetch_table($opts);
 
   unless ( defined $table ) {
@@ -564,7 +548,6 @@ sub _tour_snap {
     [
       'tour_snap',
       [ map { $_->summary } values %{ $self->tour_list } ]
-      #[ map { $self->_fetch_tour_opts($_) } values %{ $self->tour_list } ]
     ]
   );
 }
@@ -575,7 +558,6 @@ sub _poker_cleanup {
   $self->_unwatch_lobby($login);
 
   # remove login from table list
-  #for my $ring ( values %{ $self->table_list } ) {
   for my $ring (
     map  { $self->table_list->{$_} }
     grep { exists $self->table_list->{$_} }
@@ -587,7 +569,6 @@ sub _poker_cleanup {
     $ring->_unwait($login);
   }
 
-  #for my $tour ( values %{ $self->tour_list } ) {
   for my $tour (
     map  { $self->tour_list->{$_} }
     grep { exists $self->tour_list->{$_} }
@@ -629,7 +610,6 @@ sub _validate_action {
     return { success => 0, message => 'Game not started', %$opts };
   }
 
-  #my $chair = $table->chairs->[ $opts->{chair} ];
   my $chair = $rv->{table}->chairs->[ $rv->{table}->action ]
     if defined $rv->{table}->action;
   if ( $chair
@@ -642,14 +622,6 @@ sub _validate_action {
     return { success => 0, message => 'Not your turn', %$opts };
   }
 
-  #unless ( defined $table->action && $table->action == $chair->index ) {
-  #  return {
-  #    success => 0,
-  #    action  => $table->action,
-  #    message => 'Not your turn.',
-  #    %$opts
-  #  };
-  #}
   $rv->{table_id} = $rv->{table}->table_id;
   return $rv;
 }
@@ -666,13 +638,6 @@ sub bet {
   my $table = delete $response->[1]->{table};
   my $chair = $table->chairs->[ $response->[1]->{chair} ];
 
-  #my $table = $self->table_list->{ $opts->{table_id} };
-  #my $chair = $table->chairs->[ $table->action ];
-
-  #my $chair = $table->chairs->[ $opts->{chair} ];
-  #my $chair = $table->seated_list->{ $login->id };
-
-  #unless ( $table->legal_action('bet') ) {
   unless ( $table->valid_act->{bet} || $table->valid_act->{bring} ) {
     $response->[1]->{message} = 'Invalid action';
     $response->[1]->{success} = 0;
@@ -687,21 +652,6 @@ sub bet {
     return;
   }
 
-#if ( $table->can('bring_done') && !$table->bring_done && $table->round == 1 ) {
-#  if ( $table->valid_act->{bring} ) {
-#    $table->valid_act->{check} = 1;
-#    $table->valid_act->{bet} = 1;
-#    #$table->valid_act->{comp} = 1;
-#    delete $table->valid_act->{bring};
-#  }
-#}
-#elsif ( $table->valid_act->{comp} ) {
-#  if ($table->_fetch_pot_total >= $table->max_bring) {
-#    $table->valid_act->{check} = 1;
-#    delete $table->valid_act->{comp};
-#  }
-#}
-
   $response->[1]->{chips}             = $bet;
   $response->[1]->{balance}           = $chair->chips;
   $response->[1]->{chair}             = $chair->index;
@@ -710,16 +660,12 @@ sub bet {
 
   $login->send($response);
 
-  #delete $response->[1]->{success};
-  #$table->_notify_watch( [ 'notify_bet', $response->[1] ] );
-  #$table->_notify_bet($bet);
   $table->action_done;
 }
 
 sub check {
   my ( $self, $login, $opts ) = @_;
 
-  #my $response = [ 'check_res', { success => 0 } ];
   my $response = ['check_res'];
   $response->[1] = $self->_validate_action( $login, $opts );
   unless ( $response->[1]->{success} ) {
@@ -729,7 +675,6 @@ sub check {
 
   my $table = delete $response->[1]->{table};
 
-  #  unless ( exists $table->valid_act->{check} ) {
   unless ( $table->legal_action('check') ) {
     $response->[1]->{message} = 'Invalid action.';
     $response->[1]->{success} = 0;
@@ -739,7 +684,6 @@ sub check {
 
   if ( $table->check ) {
     $login->send($response);
-    #$table->_notify_check;
     $table->action_done;
   }
   else {
@@ -759,11 +703,6 @@ sub fold {
 
   my $table = delete $response->[1]->{table};
 
-  #my $chair = $table->chairs->[ $response->[1]->{$chair} ];
-  #my $table = delete $response->[1]->{table};
-  #my $chair = delete $response->[1]->{chair};
-
-  #unless ( exists $table->valid_act->{fold} ) {
   unless ( $table->legal_action('fold') ) {
     $response->[1]->{success} = 0;
     $response->[1]->{message} = 'Invalid action';
@@ -773,7 +712,6 @@ sub fold {
 
   if ( $table->fold ) {
     $login->send($response);
-    #$table->_notify_fold;
     $table->action_done;
   }
   else {
@@ -792,16 +730,6 @@ sub discard {
 
   my $table = delete $response->[1]->{table};
 
-  #my $chair = $table->chairs->[ $response->[1]->{chair} ];
-
-  #my $table = delete $response->[1]->{table};
-  #my $chair = delete $response->[1]->{chair};
-
-  #my $table = $self->table_list->{ $opts->{table_id} };
-  #my $chair = $table->chairs->[ $table->action ];
-  #my $chair = $table->chairs->[ $opts->{chair} ];
-
-  #unless ( exists $table->valid_act->{discard} ) {
   unless ( $table->legal_action('discard') ) {
     $response->[1]->{success} = 0;
     $response->[1]->{message} = 'Invalid action.';
@@ -821,20 +749,10 @@ sub discard {
 
     $response->[1]->{card_idx} = $idx;
 
-    #my $cards =
-    #  [ map { $_->rank . $_->suit } @{ $table->chairs->[$chair]->cards } ];
-    #$response->[1] = {
-    #  success  => 1,
-    #  chair    => $chair->index,
-    #  table_id => $table->table_id,
-    #  card_idx => $idx,
-    #};
-
     $login->send($response);
     delete $response->[1]->{success};
     $table->_notify_watch(
 
-      #[ 'notify_discard', { chair => $chair->index, card_idx => $idx } ] );
       [ 'notify_discard', $response->[1] ]
     );
     $table->action_done;
@@ -857,15 +775,6 @@ sub draw {
 
   my $table = delete $response->[1]->{table};
 
-  #my $chair = $table->chairs->[ $response->[1]->{$chair} ];
-
-  #my $table = delete $response->[1]->{table};
-  #my $chair = delete $response->[1]->{chair};
-
-  #my $table = $self->table_list->{ $opts->{table_id} };
-  #my $chair = $table->chairs->[ $table->action ];
-
-  #unless ( exists $table->valid_act->{draw} ) {
   unless ( $table->legal_action('draw') ) {
     $response->[1]->{success} = 0;
     $response->[1]->{message} = 'Invalid action';
@@ -887,21 +796,12 @@ sub draw {
     my $hide_map = { map { $_ => undef } ( keys %$card_map ) };
     for my $log ( values %{ $table->watch_list } ) {
 
-      #$login && $login->id == $chair->player->login->id
-      #my $map = $login->id == $log->id ? $card_map : $hide_map;
-
       $response->[1]->{card_map} =
         $login->id == $log->id ? $card_map : $hide_map;
       $log->send(
         [
           'notify_draw',
           $response->[1],
-
-          #{
-          #  chair    => $chair->index,
-          #  table_id => $opts->{table_id},
-          #  card_map => $map
-          #}
         ]
       );
     }
@@ -967,12 +867,6 @@ has 'tour_classes' => (
 );
 
 sub _build_tour_classes {
-#  return {
-#    freezeout => 'Freezeout',
-#    shootout  => 'Shootout',
-#    fifty50   => 'Fifty50',
-#    bounty    => 'Bounty',
-#  };
   return {
     1 => 'Freezeout',
     2 => 'Shootout',
@@ -999,7 +893,6 @@ sub create_tour {
   $login->send($response);
   $self->_notify_lobby(
     [ 'notify_create_tour', $tour->summary ] );
-    #[ 'notify_create_tour', $self->_fetch_tour_opts($tour) ] );
 }
 
 #sub tour_info {
@@ -1015,9 +908,6 @@ sub _watch_tour {
   my $tour     = $self->tour_list->{ $opts->{tour_id} };
   if ($tour) {
     $response->[1] = $tour->_watch($login);
-    #if ($response->[1]->{success}) {
-    #  $response->[1] = { %{ $self->_fetch_tour_opts($tour) }, success => 1 };
-    #}
   }
   else {
     $response->[1] = { %$opts, success => 0 };
@@ -1050,9 +940,6 @@ sub reg_tour {
   my $tour     = $self->tour_list->{ $opts->{tour_id} };
   if ($tour) {
     $response->[1] = $tour->register($login);
-    #if ( $response->[1]->{success} ) {
-    #  $self->_notify_lobby( [ 'notify_reg_tour', $response->[1] ] );
-    #}
   }
   else {
     $response->[1] = { success => 0 };
@@ -1066,9 +953,6 @@ sub unreg_tour {
   my $tour     = $self->tour_list->{ $opts->{tour_id} };
   if ($tour) {
     $response->[1] = $tour->unregister($login);
-    #if ( $response->[1]->{success} ) {
-    #  $self->_notify_lobby( [ 'notify_unreg_tour', $response->[1] ] );
-    #}
   }
   else {
     $response->[1] = { success => 0 };
@@ -1141,12 +1025,9 @@ sub pick_game {
     };
   %$o = ( %$o, %{ $table->dealer_choices->{ $opts->{game} } } );
 
-  #$o->{game_class}  = $table->dealer_choices->{ $opts->{game} };
-  #$o->{limit}       = $opts->{limit} if $opts->{limit};
   $o->{small_blind} = $table->small_blind if $table->small_blind;
   $o->{big_blind}   = $table->big_blind   if $table->big_blind;
 
-  #$o->{ante}        = $table->ante        if $table->ante;
   $o->{wait_list}  = $table->wait_list  if $table->wait_list;
   $o->{tournament} = $table->tournament if $table->can('tournament');
 
