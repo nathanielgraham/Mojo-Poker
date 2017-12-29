@@ -15,17 +15,17 @@ As root, issue the following commands in your terminal session:
 ## Starting the server
 Issue the following command in your terminal session:
 
-    sudo /usr/local/share/mojopoker/script/mojopoker.pl
+    sudo /opt/mojopoker/script/mojopoker.pl
 
 Now point your browser at http://localhost
 
 ## Starting the server in production mode
 Issue the following command in your terminal session:
 
-    sudo /usr/local/share/mojopoker/script/mojopoker.pl -p
+    sudo /opt/mojopoker/script/mojopoker.pl -p
 
 Now point your browser at https://localhost (forces https on port 80).
-Remember to put cert and key files down /usr/local/share/mojopoker/ssl.
+Remember to put cert and key files down /opt/mojopoker/ssl.
 
 ## Stopping the server
 
@@ -34,14 +34,14 @@ Remember to put cert and key files down /usr/local/share/mojopoker/ssl.
 ## Loading games
 wsshell.pl is a command-line utility for sending JSON encoded WebSocket messages to the server. To load a few example games, issue the following command in your terminal session:
 
-    sudo /usr/local/share/mojopoker/script/wsshell.pl < /usr/local/share/mojopoker/db/example_games
+    sudo /opt/mojopoker/script/wsshell.pl < /opt/mojopoker/db/example_games
 
 Add the -p flag if the server is running in production mode.
 
 ## Admin
 To enter the admin shell, issue the following command in your terminal: 
 
-    sudo /usr/local/share/mojopoker/script/wsshell.pl 
+    sudo /opt/mojopoker/script/wsshell.pl 
 
 Commands should be formatted as follows:
 
