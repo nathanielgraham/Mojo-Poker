@@ -49,13 +49,11 @@ Commands should be formatted as follows:
 
 The shell recognizes the following commands and arguments:
  
-* login_book 
-  * login_book 
 * login 
   * username 
   * password 
 * login_book
-  * login_book 
+  * bookmark
 * guest_login
 * login_info  
 * update_login  
