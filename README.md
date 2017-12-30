@@ -47,6 +47,7 @@ To enter the admin shell, issue the following command in your terminal:
 
     sudo /opt/mojopoker/script/wsshell.pl 
 
+Add the -p flag if the server is running in production mode. 
 Commands should be formatted as follows:
 
     [ "command" , { "arg1": "value", "arg2": "value" } ]
@@ -105,7 +106,6 @@ The shell recognizes the following commands and arguments:
   * sit_out 
 * table_chat 
   * table_id 
-  * tour_id 
   * message 
 * bet 
   * table_id 
@@ -114,11 +114,9 @@ The shell recognizes the following commands and arguments:
   * table_id 
 * fold 
   * table_id 
-  * tour_id
 * draw 
   * table_id 
   * card_idx 
-  * tour_id 
 * discard 
   * table_id
   * card_idx 
