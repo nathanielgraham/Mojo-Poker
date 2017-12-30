@@ -3,7 +3,7 @@ Poker client and server built with the Mojolicious Framework.
 
 ## Features
 The following 28 poker variants work out-of-the-box:
-Dealer's Choice, Hold'em, Hold'em jokers wild, Pineapple, Crazy Pineapple, Omaha, Omaha Hi-Lo, 5 Card Omaha, 5 Card Omaha Hi-Lo, Courcheval, Courcheval Hi-Lo, 5 Card Draw, 5 Card Draw Deuces Wild, 2-7 Single Draw, 2-7 Triple Draw, A-5 Single Draw, A-5 Triple Draw, 7 Card Stud, 7 Card Stud Jokers Wild, 7 Card Stud Hi-Lo, Razz, High Chicago, Follow the Queen, The Bitch, Badugi, Badacey, Badeucy. 
+Dealer's Choice, Hold'em, Hold'em Jokers Wild, Pineapple, Crazy Pineapple, Omaha, Omaha Hi-Lo, 5 Card Omaha, 5 Card Omaha Hi-Lo, Courcheval, Courcheval Hi-Lo, 5 Card Draw, 5 Card Draw Deuces Wild, 2-7 Single Draw, 2-7 Triple Draw, A-5 Single Draw, A-5 Triple Draw, 7 Card Stud, 7 Card Stud Jokers Wild, 7 Card Stud Hi-Lo, Razz, High Chicago, Follow the Queen, The Bitch, Badugi, Badacey, Badeucy. 
 
 See [SCREENSHOT.png](https://github.com/mojopoker/Mojo-Poker/blob/master/SCREENSHOT.png)
 
@@ -35,10 +35,6 @@ Issue the following command in your terminal session:
 Now point your browser at https://localhost (forces https on port 80).
 Remember to put cert and key files down /opt/mojopoker/ssl.
 
-## Stopping the server
-
-    sudo kill `cat mojopoker.pid`
-
 ## Loading games
 wsshell.pl is a command-line utility for sending JSON encoded WebSocket messages to the server. To load a few example games, issue the following command in your terminal session:
 
@@ -57,6 +53,78 @@ Commands should be formatted as follows:
 
 The shell recognizes the following commands and arguments:
  
+* create_ring
+  * chair_count 
+  * small_blind
+  * big_blind  
+  * ante     
+  * turn_clock 
+  * time_bank 
+  * hi_mult 
+  * low_mult
+  * auto_start 
+  * table_min 
+  * fix_limit
+  * pot_cap 
+  * small_bet
+  * limit 
+  * director_id 
+  * game_class 
+* destroy_ring
+  * table_id
+* join_ring
+  * table_id
+  * chair 
+  * chips
+  * wait_bb 
+  * auto_rebuy 
+  * auto_muck
+  * sit_out 
+* unjoin_ring
+  * table_id 
+  * chair 
+* watch_table
+  * table_id 
+* unwatch_table 
+  * table_id 
+* table_chips
+  * table_id 
+  * chair
+  * chips 
+* watch_lobby
+* unwatch_lobby
+* table_info 
+  * table_id 
+* table_opts 
+  * table_id 
+  * chair  
+  * chips
+  * wait_bb  
+  * auto_rebuy 
+  * auto_muck
+  * sit_out 
+* table_chat 
+  * table_id 
+  * tour_id 
+  * message 
+* bet 
+  * table_id 
+  * chips
+* check 
+  * table_id 
+* fold 
+  * table_id 
+  * tour_id
+* draw 
+  * table_id 
+  * card_idx 
+  * tour_id 
+* discard 
+  * table_id
+  * card_idx 
+* pick_game 
+  * table_id 
+  * game 
 * login 
   * username 
   * password 
