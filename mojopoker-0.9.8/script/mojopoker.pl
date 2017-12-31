@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 use feature qw(say);
-use lib '/usr/local/share/mojopoker/lib';
+use lib '/opt/mojopoker/lib';
 use Ships;
 use EV;
 use Mojo::Server::Daemon;
@@ -17,7 +17,7 @@ getopts('p');
 # PRODUCTION MODE OPTION
 if ($opt_p) {
     $ENV{MOJO_MODE} = 'production';
-    push @listen, 'https://*:443?cert=/usr/local/share/mojopoker/ssl/server.crt&key=/usr/local/share/mojopoker/ssl/server.key';
+    push @listen, 'https://*:443?cert=/opt/mojopoker/ssl/server.crt&key=/opt/mojopoker/ssl/server.key';
 }
 
 my $daemon = Mojo::Server::Daemon->new(
@@ -46,7 +46,7 @@ $daemon->start;
 if ($opt_p) {
     say 'Running in production mode!';
     say
-'Remember to put cert and key files down /usr/local/share/mojopoker/ssl.';
+'Remember to put cert and key files down /opt/mojopoker/ssl.';
 }
 
 open STDOUT, '>/dev/null';

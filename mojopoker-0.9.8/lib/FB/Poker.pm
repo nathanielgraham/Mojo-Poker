@@ -23,7 +23,7 @@ has 'pdb' => (
 
 sub _build_pdb {
   my $self = shift;
-  return DBI->connect( "dbi:SQLite:dbname=/usr/local/share/mojopoker/db/poker.db", "", "" );
+  return DBI->connect( "dbi:SQLite:dbname=/opt/mojopoker/db/poker.db", "", "" );
 }
 
 has 'table_count' => (

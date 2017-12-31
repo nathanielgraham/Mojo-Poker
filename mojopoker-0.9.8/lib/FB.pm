@@ -63,7 +63,7 @@ has 'db' => ( is => 'rw', );
 
 sub _build_db {
   my $self = shift;
-  return DBI->connect( "dbi:SQLite:dbname=/usr/local/share/mojopoker/db/fb.db", "", "" );
+  return DBI->connect( "dbi:SQLite:dbname=/opt/mojopoker/db/fb.db", "", "" );
 }
 
 has 'login_list' => (
