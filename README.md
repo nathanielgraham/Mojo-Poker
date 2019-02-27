@@ -42,15 +42,15 @@ wsshell.pl is a command-line utility for sending JSON encoded WebSocket messages
 
 Add the -p flag if the server is running in production mode.
 
+## Contact
+Send questions and bug reports to ngraham@cpan.org
+
 ## Admin
 To enter the admin shell, issue the following command in your terminal: 
 
     sudo /opt/mojopoker/script/wsshell.pl 
 
 Add the -p flag if the server is running in production mode. 
-
-## Contact
-Send questions and bug reports to ngraham@cpan.org
 
 ## Commands
 Commands should be formatted as follows:
