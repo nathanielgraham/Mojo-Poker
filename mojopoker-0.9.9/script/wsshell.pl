@@ -5,20 +5,16 @@ use warnings;
 use Mojo::UserAgent;
 use AnyEvent::ReadLine::Gnu;
 use EV;
-use Getopt::Std;
-
-our $opt_p;
-getopts('p');
 
 my $ua = Mojo::UserAgent->new(inactivity_timeout => 0);
-my $ws = $opt_p ? 'wss://localhost:443/websocket' : 'ws://localhost:80/websocket';
+my $ws = 'ws://localhost:3000/websocket';
 
 $ua->websocket(
   $ws => sub {
     my ( $ua, $tx ) = @_;
 
     unless ($tx->is_websocket) {
-      AnyEvent::ReadLine::Gnu->print("WebSocket handshake failed! Try toggling the -p flag.\n");
+      AnyEvent::ReadLine::Gnu->print("WebSocket handshake failed!\n");
       exit 0;
     }
 

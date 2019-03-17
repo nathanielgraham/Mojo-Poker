@@ -7,17 +7,14 @@ Dealer's Choice, Hold'em, Hold'em Jokers Wild, Pineapple, Crazy Pineapple, Omaha
 
 See [SCREENSHOT.png](https://github.com/mojopoker/Mojo-Poker/blob/master/SCREENSHOT.png)
 
-Another cool feature is the ability to create custom variants with minimal coding. For example, wildcards could be added to any of the above games. 
-
 ## Install
 Tested on Ubuntu 16.04. Other distros might require tweaking.
 Begin with a newly installed, "clean" install of Ubuntu 16.04.
 As root, issue the following commands in your terminal session:
 
     cd /tmp
-    wget https://github.com/mojopoker/Mojo-Poker/archive/master.zip
-    unzip master.zip
-    cd Mojo-Poker-master
+    git clone https://github.com/nathanielgraham/Mojo-Poker.git
+    cd Mojo-Poker
     sudo ./install
 
 ## Starting the server
@@ -25,148 +22,23 @@ Issue the following command in your terminal session:
 
     sudo /opt/mojopoker/script/mojopoker.pl
 
-Now point your browser at http://localhost
+Now point your browser at http://localhost:3000
 
-## Starting the server in production mode
-Issue the following command in your terminal session:
+## Running in production
+The recommended setup is to use nginx + SSL as a reverse proxy. See Mojolicious Cookook for examples.  You'll also need to edit the file public/main.html so that ws:// points to your real domain. 
 
-    sudo /opt/mojopoker/script/mojopoker.pl -p
+## Admin tool
+mpadmin.pl is an command-line ultility for creating and deleting ring games, editing player info, crediting chips, and other admin tasks.  For a complete list of options, type:
 
-Now point your browser at https://localhost (forces https on port 80).
-Remember to put cert and key files down /opt/mojopoker/ssl.
+    sudo /opt/mojopoker/script/wpadmin.pl --help 
 
-## Loading games
-wsshell.pl is a command-line utility for sending JSON encoded WebSocket messages to the server. To load a few example games, issue the following command in your terminal session:
+## Advanced websocket shell
+wsshell.pl is a command-line utility for sending JSON encoded WebSocket messages directly to the server. Useful for automating certain tasks. For example, to bulk loading many games at once, issue the following command in your terminal session:
 
     sudo /opt/mojopoker/script/wsshell.pl < /opt/mojopoker/db/example_games
 
-Add the -p flag if the server is running in production mode.
-
 ## Contact
 Send questions and bug reports to ngraham@cpan.org
-
-## Admin
-To enter the admin shell, issue the following command in your terminal: 
-
-    sudo /opt/mojopoker/script/wsshell.pl 
-
-Add the -p flag if the server is running in production mode. 
-
-## Commands
-Commands should be formatted as follows:
-
-    [ "command" , { "arg1": "value", "arg2": "value" } ]
-
-The shell recognizes the following commands and arguments:
- 
-* create_ring
-  * chair_count 
-  * small_blind
-  * big_blind  
-  * ante     
-  * turn_clock 
-  * time_bank 
-  * hi_mult 
-  * low_mult
-  * auto_start 
-  * table_min 
-  * fix_limit
-  * pot_cap 
-  * small_bet
-  * limit 
-  * director_id 
-  * game_class 
-* destroy_ring
-  * table_id
-* join_ring
-  * table_id
-  * chair 
-  * chips
-  * wait_bb 
-  * auto_rebuy 
-  * auto_muck
-  * sit_out 
-* unjoin_ring
-  * table_id 
-  * chair 
-* watch_table
-  * table_id 
-* unwatch_table 
-  * table_id 
-* table_chips
-  * table_id 
-  * chair
-  * chips 
-* watch_lobby
-* unwatch_lobby
-* table_info 
-  * table_id 
-* table_opts 
-  * table_id 
-  * chair  
-  * chips
-  * wait_bb  
-  * auto_rebuy 
-  * auto_muck
-  * sit_out 
-* table_chat 
-  * table_id 
-  * message 
-* bet 
-  * table_id 
-  * chips
-* check 
-  * table_id 
-* fold 
-  * table_id 
-* draw 
-  * table_id 
-  * card_idx 
-* discard 
-  * table_id
-  * card_idx 
-* pick_game 
-  * table_id 
-  * game 
-* login 
-  * username 
-  * password 
-* login_book
-  * bookmark
-* guest_login
-* login_info  
-* update_login  
-  * username 
-  * email  
-  * birthday 
-  * handle  
-  * password
-* logout
-* block   
-  * login_id
-* unblock  
-  * login_id 
-* join_channel
-  * channel
-* unjoin_channel
-  * channel 
-* write_channel 
-  * channel 
-  * message
-* ping
-* credit_chips
-  * user_id
-  * login_id 
-  * chips
-* logout_all
-* logout_user 
-  * login_id
-* create_channel 
-  * channel 
-* destroy_channel
-  * channel
-* update_news  
-  * news
 
 ## Writing a bot
 See [Poker::Robot](https://metacpan.org/pod/Poker::Robot) 
@@ -176,7 +48,7 @@ See [Poker::Robot](https://metacpan.org/pod/Poker::Robot)
 - [ ] Change hand evaluator to [Poker::Eval](https://metacpan.org/pod/Poker::Eval)
 
 ## COPYRIGHT AND LICENSE
-Copyright (C) 2016, Nathaniel J. Graham
+Copyright (C) 2019, Nathaniel J. Graham
 
 This program is free software, you can redistribute it and/or modify it
 nder the terms of the Artistic License version 2.0.

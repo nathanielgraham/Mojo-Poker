@@ -10,13 +10,13 @@ fi
 set -eu
 add-apt-repository universe
 apt-get update
-apt-get install cpanminus libterm-readline-gnu-perl libdbi-perl sqlite3 libsqlite3-dev libtie-ixhash-perl liblist-allutils-perl libmoo-perl libalgorithm-combinatorics-perl libdigest-sha-perl libsql-abstract-perl libev-perl libdbd-sqlite3-perl libmojolicious-perl -y
+apt-get install build-essential cpanminus libterm-readline-gnu-perl libdbi-perl sqlite3 libsqlite3-dev libtie-ixhash-perl liblist-allutils-perl libmoo-perl libalgorithm-combinatorics-perl libdigest-sha-perl libsql-abstract-perl libev-perl libdbd-sqlite3-perl libmojolicious-perl -y
 cpanm -S AnyEvent::ReadLine::Gnu 
 
 INSTALL_PATH=/opt
 
-cp -R ./mojopoker-0.9.8 $INSTALL_PATH
-ln -sf $INSTALL_PATH/mojopoker-0.9.8 $INSTALL_PATH/mojopoker 
+cp -R ./mojopoker-0.9.9 $INSTALL_PATH
+ln -sf $INSTALL_PATH/mojopoker-0.9.9 $INSTALL_PATH/mojopoker 
 cd $INSTALL_PATH/mojopoker/db
 
 sqlite3 fb.db < fb.schema
@@ -30,12 +30,6 @@ echo
 echo "To start the server:"
 echo "sudo $INSTALL_PATH/mojopoker/script/mojopoker.pl"
 echo
-echo "To start the server in production mode:"
-echo "sudo $INSTALL_PATH/mojopoker/script/mojopoker.pl -p"
-echo
 echo "To load a few sample games:" 
 echo "sudo $INSTALL_PATH/mojopoker/script/wsshell.pl < $INSTALL_PATH/mojopoker/db/example_games"
-echo
-echo "To load a few sample games in production mode:" 
-echo "sudo $INSTALL_PATH/mojopoker/script/wsshell.pl -p < $INSTALL_PATH/mojopoker/db/example_games"
 
