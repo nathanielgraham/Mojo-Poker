@@ -30,7 +30,7 @@ The recommended setup is to use nginx + SSL as a reverse proxy. See Mojolicious 
 ## Admin tool
 mpadmin.pl is an command-line ultility for creating and deleting ring games, editing player info, crediting chips, and other admin tasks.  For a complete list of options, type:
 
-    sudo /opt/mojopoker/script/wpadmin.pl --help 
+    sudo /opt/mojopoker/script/mpadmin.pl --help 
 
 ## Advanced websocket shell
 wsshell.pl is a command-line utility for sending JSON encoded WebSocket messages directly to the server. Useful for automating certain tasks. For example, to bulk loading many games at once, issue the following command in your terminal session:
