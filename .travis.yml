@@ -1,3 +1,5 @@
 language: bash
 
-script: bash install
+sudo: true
+
+script: sudo bash install
