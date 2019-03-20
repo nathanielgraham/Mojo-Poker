@@ -1,5 +1,5 @@
 # Mojo-Poker
-Poker client and server built with the Mojolicious Framework.
+Poker client and server built with the Mojolicious Web Framework.
 
 ## Features
 The following 28 poker variants work out-of-the-box:
@@ -10,7 +10,7 @@ See [SCREENSHOT.png](https://github.com/mojopoker/Mojo-Poker/blob/master/SCREENS
 ## Install
 Tested on Ubuntu 16.04. Other distros might require tweaking.
 Begin with a newly installed, "clean" install of Ubuntu 16.04.
-As root, issue the following commands in your terminal session:
+Issue the following commands in your terminal session:
 
     cd /tmp
     git clone https://github.com/nathanielgraham/Mojo-Poker.git
@@ -24,8 +24,20 @@ Issue the following command in your terminal session:
 
 Now point your browser at http://localhost:3000
 
-## Running in production
-The recommended setup is to use nginx + SSL as a reverse proxy. See Mojolicious Cookook for examples.  You'll also need to edit the file public/main.html so that ws:// points to your real domain. 
+## Creating new tables 
+To create a new six handed No-Limit Hold'em table, issue the following command:
+
+    /opt/mojopoker/script/mpadmin.pl create_ring -game_class holdem -limit NL -chair_count 6
+
+See mpadmin.pl --help for a complete list of options. 
+
+##  Creating a robot opponent
+An example Robot (Bender) is included in the most recent release.  
+To launch Bender on table 1, issue the following command:
+
+    /opt/mojopoker/script/bender.pl 1
+
+See [Poker::Robot](https://metacpan.org/pod/Poker::Robot) for details. 
 
 ## Admin tool
 mpadmin.pl is an command-line ultility for creating and deleting ring games, editing player info, crediting chips, and other admin tasks.  For a complete list of options, type:
@@ -39,9 +51,6 @@ wsshell.pl is a command-line utility for sending JSON encoded WebSocket messages
 
 ## Contact
 Send questions and bug reports to ngraham@cpan.org
-
-## Writing a bot
-See [Poker::Robot](https://metacpan.org/pod/Poker::Robot) 
 
 ## TODO 
 - [ ] Add support for tournaments

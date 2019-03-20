@@ -98,7 +98,7 @@ OPTIONS
 
 EXAMPLE
     # Create a new Heads-Up Pot-Limit Omaha table
-    mp_admin.pl create_ring -game_class omaha -limit PL -chair_count 2
+    mpadmin.pl create_ring -game_class omaha -limit PL -chair_count 2
 
 EOT
 }
