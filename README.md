@@ -32,7 +32,7 @@ To create a new six handed No-Limit Hold'em table, issue the following command:
 See mpadmin.pl --help for a complete list of options. 
 
 ##  Creating a robot opponent
-An example Robot (Bender) is included in the most recent release.  
+An example robot (Bender) is included in the most recent release.  
 To launch Bender on table 1, issue the following command:
 
     /opt/mojopoker/script/bender.pl 1
@@ -50,7 +50,7 @@ wsshell.pl is a command-line utility for sending JSON encoded WebSocket messages
     sudo /opt/mojopoker/script/wsshell.pl < /opt/mojopoker/db/example_games
 
 ## Running in production
-The recommended setup is SSL + nginx as a reverse proxy. See [Mojolicious::Guides::Cookbook](https://mojolicious.org/perldoc/Mojolicious/Guides/CookbookMojolicious) for example setups. 
+The recommended setup is SSL + nginx as a reverse proxy. See [Mojolicious::Guides::Cookbook](https://metacpan.org/pod/distribution/Mojolicious/lib/Mojolicious/Guides/Cookbook.pod) for example setups. 
 
 ## Contact
 Send questions and bug reports to ngraham@cpan.org
