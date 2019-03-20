@@ -49,6 +49,9 @@ wsshell.pl is a command-line utility for sending JSON encoded WebSocket messages
 
     sudo /opt/mojopoker/script/wsshell.pl < /opt/mojopoker/db/example_games
 
+## Running in production
+The recommended setup is SSL + nginx as a reverse proxy. See [Mojolicious::Guides::Cookbook](https://mojolicious.org/perldoc/Mojolicious/Guides/CookbookMojolicious) for example setups. 
+
 ## Contact
 Send questions and bug reports to ngraham@cpan.org
 
