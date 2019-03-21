@@ -1,5 +1,8 @@
-# Mojo-Poker
-Poker client and server built with the Mojolicious Web Framework.
+![Mojo Poker Logo](/mojopoker-0.9.9/public/img/logo.png)
+
+[![Build Status](https://api.travis-ci.org/nathanielgraham/Mojo-Poker.svg?branch=master)]
+
+Mojo Poker is a web-based poker client and server built with the Mojolicious framework.
 
 ## Features
 The following 28 poker variants work out-of-the-box:
@@ -45,7 +48,7 @@ mpadmin.pl is an command-line ultility for creating and deleting ring games, edi
     sudo /opt/mojopoker/script/mpadmin.pl --help 
 
 ## Advanced websocket shell
-wsshell.pl is a command-line utility for sending JSON encoded WebSocket messages directly to the server. Useful for automating certain tasks. For example, to bulk loading many games at once, issue the following command in your terminal session:
+wsshell.pl is a command-line utility for sending JSON encoded WebSocket messages directly to the server. Useful for automating certain tasks. To bulk load many games at once for example, issue the following command in your terminal session:
 
     sudo /opt/mojopoker/script/wsshell.pl < /opt/mojopoker/db/example_games
 
