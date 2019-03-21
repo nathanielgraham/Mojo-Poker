@@ -27,12 +27,22 @@ Issue the following command in your terminal session:
 
 Now point your browser at http://localhost:3000
 
-## Creating new tables 
-To create a new six handed No-Limit Hold'em table, issue the following command:
+## Creating new tables
+To create a new six handed No-Limit Hold'em table for example, issue the following command:
 
     /opt/mojopoker/script/mpadmin.pl create_ring -game_class holdem -limit NL -chair_count 6
 
 See mpadmin.pl --help for a complete list of options. 
+
+## Creating chat rooms
+
+    /opt/mojopoker/script/mpadmin.pl create_channel -channel help
+    /opt/mojopoker/script/mpadmin.pl create_channel -channel strat
+    /opt/mojopoker/script/mpadmin.pl create_channel -channel unmod
+
+## Creating news items
+
+    /opt/mojopoker/script/mpadmin.pl update_news -news 'Welcome to Mojo Poker'
 
 ##  Creating a robot opponent
 An example robot (Bender) is included in the most recent release.  
