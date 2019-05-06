@@ -27,7 +27,7 @@ if (!$cmd or $cmd =~ /help/i or exists $opt{'help'} ) {
 }
 
 my $ua = Mojo::UserAgent->new( inactivity_timeout => 0 );
-my $ws = 'ws://localhost:3000/websocket';
+my $ws = 'ws://0.0.0.0:3000/websocket';
 
 $ua->websocket(
     $ws => sub {

@@ -11,7 +11,7 @@ die "You must specify a table number as the first argument.\n"
 # Bender makes legal but random moves
 
 my $robot = Poker::Robot::Random->new(
-    websocket => 'ws://localhost:3000/websocket',
+    websocket => 'ws://0.0.0.0:3000/websocket',
     username  => 'Bender',
     ring_ids  => [$table],
 );
