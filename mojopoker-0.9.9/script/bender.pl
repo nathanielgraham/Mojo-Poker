@@ -16,5 +16,21 @@ my $robot = Poker::Robot::Random->new(
     ring_ids  => [$table],
 );
 
+# Fork and kill parent
+die "Can't fork: $!" unless defined( my $pid = fork );
+exit 0 if $pid;
+POSIX::setsid or die "Can't start a new session: $!";
+
+# pid file
+open my $handle, '>', 'bender.pid';
+print $handle $$;
+close $handle;
+
+# Close filehandles
+open STDIN,  '</dev/null';
+open STDERR, '>&STDOUT';
+
 $robot->connect;
+
+open STDOUT, '>/dev/null';
 
