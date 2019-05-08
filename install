@@ -15,8 +15,8 @@ cpanm -S AnyEvent::ReadLine::Gnu Poker::Eval Poker::Robot
 
 INSTALL_PATH=/opt
 
-cp -R ./mojopoker-0.9.9 $INSTALL_PATH
-ln -sf $INSTALL_PATH/mojopoker-0.9.9 $INSTALL_PATH/mojopoker 
+cp -R ./mojopoker-0.9.10 $INSTALL_PATH
+ln -sf $INSTALL_PATH/mojopoker-0.9.10 $INSTALL_PATH/mojopoker 
 cd $INSTALL_PATH/mojopoker/db
 
 sqlite3 fb.db < fb.schema
