@@ -81,7 +81,7 @@ COMMANDS
 OPTIONS 
     ante               Opening ante 
     big_blind          Big blind bet size
-    chair_count        Number of seats (can be 2, 6, or 9)
+    chair_count        Number of seats (can be 2, 6, or 10)
     channel            Chat channel name
     fix_limit          Maximum bet in fixed limit game
     game_class         Game types: dealers, holdem, holdemjokers, omaha, omahahilo, badugi, crazypine, omahafive, omahafivehilo, courcheval, courchevalhilo, fivedraw, singledraw27, tripledraw27, badacey, badeucy, singledrawa5, tripledrawa5, pineapple, drawjokers, drawdeuces
