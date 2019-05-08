@@ -13,8 +13,8 @@ my %opt = ();
 
 GetOptions(
     \%opt,           'auto_start=i',  'ante=i',      'big_blind=i',
-    'chair_count=i', 'channel=i',     'fix_limit=i', 'game_class=s',
-    'limit=i',       'login_id=i',    'news=s',      'pot_cap=i',
+    'chair_count=i', 'channel=s',     'fix_limit=i', 'game_class=s',
+    'limit=s',       'login_id=i',    'news=s',      'pot_cap=i',
     'small_bet=i',   'small_blind=i', 'table_id=i',  'table_min=i',
     'time_bank=i',   'turn_clock=i',  'help'
 );
