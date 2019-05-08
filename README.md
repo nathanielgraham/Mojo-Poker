@@ -1,4 +1,4 @@
-![Mojo Poker Logo](/mojopoker-0.9.9/public/img/logo.png)
+![Mojo Poker Logo](/mojopoker-0.9.10/public/img/logo.png)
 
 [![Build Status](https://api.travis-ci.org/nathanielgraham/Mojo-Poker.svg?branch=master)]
 
