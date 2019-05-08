@@ -449,6 +449,7 @@
   top: 35%;
 }
 /*.table[chair-count='6'] .seat[pos='3'] .button { */
+.table[chair-count='10'] .seat[pos='5'] .button, 
 .table[chair-count='2'] .seat[pos='1'] .button, 
 .table[chair-count='6'] .seat[pos='3'] .button {
   left: 38%;
@@ -459,6 +460,39 @@
   top: 33%;
 }
 .table[chair-count='6'] .seat[pos='5'] .button {
+  left: 74%;
+  top: 56%;
+}
+
+.table[chair-count='10'] .seat[pos='1'] .button {
+  left: 74%;
+  top: 56%;
+}
+.table[chair-count='10'] .seat[pos='2'] .button {
+  left: 74%;
+  top: 56%;
+}
+.table[chair-count='10'] .seat[pos='3'] .button {
+  left: 74%;
+  top: 56%;
+}
+.table[chair-count='10'] .seat[pos='4'] .button {
+  left: 74%;
+  top: 56%;
+}
+.table[chair-count='10'] .seat[pos='6'] .button {
+  left: 74%;
+  top: 56%;
+}
+.table[chair-count='10'] .seat[pos='7'] .button {
+  left: 74%;
+  top: 56%;
+}
+.table[chair-count='10'] .seat[pos='8'] .button {
+  left: 74%;
+  top: 56%;
+}
+.table[chair-count='10'] .seat[pos='9'] .button {
   left: 74%;
   top: 56%;
 }
@@ -479,7 +513,7 @@
   height: 8.5%;
 }
 
-.seat .seated-graphic {
+/*.seat .seated-graphic {
   z-index: 10;
   position: absolute;
   background-size: 100%;
@@ -487,8 +521,13 @@
   width: 18.75%;
   height: 8.5%;
 }
+*/
 
 .table .seat[pos='0'] .seated-graphic, 
+.table[chair-count='10'] .seat[pos='6'] .seated-graphic, 
+.table[chair-count='10'] .seat[pos='7'] .seated-graphic, 
+.table[chair-count='10'] .seat[pos='8'] .seated-graphic, 
+.table[chair-count='10'] .seat[pos='9'] .seated-graphic, 
 .table[chair-count='6'] .seat[pos='4'] .seated-graphic, 
 .table[chair-count='6'] .seat[pos='5'] .seated-graphic {
   background-image: url("/img/title_left.png");
@@ -496,11 +535,20 @@
 
 /* .table[chair-count='6'] .seat[pos='0'].active .seated-graphic, */
 .table .seat[pos='0'].active .seated-graphic,
+.table[chair-count='10'] .seat[pos='6'].active .seated-graphic, 
+.table[chair-count='10'] .seat[pos='7'].active .seated-graphic, 
+.table[chair-count='10'] .seat[pos='8'].active .seated-graphic, 
+.table[chair-count='10'] .seat[pos='9'].active .seated-graphic, 
 .table[chair-count='6'] .seat[pos='4'].active .seated-graphic,
 .table[chair-count='6'] .seat[pos='5'].active .seated-graphic {
   background-image: url("/img/title_left_active.png");
 }
 
+.table[chair-count='10'] .seat[pos='1'] .seated-graphic, 
+.table[chair-count='10'] .seat[pos='2'] .seated-graphic, 
+.table[chair-count='10'] .seat[pos='3'] .seated-graphic, 
+.table[chair-count='10'] .seat[pos='4'] .seated-graphic, 
+.table[chair-count='10'] .seat[pos='5'] .seated-graphic, 
 .table[chair-count='2'] .seat[pos='1'] .seated-graphic, 
 .table[chair-count='6'] .seat[pos='1'] .seated-graphic, 
 .table[chair-count='6'] .seat[pos='2'] .seated-graphic, 
@@ -508,6 +556,11 @@
   background-image: url("/img/title_right.png");
 }
 
+.table[chair-count='10'] .seat[pos='1'].active .seated-graphic, 
+.table[chair-count='10'] .seat[pos='2'].active .seated-graphic, 
+.table[chair-count='10'] .seat[pos='3'].active .seated-graphic, 
+.table[chair-count='10'] .seat[pos='4'].active .seated-graphic, 
+.table[chair-count='10'] .seat[pos='5'].active .seated-graphic, 
 .table[chair-count='2'] .seat[pos='1'].active .seated-graphic, 
 .table[chair-count='6'] .seat[pos='1'].active .seated-graphic, 
 .table[chair-count='6'] .seat[pos='2'].active .seated-graphic, 
@@ -527,6 +580,11 @@
   color: #FFF;
 }
 
+.table[chair-count='10'] .seat[pos='1'] .game-action, 
+.table[chair-count='10'] .seat[pos='2'] .game-action, 
+.table[chair-count='10'] .seat[pos='3'] .game-action, 
+.table[chair-count='10'] .seat[pos='4'] .game-action, 
+.table[chair-count='10'] .seat[pos='5'] .game-action, 
 .table[chair-count='2'] .seat[pos='1'] .game-action, 
 .table[chair-count='6'] .seat[pos='1'] .game-action, 
 .table[chair-count='6'] .seat[pos='2'] .game-action, 
@@ -536,6 +594,10 @@
 
 /*.table[chair-count='6'] .seat[pos='0'] .game-action, */
 .table .seat[pos='0'] .game-action,
+.table[chair-count='10'] .seat[pos='6'] .game-action,
+.table[chair-count='10'] .seat[pos='7'] .game-action,
+.table[chair-count='10'] .seat[pos='8'] .game-action,
+.table[chair-count='10'] .seat[pos='9'] .game-action,
 .table[chair-count='6'] .seat[pos='4'] .game-action,
 .table[chair-count='6'] .seat[pos='5'] .game-action {
   margin-left: 6.3%;
@@ -551,6 +613,11 @@
   background-image: url("/img/avitar_default.png");
 }
 
+.table[chair-count='10'] .seat[pos='1'] .avitar-graphic,
+.table[chair-count='10'] .seat[pos='2'] .avitar-graphic,
+.table[chair-count='10'] .seat[pos='3'] .avitar-graphic,
+.table[chair-count='10'] .seat[pos='4'] .avitar-graphic,
+.table[chair-count='10'] .seat[pos='5'] .avitar-graphic,
 .table[chair-count='2'] .seat[pos='1'] .avitar-graphic,
 .table[chair-count='6'] .seat[pos='1'] .avitar-graphic,
 .table[chair-count='6'] .seat[pos='2'] .avitar-graphic,
@@ -573,7 +640,17 @@
 .table[chair-count='6'] .seat[pos='1'] .titlebar,
 .table[chair-count='6'] .seat[pos='2'] .titlebar,
 .table[chair-count='6'] .seat[pos='3'] .titlebar,
+.table[chair-count='10'] .seat[pos='1'] .titlebar,
+.table[chair-count='10'] .seat[pos='2'] .titlebar,
+.table[chair-count='10'] .seat[pos='3'] .titlebar,
+.table[chair-count='10'] .seat[pos='4'] .titlebar,
+.table[chair-count='10'] .seat[pos='5'] .titlebar,
 .table[chair-count='2'] .seat[pos='1'] .chips,
+.table[chair-count='10'] .seat[pos='1'] .chips,
+.table[chair-count='10'] .seat[pos='2'] .chips,
+.table[chair-count='10'] .seat[pos='3'] .chips,
+.table[chair-count='10'] .seat[pos='4'] .chips,
+.table[chair-count='10'] .seat[pos='5'] .chips,
 .table[chair-count='6'] .seat[pos='1'] .chips,
 .table[chair-count='6'] .seat[pos='2'] .chips,
 .table[chair-count='6'] .seat[pos='3'] .chips {
@@ -582,9 +659,17 @@
 
 /* .table[chair-count='6'] .seat[pos='0'] .titlebar, */
 .table .seat[pos='0'] .titlebar,
+.table[chair-count='10'] .seat[pos='6'] .titlebar,
+.table[chair-count='10'] .seat[pos='7'] .titlebar,
+.table[chair-count='10'] .seat[pos='8'] .titlebar,
+.table[chair-count='10'] .seat[pos='9'] .titlebar,
 .table[chair-count='6'] .seat[pos='4'] .titlebar,
 .table[chair-count='6'] .seat[pos='5'] .titlebar,
 .table .seat[pos='0'] .chips,
+.table[chair-count='10'] .seat[pos='6'] .chips,
+.table[chair-count='10'] .seat[pos='7'] .chips,
+.table[chair-count='10'] .seat[pos='8'] .chips,
+.table[chair-count='10'] .seat[pos='9'] .chips,
 .table[chair-count='6'] .seat[pos='4'] .chips,
 .table[chair-count='6'] .seat[pos='5'] .chips {
   margin-left: 6.2%;
@@ -861,6 +946,8 @@
   left: 26%;
   top: 23%;
 }
+.table[chair-count='10'] .seat[pos='5'] .chip, 
+.table[chair-count='10'] .seat[pos='5'] .size, 
 .table[chair-count='2'] .seat[pos='1'] .chip, 
 .table[chair-count='2'] .seat[pos='1'] .size,
 .table[chair-count='6'] .seat[pos='3'] .chip, 
@@ -873,6 +960,40 @@
   top: 22%;
 }
 .table[chair-count='6'] .seat[pos='5'] .chip, .seat[pos='5'] .size {
+  left: 72%;
+  top: 42%;
+}
+
+.table[chair-count='10'] .seat[pos='1'] .chip, .seat[pos='1'] .size {
+  left: 72%;
+  top: 42%;
+}
+
+.table[chair-count='10'] .seat[pos='2'] .chip, .seat[pos='2'] .size {
+  left: 72%;
+  top: 42%;
+}
+.table[chair-count='10'] .seat[pos='3'] .chip, .seat[pos='3'] .size {
+  left: 72%;
+  top: 42%;
+}
+.table[chair-count='10'] .seat[pos='4'] .chip, .seat[pos='4'] .size {
+  left: 72%;
+  top: 42%;
+}
+.table[chair-count='10'] .seat[pos='6'] .chip, .seat[pos='6'] .size {
+  left: 67%;
+  top: 21%;
+}
+.table[chair-count='10'] .seat[pos='7'] .chip, .seat[pos='7'] .size {
+  left: 72%;
+  top: 42%;
+}
+.table[chair-count='10'] .seat[pos='8'] .chip, .seat[pos='8'] .size {
+  left: 72%;
+  top: 42%;
+}
+.table[chair-count='10'] .seat[pos='9'] .chip, .seat[pos='9'] .size {
   left: 72%;
   top: 42%;
 }
