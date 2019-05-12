@@ -26,6 +26,9 @@ Issue the following command in your terminal session:
     sudo /opt/mojopoker/script/mojopoker.pl
 
 Now point your browser at http://localhost:3000
+To stop the server, issue the following command:
+
+    sudo kill `cat mojopoker.pid`
 
 ## Creating new tables
 To create a new six handed No-Limit Hold'em table for example, issue the following command:
@@ -34,21 +37,23 @@ To create a new six handed No-Limit Hold'em table for example, issue the followi
 
 See mpadmin.pl --help for a complete list of options. 
 
-## Creating chat rooms
+## Chat rooms, news, and other housekeeping items:
+Issue the following command to finish setting up the server:
 
     /opt/mojopoker/script/mpadmin.pl create_channel -channel help
     /opt/mojopoker/script/mpadmin.pl create_channel -channel strat
     /opt/mojopoker/script/mpadmin.pl create_channel -channel unmod
-
-## Creating news items
-
     /opt/mojopoker/script/mpadmin.pl update_news -news 'Welcome to Mojo Poker'
 
 ##  Creating a robot opponent
-An example robot (Bender) is included in the most recent release.  
-To launch Bender on table 1, issue the following command:
+An example robot (bender) is included in the most recent release.  
+To launch bender on table 1, issue the following command:
 
     /opt/mojopoker/script/bender.pl 1
+
+To log out bender:
+
+    sudo kill `cat bender.pid`
 
 See [Poker::Robot](https://metacpan.org/pod/Poker::Robot) for details. 
 
@@ -63,10 +68,17 @@ wsshell.pl is a command-line utility for sending JSON encoded WebSocket messages
     sudo /opt/mojopoker/script/wsshell.pl < /opt/mojopoker/db/example_games
 
 ## Running in production
-The recommended setup is SSL + nginx as a reverse proxy. See [Mojolicious::Guides::Cookbook](https://metacpan.org/pod/distribution/Mojolicious/lib/Mojolicious/Guides/Cookbook.pod) for example setups. 
+Additional steps are required to run a secure server:
+- [ ] Setup nginx as reverse proxy to provide SSL/TLS certificate
+- [ ] Add logic to ensure admin account can only log-in locally
+- [ ] Change admin password
+- [ ] Add firewall for DDOS protection
+- [ ] Anything else? 
+
+[Mojolicious::Guides::Cookbook](https://metacpan.org/pod/distribution/Mojolicious/lib/Mojolicious/Guides/Cookbook.pod) is a good resource, but you can also contact me directly if you need additional support. Email ngraham@cpan.org  
 
 ## Contact
-Send questions and bug reports to ngraham@cpan.org
+Questions and bug reports to ngraham@cpan.org
 
 ## TODO 
 - [ ] Add support for tournaments
