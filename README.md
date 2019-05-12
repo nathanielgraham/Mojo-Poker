@@ -25,8 +25,8 @@ Issue the following command in your terminal session:
 
     sudo /opt/mojopoker/script/mojopoker.pl
 
-Now point your browser at http://localhost:3000
-To stop the server, issue the following command:
+Now point your browser at http://localhost:3000.
+Issue the following command to stop the server:
 
     sudo kill `cat mojopoker.pid`
 
@@ -38,7 +38,7 @@ To create a new six handed No-Limit Hold'em table for example, issue the followi
 See mpadmin.pl --help for a complete list of options. 
 
 ## Chat rooms, news, and other housekeeping items:
-Issue the following command to finish setting up the server:
+The following commands will finish setting up the server:
 
     /opt/mojopoker/script/mpadmin.pl create_channel -channel help
     /opt/mojopoker/script/mpadmin.pl create_channel -channel strat
@@ -51,7 +51,7 @@ To launch bender on table 1, issue the following command:
 
     /opt/mojopoker/script/bender.pl 1
 
-To log out bender:
+To stop bender:
 
     sudo kill `cat bender.pid`
 
@@ -68,14 +68,14 @@ wsshell.pl is a command-line utility for sending JSON encoded WebSocket messages
     sudo /opt/mojopoker/script/wsshell.pl < /opt/mojopoker/db/example_games
 
 ## Running in production
-Additional steps are required to run a secure server:
+Additional steps to run a secure site:
 - [ ] Setup nginx as reverse proxy to provide SSL/TLS certificate
-- [ ] Add logic to ensure admin account can only log-in locally
+- [ ] Logic to prevent remote login by admin account
 - [ ] Change admin password
 - [ ] Add firewall for DDOS protection
 - [ ] Anything else? 
 
-[Mojolicious::Guides::Cookbook](https://metacpan.org/pod/distribution/Mojolicious/lib/Mojolicious/Guides/Cookbook.pod) is a good resource, but you can also contact me directly if you need additional support. Email ngraham@cpan.org  
+See [Mojolicious::Guides::Cookbook](https://metacpan.org/pod/distribution/Mojolicious/lib/Mojolicious/Guides/Cookbook.pod). You can also contact me directly if you need additional support. Email ngraham@cpan.org  
 
 ## Contact
 Questions and bug reports to ngraham@cpan.org
