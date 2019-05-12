@@ -25,7 +25,8 @@ Issue the following command in your terminal session:
 
     sudo /opt/mojopoker/script/mojopoker.pl
 
-Now point your browser at http://localhost:3000.
+Now point your browser at http://localhost:3000
+
 Issue the following command to stop the server:
 
     sudo kill `cat mojopoker.pid`
@@ -38,7 +39,7 @@ To create a new six handed No-Limit Hold'em table for example, issue the followi
 See mpadmin.pl --help for a complete list of options. 
 
 ## Chat rooms, news, and other housekeeping items:
-The following commands will finish setting up the server:
+Issue the following commands to finish setting up the server:
 
     /opt/mojopoker/script/mpadmin.pl create_channel -channel help
     /opt/mojopoker/script/mpadmin.pl create_channel -channel strat
@@ -75,7 +76,7 @@ Additional steps to run a secure site:
 - [ ] Add firewall for DDOS protection
 - [ ] Anything else? 
 
-See [Mojolicious::Guides::Cookbook](https://metacpan.org/pod/distribution/Mojolicious/lib/Mojolicious/Guides/Cookbook.pod). You can also contact me directly if you need additional support. Email ngraham@cpan.org  
+See [Mojolicious::Guides::Cookbook](https://metacpan.org/pod/distribution/Mojolicious/lib/Mojolicious/Guides/Cookbook.pod). You can also contact me directly if you need additional support.
 
 ## Contact
 Questions and bug reports to ngraham@cpan.org
