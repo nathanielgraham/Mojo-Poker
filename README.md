@@ -6,7 +6,7 @@ Mojo Poker is a web-based poker client and server built with the Mojolicious fra
 
 ## Features
 Includes all the clasics plus a large selection of offbeat games: 
-Hold'em, Hold'em Jokers Wild, Pineapple, Crazy Pineapple, Omaha, Omaha Hi-Lo, 5 Card Omaha, 5 Card Omaha Hi-Lo, Courcheval, Courcheval Hi-Lo, 5 Card Draw, 5 Card Draw Deuces Wild, 2-7 Single Draw, 2-7 Triple Draw, A-5 Single Draw, A-5 Triple Draw, 7 Card Stud, 7 Card Stud Jokers Wild, 7 Card Stud Hi-Lo, Razz, High Chicago, Follow the Queen, The Bitch, Badugi, Badacey, Badeucy. Dealer's Choice.
+Hold'em, Hold'em Jokers Wild, Pineapple, Crazy Pineapple, Omaha, Omaha Hi-Lo, 5 Card Omaha, 5 Card Omaha Hi-Lo, Courcheval, Courcheval Hi-Lo, 5 Card Draw, 5 Card Draw Deuces Wild, 5 Card Draw Jokers Wild, 2-7 Single Draw, 2-7 Triple Draw, A-5 Single Draw, A-5 Triple Draw, 7 Card Stud, 7 Card Stud Jokers Wild, 7 Card Stud Hi-Lo, Razz, High Chicago, Follow the Queen, The Bitch, Badugi, Badacey, Badeucy, Dealer's Choice.
 
 ![SCREENSHOT](https://github.com/mojopoker/Mojo-Poker/blob/master/SCREENSHOT.png)
 
@@ -38,7 +38,7 @@ To create a new six handed No-Limit Hold'em table for example, issue the followi
 
 See mpadmin.pl --help for a complete list of options. 
 
-## Chat rooms, news, and other housekeeping items:
+## Chat rooms, news, and other housekeeping items
 Issue the following commands to finish setting up the server:
 
     /opt/mojopoker/script/mpadmin.pl create_channel -channel help
