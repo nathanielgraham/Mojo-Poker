@@ -84,7 +84,7 @@ OPTIONS
     chair_count        Number of seats (can be 2, 6, or 10)
     channel            Chat channel name
     fix_limit          Maximum bet in fixed limit game
-    game_class         Game types: dealers, holdem, holdemjokers, omaha, omahahilo, badugi, crazypine, omahafive, omahafivehilo, courcheval, courchevalhilo, fivedraw, singledraw27, tripledraw27, badacey, badeucy, singledrawa5, tripledrawa5, pineapple, drawjokers, drawdeuces
+    game_class         Game types: dealers, holdem, holdemjokers, omaha, omahahilo, pineapple, crazypine, omahafive, omahafivehilo, courcheval, courchevalhilo, fivedraw, drawdeuces, drawjokers, singledraw27, tripledraw27, singledrawa5, tripledrawa5, sevenstud, sevenstudjokers, sevenstudhilo, razz, highchicago, badugi, badacey, badeucy, bitch, ftq 
     limit              Type of bet limit: NL, PL, FL 
     login_id           Login id of user
     news               List of front page news items 
