@@ -2,7 +2,7 @@
 
 [![Build Status](https://api.travis-ci.org/nathanielgraham/Mojo-Poker.svg?branch=master)]
 
-Mojo Poker is a web-based poker client and server built with the Mojolicious framework.
+Mojo Poker is a web-based poker system that allows anyone to run their own private poker site.
 
 ## Features
 Includes all the clasics plus a large selection of offbeat games: 
