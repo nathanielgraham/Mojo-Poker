@@ -9,15 +9,16 @@ use EV;
 use Mojo::Server::Daemon;
 use POSIX qw(setsid);
 
-$ENV{MOJO_MODE} = 'production';
+$ENV{MOJO_MODE}               = 'production';
+$ENV{MOJO_INACTIVITY_TIMEOUT} = 0;
+
 my @listen = ('http://*:3000');
 
 my $daemon = Mojo::Server::Daemon->new(
     app                => Ships->new,
     listen             => [@listen],
     accepts            => 0,
-    inactivity_timeout => 0,
-    proxy => 1,
+    proxy              => 1,
 );
 
 # Fork and kill parent

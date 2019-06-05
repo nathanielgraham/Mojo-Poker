@@ -4,15 +4,7 @@ use Moo;
 
 has 'timeout' => (
   is       => 'rw',
-  builder => '_build_timeout',
 );
-
-sub _build_timeout {
-  my $self = shift;
-  return EV::timer 3, 0, sub {
-    $self->logout;
-  };
-}
 
 sub logout {}
 

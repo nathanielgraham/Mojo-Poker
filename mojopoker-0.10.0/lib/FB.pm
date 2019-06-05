@@ -373,9 +373,10 @@ sub _guest_login {
 
 sub guest_login {
   my ( $self, $login ) = @_;
-  $login->timeout(undef);
-  $login->credit_chips( 1, 2000 );
-  $login->credit_invested( 1, 2000 );
+
+  #$login->timeout(EV::timer 10, 0, sub { $self->logout($login) });
+  #$login->credit_chips( 1, 2000 );
+  #$login->credit_invested( 1, 2000 );
   $self->login_list->{ $login->id } = $login;
   $login->send(
     [
@@ -882,9 +883,9 @@ sub BUILD {
   $self->db( $self->_build_db );
   $self->option( { %{ $self->option }, %{ $self->poker_option } } );
   $self->command( { %{ $self->command }, %{ $self->poker_command } } );
-  $self->cycle_event(EV::timer 300, 300, sub {
-    $self->cycle300;
-  });
+  #$self->cycle_event(EV::timer 300, 300, sub {
+  #  $self->cycle300;
+  #});
 }
 
 1;

@@ -13,13 +13,6 @@
       });
 
       if (!("WebSocket" in window)) {
-        // flash fallback
-        WEB_SOCKET_SWF_LOCATION = "WebSocketMain.swf";
-        document.write([
-          '<scr'+'ipt type="text/javascript" src="web-socket-js/swfobject.js"></scr'+'ipt>',
-          '<scr'+'ipt type="text/javascript" src="web-socket-js/web_socket.js"></scr'+'ipt>'
-        ].join(''));
-
         var m = $("#modal-box");
         m.append(
           $("<div />").addClass("modal-mes")

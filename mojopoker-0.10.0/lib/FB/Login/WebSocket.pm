@@ -13,7 +13,6 @@ sub remote_address { shift->websocket->remote_address }
 
 sub send {
   my ($self, $href) = @_;
-  #$self->websocket->send(encode_json($href));
   $self->websocket->send(j($href));
 }
 
