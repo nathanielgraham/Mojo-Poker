@@ -9,10 +9,6 @@ use EV;
 use Mojo::Server::Daemon;
 use POSIX qw(setsid);
 
-# PRODUCTION MODE DEPRECATED
-# Best practice is to use reverse proxy for production
-# See nginx documentation
-
 $ENV{MOJO_MODE} = 'production';
 my @listen = ('http://*:3000');
 
@@ -21,6 +17,7 @@ my $daemon = Mojo::Server::Daemon->new(
     listen             => [@listen],
     accepts            => 0,
     inactivity_timeout => 0,
+    proxy => 1,
 );
 
 # Fork and kill parent

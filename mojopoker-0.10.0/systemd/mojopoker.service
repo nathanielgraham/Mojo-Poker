@@ -1,0 +1,11 @@
+[Unit]
+Description=Mojo Poker
+
+[Service]
+ExecStart=
+ExecStart=/opt/mojopoker/script/mojopoker.pl 
+Type=forking
+
+[Install]
+WantedBy=multi-user.target
+

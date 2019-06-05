@@ -22,6 +22,7 @@ has fb => sub {
 sub startup {
   my $self = shift;
 
+  # change 'scheme' of request url
   # force https in production 
   # note: deprecated. use nginx 
   #$self->hook(before_dispatch => sub {
@@ -32,7 +33,6 @@ sub startup {
   #    $c->redirect_to($c->req->url->to_abs);
   #  }
   #}) if $ENV{MOJO_MODE} && $ENV{MOJO_MODE} eq 'production';
-
   $ENV{LIBEV_FLAGS} = 4;
 
   # cookie setup
@@ -44,7 +44,9 @@ sub startup {
 
   # Router
   my $r = $self->routes;
-  my $b = $r->under('/')->to( controller => 'auth', action => 'block' );
+  # swap next line for the one after for custom DOS protection
+  # my $b = $r->under('/')->to( controller => 'auth', action => 'block' );
+  my $b = $r->under( sub { return 1 } ); # don't block anyone
   $b->websocket('/websocket')->to( controller => 'websocket', action => 'service' );
   $b->route('/')->to( controller => 'main', action => 'default' );
   $r->route('*')->to(cb => sub { shift->redirect_to('/') });

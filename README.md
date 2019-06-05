@@ -23,13 +23,9 @@ Issue the following commands in your terminal session:
 ## Starting the server
 Issue the following command in your terminal session:
 
-    sudo /opt/mojopoker/script/mojopoker.pl
+    sudo systemctl start mojopoker.service
 
 Now point your browser at http://localhost:3000
-
-Issue the following command to stop the server:
-
-    sudo kill `cat mojopoker.pid`
 
 ## Creating new tables
 To create a new six handed No-Limit Hold'em table for example, issue the following command:

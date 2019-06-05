@@ -121,11 +121,12 @@
 .opt-amt {
   position: absolute;
   color: black;
-  top: 45%;
-  width: 20%;
+  top: 43%;
+  width: 22%;
   height: 14%;
   text-align: center;
-  right: 30%;
+  right: 29%;
+  border: 0;
 }
 
 .opt-sld {
@@ -277,13 +278,14 @@
 
 .bet-amount {
   position: absolute;
-  width: 8%;
+  width: 9.6%;
   height: 5%;
   left: 68%;
   font-size: 90%;
   text-align: center;
   top: 82.8%;
   display: none;
+  border: 1px;
 }
 
 .board {

@@ -24,12 +24,17 @@ sqlite3 poker.db < poker.schema
 chmod 666 *
 chmod 755 $INSTALL_PATH/mojopoker/script/*
 
+# start with systemd
+cp $INSTALL_PATH/mojopoker/systemd/* /etc/systemd/system/
+systemctl daemon-reload
+systemctl enable mojopoker 
+
 echo
 echo "Installation complete!"
 echo
 echo "To start the server:"
-echo "sudo $INSTALL_PATH/mojopoker/script/mojopoker.pl"
+echo "sudo systemctl start mojopoker.service"
 echo
 echo "To load a few sample games:" 
-echo "sudo $INSTALL_PATH/mojopoker/script/wsshell.pl < $INSTALL_PATH/mojopoker/db/example_games"
+echo "/opt/mojopoker/script/wsshell.pl < /opt/mojopoker/db/example_games"
 

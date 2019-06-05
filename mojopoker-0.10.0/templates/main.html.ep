@@ -1,3 +1,4 @@
+<!doctype html>
 <html>
   <head>
     <title>Mojo Poker</title>
@@ -12,19 +13,22 @@
     <link rel="stylesheet" href="tour.min.css">
   </head>
   <body>
-    <script type="text/javascript" src="jquery-1.11.2.min.js"></script>
-    <script type="text/javascript" src="jquery-ui.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script type="text/javascript" src="stupidtable.min.js"></script>
     <script type="text/javascript" src="jquery.poker.main.min.js"></script>
     <script type="text/javascript" src="jquery.poker.lobby.min.js"></script>
     <script type="text/javascript" src="jquery.poker.table.min.js"></script>
     <script type="text/javascript" src="jquery.poker.table.ring.min.js"></script>
-    <script type="text/javascript" src="jquery.poker.tour.min.js"></script>
+<!--
+    <script src="http://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="http://code.jquery.com/jquery-migrate-1.4.1.js"></script>
+-->
     <script>
       WEB_SOCKET_SWF_LOCATION = "WebSocketMain.swf";
       $( document ).ready(function() {
         $( "body" ).append( 
-          $("<div />").main({ws: "<%= url_for('websocket')->to_abs %>" })
+          $("<div />").main({ws: "<%= $furl %>" })
         );
       });
     </script>

@@ -136,7 +136,7 @@
                 type: "text",
                 maxlength: 30
             });
-            var g = f.addClass("ui-widget").append(c("<div />").attr("id", "lobby-header"), c("<div />").attr("id", "lobby-logo"), c("<div />").attr("id", "lobby-clock"), c("<div/>").attr("id", "welcome"), c("<button />)").attr("id", "lobby-red").html("Log-In").click(function() {
+            var g = f.addClass("ui-widget").append(c("<div />").attr("id", "lobby-header"), c("<div />").attr("id", "lobby-logo"), c("<div />").attr("id", "lobby-clock"), c("<div/>").attr("id", "welcome"), c("<button />)").attr("id", "lobby-red").html("Log-Inn").click(function() {
                 c("#login-box").show();
                 c("#login-name").focus()
             }), c("<div />").attr("id", "login-box").addClass("lobby-modal"), c("<div />").attr("id", "modal-box").addClass("lobby-modal"), c("<div />").attr("id", "new-account").addClass("lobby-modal"), x, c("<div />").attr("id", "ring-info").addClass("tab-info games").append(v._buildTable(e.ringCols)), c("<div />").attr("id", "social-info").addClass("tab-info").append(v._buildTable([18, 23]), c("<div />").attr("id", "help-chat").addClass("social-chat"), c("<div />").attr("id", "strat-chat").addClass("social-chat"), c("<div />").attr("id", "unmod-chat").addClass("social-chat"), c("<form />").attr("id", "social-form").append(w).submit(function(m) {
@@ -303,11 +303,12 @@
                 v.resizeLobby()
             });
             v.resizeLobby();
+            v._buildLogin();
+            v._buildReg();
             f.find("#ring-tab").trigger("click");
             f.find("#soft-tab").trigger("click");
-            f.find("#play-tab").trigger("click");
-            v._buildLogin();
-            v._buildReg()
+            //f.find("#play-tab").trigger("click");
+            //$.when(v._ring_snap()).done(f.find("#play-tab").trigger("click"));
         },
         _filter_money: function(f) {
             var e = this,
@@ -815,10 +816,10 @@
                     did: j.director_id,
                     game_class: j.game_class
                 }).addClass("lring").append(c("<td />").addClass("table-id").html(j.table_id), c("<td />").html(h.gameTabs[j.game_class][0]), c("<td />").addClass().html(m), c("<td />").addClass().html(i), c("<td />").addClass().html(j.chair_count), c("<td />").addClass("plr-count"), c("<td />").addClass("avg-pot"), c("<td />").addClass("plrs-flop"), c("<td />").addClass("hhr")).appendTo(f);
-                e._update_ring_tab(j)
-            });
+                e._update_ring_tab(j);
+            }, g.find("#play-tab").trigger("click") );
             g.find("#all-tab").trigger("click");
-            g.find("#ring-info thead th:eq(5)").trigger("click")
+            g.find("#ring-info thead th:eq(5)").trigger("click");
         },
         notify_create_ring: function(f) {
             var e = this,
