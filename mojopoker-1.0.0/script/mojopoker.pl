@@ -9,8 +9,9 @@ use EV;
 use Mojo::Server::Daemon;
 use POSIX qw(setsid);
 
-$ENV{MOJO_MODE}               = 'production';
+#$ENV{MOJO_MODE}               = 'production';
 $ENV{MOJO_INACTIVITY_TIMEOUT} = 0;
+$ENV{MOJO_LOG_LEVEL} = 'debug';
 
 my @listen = ('http://*:3000');
 
@@ -33,10 +34,10 @@ close $handle;
 
 # Close filehandles
 open STDIN,  '</dev/null';
-open STDERR, '>&STDOUT';
+#open STDERR, '>&STDOUT';
 
 $daemon->start;
 
-open STDOUT, '>/dev/null';
+#open STDOUT, '>/dev/null';
 
 EV::run;

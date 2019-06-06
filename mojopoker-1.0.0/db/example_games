@@ -1,7 +1,4 @@
-["create_channel", { "channel": "strat" }]
-["create_channel", { "channel": "unmod" }]
-["create_channel", { "channel": "help" }]
-["update_news", { "news": ["Welcome to Mojo Poker.", "Register and get started with 2000 play chips."]}]
+["create_channel", { "channel": "main" }]
 ["create_ring", {"game_class":"dealers" }]
 ["create_ring", {"game_class":"holdem"}]
 ["create_ring", {"game_class":"holdemjokers", "limit":"FL"}]

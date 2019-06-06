@@ -1,10 +1,10 @@
 package FB::Poker;
 use Moo::Role;
 use FB::Poker::Table::Maker;
-use FB::Poker::Tournament::Freezeout;
-use FB::Poker::Tournament::Shootout;
-use FB::Poker::Tournament::Fifty50;
-use FB::Poker::Tournament::Bounty;
+#use FB::Poker::Tournament::Freezeout;
+#use FB::Poker::Tournament::Shootout;
+#use FB::Poker::Tournament::Fifty50;
+#use FB::Poker::Tournament::Bounty;
 
 has 'table_maker' => (
   is      => 'rw',
@@ -56,6 +56,7 @@ sub _build_table_option {
   };
 }
 
+=pod
 has 'tour_option' => (
   is      => 'rw',
   isa     => sub { die "Not a hash.\n" unless ref( $_[0] ) eq 'HASH' },
@@ -85,6 +86,7 @@ sub _build_tour_option {
     level_info      => 0,
   };
 }
+=cut
 
 has 'game_option' => (
   is      => 'rw',
@@ -152,10 +154,10 @@ sub _build_poker_command {
     'discard' => [ \&discard, { table_id => 1, card_idx => 1, tour_id => 0 } ],
 
     # tournaments
-    'create_tour' => [
-      #\&create_tour, { %{ $self->game_option }, %{ $self->tour_option } }, 4
-      \&create_tour, $self->tour_option, 4
-    ],
+    #'create_tour' => [
+    #  #\&create_tour, { %{ $self->game_option }, %{ $self->tour_option } }, 4
+    #  \&create_tour, $self->tour_option, 4
+    #],
     'watch_tour'   => [ \&watch_tour,   { tour_id => 1 } ],
     'unwatch_tour' => [ \&unwatch_tour, { tour_id => 1 } ],
     'open_tour'    => [ \&open_tour,    { tour_id => 1 } ],
@@ -217,6 +219,7 @@ sub _build_table_list {
   return {};
 }
 
+=pod
 has 'tour_list' => (
   is      => 'rw',
   isa     => sub { die "Not a hash.\n" unless ref( $_[0] ) eq 'HASH' },
@@ -231,6 +234,7 @@ has 'tour_count' => (
   is      => 'rw',
   default => sub { return 0 },
 );
+=cut
 
 sub _create_ring {
   my ( $self, $login, $opts ) = @_;
@@ -497,7 +501,7 @@ sub _watch_lobby {
   my ( $self, $login ) = @_;
   $self->lobby_watch->{ $login->id } = $login;
   $self->_ring_snap($login);
-  $self->_tour_snap($login);
+  #$self->_tour_snap($login);
 }
 
 sub unwatch_lobby {
@@ -542,6 +546,7 @@ sub _ring_snap {
   );
 }
 
+=pod
 sub _tour_snap {
   my ( $self, $login ) = @_;
   $login->send(
@@ -551,6 +556,7 @@ sub _tour_snap {
     ]
   );
 }
+=cut
 
 sub _poker_cleanup {
   my ( $self, $login ) = @_;
@@ -569,6 +575,7 @@ sub _poker_cleanup {
     $ring->_unwait($login);
   }
 
+=pod
   for my $tour (
     map  { $self->tour_list->{$_} }
     grep { exists $self->tour_list->{$_} }
@@ -578,6 +585,7 @@ sub _poker_cleanup {
     $tour->_unwatch($login);
     $tour->unregister($login);
   }
+=cut
 }
 
 sub _validate_action {
@@ -833,6 +841,7 @@ sub draw {
 #  return $opt;
 #}
 
+=pod
 sub open_tour {
   my ( $self, $login, $opts ) = @_;
   my $response = ['open_tour_res'];
@@ -959,6 +968,7 @@ sub unreg_tour {
   }
   $login->send($response);
 }
+=cut
 
 sub _fetch_table {
   my ( $self, $opts ) = @_;
@@ -1029,12 +1039,16 @@ sub pick_game {
   $o->{big_blind}   = $table->big_blind   if $table->big_blind;
 
   $o->{wait_list}  = $table->wait_list  if $table->wait_list;
-  $o->{tournament} = $table->tournament if $table->can('tournament');
+  #$o->{tournament} = $table->tournament if $table->can('tournament');
 
+  my $new_table = $self->table_maker->ring_table($o);
+
+=pod
   my $new_table =
       $table->type eq 'r' ? $self->table_maker->ring_table($o)
     : $table->type eq 't' ? $self->table_maker->tour_table($o)
     :                       undef;
+=cut
 
   unless ($new_table) {
     $response->[1]->{message} = 'Invalid game';

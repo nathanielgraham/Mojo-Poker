@@ -1,8 +1,8 @@
 (function(c, b, a, d) {
     c.widget("poker.lobby", {
         options: {
-            heightToWidth: 9 / 16,
-            windowRatio: 15 / 16,
+            widthToHeight: 4 / 3,
+            //windowRatio: 15 / 16,
             epochDiff: 0,
             inchan: {},
             colData: {
@@ -32,12 +32,12 @@
                 24: ["Player Pool", "int"]
             },
             ringCols: [1, 11, 2, 3, 4, 5, 7, 8, 9],
-            tourCols: [1, 10, 11, 12, 13, 14],
+            //tourCols: [1, 10, 11, 12, 13, 14],
             socialCols: [17, 18, 19],
             hydraCols: [1, 11, 2, 3, 4, 24],
             loginData: {},
             ringData: {},
-            tourData: {},
+            //tourData: {},
             fastData: {},
             gameState: {
                 0: "Closed",
@@ -47,12 +47,14 @@
                 4: "Playing",
                 6: "Complete"
             },
-            tourClasses: {
-                1: "Freezeout",
-                2: "Shootout",
-                3: "Fifty50",
-                4: "Bounty"
-            },
+            /*
+                        tourClasses: {
+                            1: "Freezeout",
+                            2: "Shootout",
+                            3: "Fifty50",
+                            4: "Bounty"
+                        },
+            */
             gameTabs: {
                 dealers: ["Dealer's Choice", 1],
                 holdem: ["Hold'em", 1],
@@ -89,10 +91,12 @@
                 e = v.options,
                 f = v.element;
             var q = c("<div />").attr("id", "tabs");
-            var u = c("<div />").attr({
-                id: "main-tabs",
-                type: "main"
-            });
+            /*
+                        var u = c("<div />").attr({
+                            id: "main-tabs",
+                            type: "main"
+                        });
+            */
             var l = c("<div />").attr({
                 id: "game-tabs1",
                 type: "game"
@@ -109,204 +113,294 @@
                 id: "game-tabs4",
                 type: "game"
             });
+            /*
             var n = c("<div />").attr({
                 id: "money-tabs",
                 type: "money"
             });
-            var t = c("<div />").attr({
-                id: "social-tabs",
-                type: "social"
-            });
-            var r = c("<div />").attr({
-                id: "about-tabs",
-                type: "about"
-            });
-            var x = c("<div />").attr("id", "ring-box").addClass("main-box").append(c("<div />").addClass("box-header"), v._buildTable([22, 20, 21]), c("<button />").addClass("box-footer").html("Go to Table").click(function() {
-                c("#poker-main").main("watch_table", {
+                        var t = c("<div />").attr({
+                            id: "social-tabs",
+                            type: "social"
+                        });
+                        var r = c("<div />").attr({
+                            id: "about-tabs",
+                            type: "about"
+                        });
+            // table details
+            var x = c("<div />").attr("id", "ring-box").addClass("main-box").append(c("<div />").addClass("box-header"), 
+               v._buildTable([22, 20, 21]), c("<button />").addClass("box-footer").html("Go to Table").click(function() {
+                  c("#poker-main").main("watch_table", {
                     table_id: c(this).attr("tid")
-                })
-            }));
-            var p = c("<div />").attr("id", "hydra-box").addClass("main-box").append(c("<div />").addClass("box-header"), c("<button />").addClass("box-footer").html("Join Pool").click(function() {
-                c("#poker-main").main("hydra_info", {
-                    hydra_id: c(this).attr("tid")
-                })
-            }));
+                  })
+               })
+            );
+
+                        var p = c("<div />").attr("id", "hydra-box").addClass("main-box").append(c("<div />").addClass("box-header"), c("<button />").addClass("box-footer").html("Join Pool").click(function() {
+                            c("#poker-main").main("hydra_info", {
+                                hydra_id: c(this).attr("tid")
+                            })
+                        }));
+            */
             var w = c("<input />").attr({
                 id: "social-input",
                 type: "text",
                 maxlength: 30
             });
-            var g = f.addClass("ui-widget").append(c("<div />").attr("id", "lobby-header"), c("<div />").attr("id", "lobby-logo"), c("<div />").attr("id", "lobby-clock"), c("<div/>").attr("id", "welcome"), c("<button />)").attr("id", "lobby-red").html("Log-Inn").click(function() {
-                c("#login-box").show();
-                c("#login-name").focus()
-            }), c("<div />").attr("id", "login-box").addClass("lobby-modal"), c("<div />").attr("id", "modal-box").addClass("lobby-modal"), c("<div />").attr("id", "new-account").addClass("lobby-modal"), x, c("<div />").attr("id", "ring-info").addClass("tab-info games").append(v._buildTable(e.ringCols)), c("<div />").attr("id", "social-info").addClass("tab-info").append(v._buildTable([18, 23]), c("<div />").attr("id", "help-chat").addClass("social-chat"), c("<div />").attr("id", "strat-chat").addClass("social-chat"), c("<div />").attr("id", "unmod-chat").addClass("social-chat"), c("<form />").attr("id", "social-form").append(w).submit(function(m) {
-                m.preventDefault();
-                var y = /^[\w\s\.\,\?!@#\$%^&\*\(\)_]{0,30}$/;
-                if (y.test(w.val())) {
-                    var o = f.find("#social-tabs .lobby-tab.select").attr("info");
-                    c("#poker-main").main("write_channel", {
-                        channel: o,
-                        message: w.val()
+            // append to ui-widget
+
+            var g = f.addClass("ui-widget").append(
+                // Header
+                c("<div />").attr("id", "lobby-header"),
+                c("<div />").attr("id", "lobby-logo"), c("<div />").attr("id", "lobby-clock"),
+                c("<div/>").attr("id", "welcome"),
+
+                // Login button and modal
+                c("<button />)").attr("id", "lobby-red").html("Log-In").click(function() {
+                    c("#login-box").show();
+                    c("#login-name").focus()
+                }),
+                c("<div />").attr("id", "login-box").addClass("lobby-modal"),
+                c("<div />").attr("id", "modal-box").addClass("lobby-modal"),
+                c("<div />").attr("id", "new-account").addClass("lobby-modal"),
+                //x,
+                c("<div />").attr("id", "ring-info").addClass("tab-info games").append(v._buildTable(e.ringCols)),
+                q.append(
+                    l.append(c("<button />").attr({
+                        id: "all-tab",
+                        info: "all"
+                    }).addClass("lobby-tab").html("All")),
+                    j, i, h
+                ),
+
+                // social tab
+                c("<div />").attr("id", "social-box").append(
+                    c("<div />").attr("id", "main-chat"),
+                    c("<form />").attr("id", "social-form").append(w).submit(function(m) {
+                        m.preventDefault();
+                        var y = /^[\w\s\.\,\?!@#\$%^&\*\(\)_]{0,30}$/;
+                        if (y.test(w.val())) {
+                            //var o = f.find("#social-tabs .lobby-tab.select").attr("info");
+                            var o = 'main';
+                            c("#poker-main").main("write_channel", {
+                                channel: o,
+                                message: w.val()
+                            })
+                        }
+                        w.val("")
                     })
-                }
-                w.val("")
-            })), c("<div />").attr("id", "about-info").addClass("tab-info").append(c("<iframe />").attr({
-                id: "soft-info",
-                src: "faq.html"
-            }).addClass("about-box"), c("<iframe />").attr({
-                id: "contact-info",
-                src: "contact.html"
-            }).addClass("about-box")), q.append(u.append(c("<button />").attr({
-                id: "ring-tab",
-                info: "ring"
-            }).addClass("lobby-tab").html("Ring").click(function() {
-                x.show();
-                p.hide();
-                l.show();
-                j.show();
-                i.show();
-                h.show();
-                n.attr("info", "ring").show();
-                t.hide();
-                r.hide()
-            }), c("<button />").attr({
-                id: "social-tab",
-                info: "social"
-            }).addClass("lobby-tab").html("Social").click(function() {
-                x.hide();
-                p.hide();
-                l.hide();
-                j.hide();
-                i.hide();
-                h.hide();
-                n.hide();
-                r.hide();
-                t.show()
-            }), c("<button />").attr({
-                id: "about-tab",
-                info: "about"
-            }).addClass("lobby-tab").html("About").click(function() {
-                x.hide();
-                p.hide();
-                l.hide();
-                j.hide();
-                i.hide();
-                h.hide();
-                n.hide();
-                t.hide();
-                r.show()
-            })), l.append(c("<button />").attr({
-                id: "all-tab",
-                info: "all"
-            }).addClass("lobby-tab").html("All")), j, i, h, n, t, r));
+                )
+                /*
+// about tab
+                c("<div />").attr("id", "about-info").addClass("tab-info").append(c("<iframe />").attr({
+                    id: "soft-info",
+                    src: "faq.html"
+                }).addClass("about-box"), 
+                c("<iframe />").attr({
+                    id: "contact-info",
+                    src: "contact.html"
+                }).addClass("about-box")), 
+// ring, social, about
+                q.append(u.append(c("<button />").attr({
+                        id: "ring-tab",
+                        info: "ring"
+                    }).addClass("lobby-tab").html("Ring").click(function() {
+                        x.show();
+                        p.hide();
+                        l.show();
+                        j.show();
+                        i.show();
+                        h.show();
+                        n.attr("info", "ring").show();
+                        t.hide();
+                        r.hide()
+                    }), c("<button />").attr({
+                        id: "social-tab",
+                        info: "social"
+                    }).addClass("lobby-tab").html("Social").click(function() {
+                        x.hide();
+                        p.hide();
+                        l.hide();
+                        j.hide();
+                        i.hide();
+                        h.hide();
+                        n.hide();
+                        r.hide();
+                        t.show()
+                    }), c("<button />").attr({
+                        id: "about-tab",
+                        info: "about"
+                    }).addClass("lobby-tab").html("About").click(function() {
+                        x.hide();
+                        p.hide();
+                        l.hide();
+                        j.hide();
+                        i.hide();
+                        h.hide();
+                        n.hide();
+                        t.hide();
+                        r.show()
+                    })),
+
+                    l.append(c("<button />").attr({
+                        id: "all-tab",
+                        info: "all"
+                    }).addClass("lobby-tab").html("All")),
+                    j, i, h, n, t, r
+                )
+*/
+            );
+            // game tabs
+            w.focus();
             c.each(e.gameTabs, function(o, m) {
                 f.find("#game-tabs" + m[1]).append(c("<button />").attr({
                     id: o + "-tab",
                     info: o
                 }).addClass("lobby-tab").html(m[0]))
             });
-            n.append(c("<button />").attr({
-                id: "play-tab",
-                info: "play"
-            }).addClass("lobby-tab").html("Play Money"), c("<button />").attr({
-                id: "real-tab",
-                info: "real"
-            }).addClass("lobby-tab").html("Other Money"));
-            t.append(c("<button />").attr({
-                id: "strat-tab",
-                info: "strat"
-            }).addClass("lobby-tab").html("Main Chat"), c("<button />").attr({
-                id: "unmod-tab",
-                info: "unmod"
-            }).addClass("lobby-tab").html("Unmoderated"), c("<button />").attr({
-                id: "help-tab",
-                info: "help"
-            }).addClass("lobby-tab").html("Help"));
-            r.append(c("<button />").attr({
-                id: "soft-tab",
-                info: "soft"
-            }).addClass("lobby-tab").html("FAQ"), c("<button />").attr({
-                id: "contact-tab",
-                info: "contact"
-            }).addClass("lobby-tab").html("Contact"));
+
+            /*
+            // money tabs
+                        n.append(c("<button />").attr({
+                            id: "play-tab",
+                            info: "play"
+                        }).addClass("lobby-tab").html("Play Money"), c("<button />").attr({
+                            id: "real-tab",
+                            info: "real"
+                        }).addClass("lobby-tab").html("Other Money"));
+                        t.append(c("<button />").attr({
+                            id: "strat-tab",
+                            info: "strat"
+                        }).addClass("lobby-tab").html("Main Chat"), 
+            // chat tabs
+                        c("<button />").attr({
+                            id: "unmod-tab",
+                            info: "unmod"
+                        }).addClass("lobby-tab").html("Unmoderated"), c("<button />").attr({
+                            id: "help-tab",
+                            info: "help"
+                        }).addClass("lobby-tab").html("Help"));
+            // about tabs
+                        r.append(c("<button />").attr({
+                            id: "soft-tab",
+                            info: "soft"
+                        }).addClass("lobby-tab").html("FAQ"), c("<button />").attr({
+                            id: "contact-tab",
+                            info: "contact"
+                        }).addClass("lobby-tab").html("Contact"));
+            */
+            // clicking behavior
             g.on("click", "#tabs .lobby-tab", function() {
-                var m = c(this);
-                f.find("#tabs > [type=" + m.parent().attr("type") + "] .lobby-tab.select").removeClass("select");
-                m.addClass("select")
-            }).on("click", "#main-tabs .lobby-tab", function() {
-                var m = c(this).attr("info");
-                f.find(".tab-info.select").removeClass("select").hide();
-                var m = f.find("#" + m + "-info");
-                m.addClass("select").show()
-            }).on("click", "#tour-tab", function() {
-                f.find(".tab-info.games.select tbody tr").show();
-                var m = f.find("#money-tabs .lobby-tab.select").attr("info");
-                v._filter_money(m)
-            }).on("click", "#ring-tab", function() {
-                f.find("#tabs > [type=game] .lobby-tab.select").trigger("click")
-            }).on("click", "#tabs > [type=game] .lobby-tab", function() {
-                var y = c(this).attr("info");
-                var o = f.find(".tab-info.games.select tbody tr");
-                if (y == "all") {
-                    o.show()
-                } else {
-                    o.filter("[game_class=" + y + "]").show();
-                    o.filter("[game_class!=" + y + "]").hide()
-                }
-                var m = f.find("#money-tabs .lobby-tab.select").attr("info");
-                v._filter_money(m)
-            }).on("click", "#money-tabs .lobby-tab", function() {
-                $this = c(this);
-                $this.addClass("select");
-                var m = $this.attr("info");
-                f.find("#main-tabs .lobby-tab.select").trigger("click");
-                v._filter_money(m)
-            }).on("click", "#social-tabs .lobby-tab", function() {
-                var m = c(this).attr("info");
-                f.find("#social-info .social-chat").hide();
-                f.find("#" + m + "-chat").show();
-                f.find("#social-input").focus();
-                if (!e.inchan[m]) {
-                    c("#poker-main").main("join_channel", {
-                        channel: m
+                    var m = c(this);
+                    f.find("#tabs > [type=" + m.parent().attr("type") + "] .lobby-tab.select").removeClass("select");
+                    m.addClass("select")
+                })
+                /*
+                            .on("click", "#main-tabs .lobby-tab", function() {
+                                var m = c(this).attr("info");
+                                f.find(".tab-info.select").removeClass("select").hide();
+                                var m = f.find("#" + m + "-info");
+                                m.addClass("select").show()
+                            })
+                // tournament button
+                            .on("click", "#tour-tab", function() {
+                                f.find(".tab-info.games.select tbody tr").show();
+                                var m = f.find("#money-tabs .lobby-tab.select").attr("info");
+                                v._filter_money(m)
+                            })
+                // ring button
+                            .on("click", "#ring-tab", function() {
+                                f.find("#tabs > [type=game] .lobby-tab.select").trigger("click")
+                            })
+                */
+                // game filter
+                .on("click", "#tabs > [type=game] .lobby-tab", function() {
+                    var y = c(this).attr("info");
+                    var o = f.find(".tab-info.games tbody tr");
+                    if (y == "all") {
+                        o.show()
+                    } else {
+                        o.filter("[game_class=" + y + "]").show();
+                        o.filter("[game_class!=" + y + "]").hide()
+                    }
+                    //var m = f.find("#money-tabs .lobby-tab.select").attr("info");
+                    //v._filter_money(m)
+                })
+                /*
+                // money buttons
+                            .on("click", "#money-tabs .lobby-tab", function() {
+                                $this = c(this);
+                                $this.addClass("select");
+                                var m = $this.attr("info");
+                                f.find("#main-tabs .lobby-tab.select").trigger("click");
+                                v._filter_money(m)
+                            })
+                // social button
+                            .on("click", "#social-tabs .lobby-tab", function() {
+                                var m = c(this).attr("info");
+                                f.find("#social-info .social-chat").hide();
+                                f.find("#" + m + "-chat").show();
+                                f.find("#social-input").focus();
+                                if (!e.inchan[m]) {
+                                    c("#poker-main").main("join_channel", {
+                                        channel: m
+                                    })
+                                }
+                            })
+                // about button
+                            .on("click", "#about-tabs .lobby-tab", function() {
+                                var m = c(this).attr("info");
+                                f.find("#about-info .about-box").hide();
+                                f.find("#about-info #" + m + "-info").show()
+                            })
+                */
+
+                // highlighter 
+                .on("click", ".tab-info tbody tr", function() {
+                    var m = c(this);
+                    m.siblings().removeClass("select");
+                    m.addClass("select")
+                })
+/*
+                // populate ring detail
+                .on("click", "#ring-info tbody tr", function() {
+                    var m = c(this).attr("table_id");
+                    v._buildRing(m)
+                })
+*/
+                // load table
+                // .on("dblclick", "#ring-info tbody tr", function() {
+                .on("click", "#ring-info tbody tr", function() {
+                    var m = c(this).attr("table_id");
+                    c("#poker-main").main("watch_table", {
+                        table_id: m
                     })
-                }
-            }).on("click", "#about-tabs .lobby-tab", function() {
-                var m = c(this).attr("info");
-                f.find("#about-info .about-box").hide();
-                f.find("#about-info #" + m + "-info").show()
-            }).on("click", ".tab-info tbody tr", function() {
-                var m = c(this);
-                m.siblings().removeClass("select");
-                m.addClass("select")
-            }).on("click", "#ring-info tbody tr", function() {
-                var m = c(this).attr("table_id");
-                v._buildRing(m)
-            }).on("dblclick", "#ring-info tbody tr", function() {
-                var m = c(this).attr("table_id");
-                c("#poker-main").main("watch_table", {
-                    table_id: m
                 })
-            }).on("click", "#social-tab", function() {
-                f.find("#social-input").focus()
-            }).on("dblclick", "#tour-info tbody tr", function() {
-                var m = c(this).attr("tour_id");
-                c("#poker-main").main("watch_tour", {
-                    tour_id: m
+/*
+                .on("click", "#social-tab", function() {
+                    f.find("#social-input").focus()
                 })
-            }).on("mouseenter", "button.lobby-tab", function() {
-                c(this).addClass("tab-hover")
-            }).on("mouseleave", "button.lobby-tab", function() {
-                c(this).removeClass("tab-hover")
-            });
+*/
+                .on("dblclick", "#tour-info tbody tr", function() {
+                    var m = c(this).attr("tour_id");
+                    c("#poker-main").main("watch_tour", {
+                        tour_id: m
+                    })
+                })
+                // buton hoover
+                .on("mouseenter", "button.lobby-tab", function() {
+                    c(this).addClass("tab-hover")
+                })
+                .on("mouseleave", "button.lobby-tab", function() {
+                    c(this).removeClass("tab-hover")
+                });
             c(b).resize(function() {
                 v.resizeLobby()
             });
             v.resizeLobby();
             v._buildLogin();
             v._buildReg();
-            f.find("#ring-tab").trigger("click");
-            f.find("#soft-tab").trigger("click");
+            //f.find("#ring-tab").trigger("click");
+            //f.find("#soft-tab").trigger("click");
             //f.find("#play-tab").trigger("click");
             //$.when(v._ring_snap()).done(f.find("#play-tab").trigger("click"));
         },
@@ -331,20 +425,23 @@
                 g = e.element;
             c("#table-ring").append(c("<div />").attr("id", "tring" + f.table_id).table_ring(f))
         },
-        watch_tour_res: function(f) {
-            var e = this,
-                h = e.options,
-                g = e.element;
-            c.extend(f, {
-                tourData: h.tourData[f.tour_id],
-                tourClasses: h.tourClasses,
-                gameState: h.gameState,
-                gameTabs: h.gameTabs,
-                epochDiff: h.epochDiff
-            });
-            c("#tour-lobby").append(c("<div />").attr("id", "tour" + f.tour_id).tour(f))
-        },
+        /*
+                watch_tour_res: function(f) {
+                    var e = this,
+                        h = e.options,
+                        g = e.element;
+                    c.extend(f, {
+                        tourData: h.tourData[f.tour_id],
+                        tourClasses: h.tourClasses,
+                        gameState: h.gameState,
+                        gameTabs: h.gameTabs,
+                        epochDiff: h.epochDiff
+                    });
+                    c("#tour-lobby").append(c("<div />").attr("id", "tour" + f.tour_id).tour(f))
+                },
+        */
         _destroy: function() {},
+/*
         _buildRing: function(i) {
             var q = this,
                 e = q.options,
@@ -366,6 +463,7 @@
             h.html(n);
             m.show()
         },
+*/
         destroy: function() {},
         _buildReg: function() {
             var g = this,
@@ -496,6 +594,7 @@
             var j = g[0] + ":" + g[1] + " " + l;
             f.find("#lobby-clock").html(j)
         },
+/*
         _updateNews: function() {
             var e = this,
                 g = e.options,
@@ -509,6 +608,7 @@
                 c(this).html(h).slideDown("slow")
             })
         },
+*/
         _buildTable: function(h) {
             var e = this,
                 i = e.options,
@@ -521,7 +621,7 @@
             });
             return c("<div/>").addClass("table-box").append(c("<table />").append(c("<thead />").append(c("<tr>").html(f)), c("<tbody />")).stupidtable().bind("aftertablesort", function(l, n) {
                 $this = c(this);
-                $this.find("tbody tr:visible:first").trigger("click");
+                //$this.find("tbody tr:visible:first").trigger("click");
                 var j = $this.find("th");
                 j.find(".arro").remove();
                 var m = n.direction === "asc" ? "↑" : "↓";
@@ -530,19 +630,30 @@
         },
         resizeLobby: function(g) {
             var h = this.options,
-                f = b.innerWidth,
-                e = f * h.heightToWidth;
+                //e = this.element,
+                newWidth = b.innerWidth * .9,
+                newHeight = b.innerHeight * .9,
+                newWidthToHeight = newWidth / newHeight;
+
+            if (newWidthToHeight > h.widthToHeight) {
+               newWidth = newHeight * h.widthToHeight;
+            } else { // window height is too high relative to desired game height
+               newHeight = newWidth / h.widthToHeight;
+            }
             this.element.css({
-                height: (e) + "px",
-                fontSize: (f / 800) + "em"
-            })
+                height: newHeight + "px",
+                width: newWidth + "px",
+                marginTop: (-newHeight / 2) + "px",
+                marginLeft: (-newWidth /2) + "px",
+                fontSize: (newWidth / 680) + "em"
+            });
         },
         guest_login: function(f) {
             var e = this,
                 h = e.options,
                 g = e.element;
             h.epochDiff = (new Date).getTime() - (f.epoch * 1000);
-            h.news = f.news;
+            //h.news = f.news;
             h.myData = {
                 login_id: f.login_id,
                 username: f.username,
@@ -556,6 +667,7 @@
                     e._updateClock()
                 }, 60000)
             }, (62 - (new Date).getSeconds()));
+/*
             if (h.news.length) {
                 g.append(c("<div />").attr("id", "lobby-news").append(c("<div />").attr("id", "news-head").html("News"), c("<div />").attr("id", "news-body")));
                 e._updateNews();
@@ -563,10 +675,11 @@
                     e._updateNews()
                 }, 15000)
             }
+*/
             g.find("#welcome").empty().append(c("<div/>").attr("id", "username").html(h.myData.username), c("<div/>").attr("id", "logout").html("&nbsp[ Logout ]").click(function() {
                 c("#poker-main").main("logout")
             }));
-            g.find("#strat-tab").trigger("click")
+            // g.find("#strat-tab").trigger("click")
         },
         modal_message: function(i) {
             var h = this,
@@ -698,6 +811,7 @@
             var i = m ? m.username : "Guest" + g.from;
             var j = m ? m.color : "black";
             var e = h.find("#" + g.channel + "-chat");
+
             e.append(c("<div />").addClass("chat-msg").append(c("<a />").addClass("chat-handle").html(i).css("color", j), c("<span />").html(": " + g.message)));
             e.animate({
                 scrollTop: e[0].scrollHeight
@@ -729,69 +843,72 @@
             delete h.loginData[f.login_id];
             g.find("#social-info .table-box tbody tr[login_id=" + f.login_id + "]").remove()
         },
-        notify_create_tour: function(f) {
-            var e = this,
-                h = e.options,
-                g = e.element;
-            e.notify_destroy_tour(f);
-            e._add_tour(f)
-        },
-        notify_destroy_tour: function(e) {
-            delete this.options.tourData[e.tour_id];
-            this.element.find("#ltour" + e.tour_id).remove()
-        },
-        tour_snap: function(f) {
-            var e = this,
-                i = e.options,
-                h = e.element;
-            var g = h.find("#tour-info tbody");
-            g.empty();
-            c.each(f, function(j, l) {
-                e._add_tour(l)
-            })
-        },
-        _add_tour: function(l) {
-            var p = this,
-                f = p.options,
-                h = p.element;
-            var i = h.find("#tour-info tbody");
-            var g = (new Date(l.start_time * 1000 + f.epochDiff)).toString().split(/\s/);
-            var n = g[4].split(":");
-            l.start = g[1] + " " + g[2] + " " + n[0] + ":" + n[1];
-            var j = l.game_class == "dealers" ? "--" : l.limit;
-            l.desc = l.desc ? l.desc : j + " " + f.gameTabs[l.game_class][0];
-            var e = (new Date(l.end_time * 1000 + f.epochDiff)).toString().split(/\s/);
-            var m = e[4].split(":");
-            l.end = e[1] + " " + e[2] + " " + m[0] + ":" + m[1];
-            l.class_name = f.tourClasses[l.tour_class];
-            f.tourData[l.tour_id] = l;
-            c("<tr />").attr({
-                id: "ltour" + l.tour_id,
-                tour_id: l.tour_id,
-                did: l.director_id,
-                game_class: l.game_class
-            }).append(c("<td />").html(l.tour_id), c("<td />").html(l.start), c("<td />").html(l.desc), c("<td />").html(l.buy_in + l.entry_fee), c("<td />").addClass("ltour-state"), c("<td />").addClass("ltour-enrolled")).appendTo(i);
-            p._update_tour_tab(l)
-        },
-        _update_tour_tab: function(j) {
-            var f = this,
-                i = f.options,
-                h = f.element;
-            var g = h.find("#ltour" + j.tour_id);
-            var e = {
-                state: function(l) {
-                    g.find(".ltour-state").html(i.gameState[j.state])
+        /*
+        // tournament related functions
+                notify_create_tour: function(f) {
+                    var e = this,
+                        h = e.options,
+                        g = e.element;
+                    e.notify_destroy_tour(f);
+                    e._add_tour(f)
                 },
-                enrolled: function(l) {
-                    g.find(".ltour-enrolled").html(l)
-                }
-            };
-            c.each(j, function(l, m) {
-                if (l in e) {
-                    e[l](m)
-                }
-            })
-        },
+                notify_destroy_tour: function(e) {
+                    delete this.options.tourData[e.tour_id];
+                    this.element.find("#ltour" + e.tour_id).remove()
+                },
+                tour_snap: function(f) {
+                    var e = this,
+                        i = e.options,
+                        h = e.element;
+                    var g = h.find("#tour-info tbody");
+                    g.empty();
+                    c.each(f, function(j, l) {
+                        e._add_tour(l)
+                    })
+                },
+                _add_tour: function(l) {
+                    var p = this,
+                        f = p.options,
+                        h = p.element;
+                    var i = h.find("#tour-info tbody");
+                    var g = (new Date(l.start_time * 1000 + f.epochDiff)).toString().split(/\s/);
+                    var n = g[4].split(":");
+                    l.start = g[1] + " " + g[2] + " " + n[0] + ":" + n[1];
+                    var j = l.game_class == "dealers" ? "--" : l.limit;
+                    l.desc = l.desc ? l.desc : j + " " + f.gameTabs[l.game_class][0];
+                    var e = (new Date(l.end_time * 1000 + f.epochDiff)).toString().split(/\s/);
+                    var m = e[4].split(":");
+                    l.end = e[1] + " " + e[2] + " " + m[0] + ":" + m[1];
+                    l.class_name = f.tourClasses[l.tour_class];
+                    f.tourData[l.tour_id] = l;
+                    c("<tr />").attr({
+                        id: "ltour" + l.tour_id,
+                        tour_id: l.tour_id,
+                        did: l.director_id,
+                        game_class: l.game_class
+                    }).append(c("<td />").html(l.tour_id), c("<td />").html(l.start), c("<td />").html(l.desc), c("<td />").html(l.buy_in + l.entry_fee), c("<td />").addClass("ltour-state"), c("<td />").addClass("ltour-enrolled")).appendTo(i);
+                    p._update_tour_tab(l)
+                },
+                _update_tour_tab: function(j) {
+                    var f = this,
+                        i = f.options,
+                        h = f.element;
+                    var g = h.find("#ltour" + j.tour_id);
+                    var e = {
+                        state: function(l) {
+                            g.find(".ltour-state").html(i.gameState[j.state])
+                        },
+                        enrolled: function(l) {
+                            g.find(".ltour-enrolled").html(l)
+                        }
+                    };
+                    c.each(j, function(l, m) {
+                        if (l in e) {
+                            e[l](m)
+                        }
+                    })
+                },
+        */
         ring_snap: function(f) {
             var e = this,
                 h = e.options,
@@ -817,7 +934,8 @@
                     game_class: j.game_class
                 }).addClass("lring").append(c("<td />").addClass("table-id").html(j.table_id), c("<td />").html(h.gameTabs[j.game_class][0]), c("<td />").addClass().html(m), c("<td />").addClass().html(i), c("<td />").addClass().html(j.chair_count), c("<td />").addClass("plr-count"), c("<td />").addClass("avg-pot"), c("<td />").addClass("plrs-flop"), c("<td />").addClass("hhr")).appendTo(f);
                 e._update_ring_tab(j);
-            }, g.find("#play-tab").trigger("click") );
+            });
+            // g.find("#play-tab").trigger("click"));
             g.find("#all-tab").trigger("click");
             g.find("#ring-info thead th:eq(5)").trigger("click");
         },
@@ -832,13 +950,15 @@
             delete this.options.ringData[e.table_id];
             this.element.find("#lring" + e.table_id).remove()
         },
-        notify_lt_update: function(f) {
-            var e = this,
-                h = e.options,
-                g = e.element;
-            c.extend(h.tourData[f.tour_id], f);
-            e._update_tour_tab(f)
-        },
+        /*
+                notify_lt_update: function(f) {
+                    var e = this,
+                        h = e.options,
+                        g = e.element;
+                    c.extend(h.tourData[f.tour_id], f);
+                    e._update_tour_tab(f)
+                },
+        */
         notify_lr_update: function(f) {
             var e = this,
                 h = e.options,
@@ -851,9 +971,11 @@
                 j = f.options,
                 i = f.element;
             var h = i.find("#lring" + g.table_id);
+/*
             if (i.find("#ring-box").attr("tid") == g.table_id) {
                 h.trigger("click")
             }
+*/
             var e = {
                 avg_pot: function(l) {
                     h.find(".avg-pot").html(l)
