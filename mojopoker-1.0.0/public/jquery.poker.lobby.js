@@ -2,7 +2,6 @@
     c.widget("poker.lobby", {
         options: {
             widthToHeight: 4 / 3,
-            //windowRatio: 15 / 16,
             epochDiff: 0,
             inchan: {},
             colData: {
@@ -29,9 +28,12 @@
                 21: ["Chips", "int"],
                 22: ["Seat", "int"],
                 23: ["Block", "int"],
-                24: ["Player Pool", "int"]
+                24: ["Player Pool", "int"],
+                25: ["Rank", "int"],
+                26: ["Rating", "int"]
             },
             ringCols: [1, 11, 2, 3, 4, 5, 7, 8, 9],
+            leaderCols: [25, 20, 26],
             //tourCols: [1, 10, 11, 12, 13, 14],
             socialCols: [17, 18, 19],
             hydraCols: [1, 11, 2, 3, 4, 24],
@@ -151,7 +153,10 @@
             var g = f.addClass("ui-widget").append(
                 // Header
                 c("<div />").attr("id", "lobby-header"),
-                c("<div />").attr("id", "lobby-logo"), c("<div />").attr("id", "lobby-clock"),
+                c("<div />").attr("id", "lobby-leader").append(v._buildTable(e.leaderCols)), 
+                c("<div />").attr("id", "lobby-countdown"),
+                c("<div />").attr("id", "lobby-adspace"), 
+                c("<div />").attr("id", "lobby-logins"), 
                 c("<div/>").attr("id", "welcome"),
 
                 // Login button and modal
@@ -174,6 +179,7 @@
 
                 // social tab
                 c("<div />").attr("id", "social-box").append(
+                    c("<div />").attr("id", "chat-header"),
                     c("<div />").attr("id", "main-chat"),
                     c("<form />").attr("id", "social-form").append(w).submit(function(m) {
                         m.preventDefault();
@@ -250,7 +256,6 @@
 */
             );
             // game tabs
-            w.focus();
             c.each(e.gameTabs, function(o, m) {
                 f.find("#game-tabs" + m[1]).append(c("<button />").attr({
                     id: o + "-tab",
@@ -399,6 +404,7 @@
             v.resizeLobby();
             v._buildLogin();
             v._buildReg();
+            w.focus();
             //f.find("#ring-tab").trigger("click");
             //f.find("#soft-tab").trigger("click");
             //f.find("#play-tab").trigger("click");
