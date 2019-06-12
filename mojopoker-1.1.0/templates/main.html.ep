@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta name="generator" content="HTML Tidy for Linux (vers 25 March 2009), see www.w3.org">
+
+  <title>Poker with Friends</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+  <meta name="description" content="Poker with Friends">
+  <meta name="keywords" content="poker friends facebook games">
+  <meta property="fb:app_id" content="431502190982449">
+  <link href="favicon.png" rel="icon" type="image/x-png">
+  <link rel="stylesheet" href="jquery-ui.min.css" type="text/css">
+  <link rel="stylesheet" href="cards.min.css" type="text/css">
+  <link rel="stylesheet" href="table.min.css" type="text/css">
+  <link rel="stylesheet" href="lobby.css" type="text/css">
+</head>
+
+<body>
+  <div id="poker-main">
+    <div id="table-ring"></div>
+
+    <div id="lobby-main">
+      <div id="lobby-head1">
+        <div id="lobby-logo"></div>
+      </div>
+
+      <div id="lobby-head2">
+        <div id="lobby-countdown">Next Winner:<span></span></div>
+        <div id="lobby-leader"></div>
+      </div>
+
+      <div id="lobby-head3">
+        <div id="lobby-count">Players Online:<span></span></div>
+
+        <div id="lobby-login">
+          <div class="fb-login-button" data-width="" data-size="small" data-button-type="login_with" data-auto-logout-link="true" data-use-continue-as="false"></div>
+        </div>`
+
+        <div id="lobby-username"></div>
+
+        <div id="lobby-logout">
+          [Logout]
+        </div>
+      </div>
+
+      <div id="modal-box" class="lobby-modal"></div>
+
+      <div id="ring-info" class="tab-info games"></div>
+
+      <div id="tabs">
+        <div id="game-tabs1" type="game"></div>
+
+        <div id="game-tabs2" type="game"></div>
+
+        <div id="game-tabs3" type="game"></div>
+
+        <div id="game-tabs4" type="game"></div>
+      </div>
+
+      <div id="social-box">
+
+        <form id="social-form">
+          <input id="social-input" type="text" maxlength="30">
+        </form>
+      </div>
+    </div>
+  </div>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js" type="text/javascript"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="stupidtable.min.js">
+</script><script type="text/javascript" src="jquery.poker.main.js">
+</script><script type="text/javascript" src="jquery.poker.lobby.js">
+</script><script type="text/javascript" src="jquery.poker.table.js">
+</script><script type="text/javascript" src="jquery.poker.table.ring.js">
+</script>
+
+<script>
+$(document).ready(function()
+{
+    $.ajax(
+            {
+                url: '//connect.facebook.net/en_US/sdk.js',
+                dataType: 'script',
+                cache: true,
+                success:function(script, textStatus, jqXHR)
+                {
+                    FB.init(
+                        {
+                            appId      : '<%= $facebook_app_id %>',
+                            cookie     : true,
+                            xfbml      : true,
+                            version    : 'v3.3'
+                        }
+                    );
+                     
+                    $("#poker-main").main({ws: "<%= $furl %>" }); 
+                }
+            });
+});
+</script>
+</body>
+</html>

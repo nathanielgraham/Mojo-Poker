@@ -7,26 +7,36 @@ body {
   width: 100%;
   height: 100%;
   overflow-x: hidden;
+  font-size: 100%;
+  font-family: Lucida Grande,Lucida Sans,Arial,sans-serif;
 }
 
 #poker-main { }
 
+/*
 #welcome {
   position: absolute;
   top: 15%;
   right: 4.5%;
   font-size: 90%;
 }
+*/
 
 #username {
-  position: relative;
-  display: inline-block;
+  position: absolute;
+  top: 5%;
+  right: 4.5%;
+  font-size: 90%;
+
 }
 
 #logout {
-  position: relative;
-  display: inline-block;
+  position: absolute;
   cursor: pointer;
+  top: 25%;
+  right: 4.5%;
+  font-size: 90%;
+
 }
 
 .lobby-modal { 
@@ -410,75 +420,104 @@ body {
   width: 100%;
 }
 
-/*
-#lobby-header {
+#lobby-head1 {
   position: absolute;
-  width: 100%;
-  height: 20%;
-  background-color: #1a1a1a;
+  top: 0%;
+  left: 0%;
+  width: 30%;
+  height: 25%;
 }
-*/
+
+#lobby-head2 {
+  position: absolute;
+  top: 0%;
+  left: 30%;
+  width: 40%;
+  height: 25%;
+}
+
+#lobby-head3 {
+  position: absolute;
+  top: 0%;
+  left: 70%;
+  width: 30%;
+  height: 25%;
+}
 
 #lobby-logo {
   position: absolute;
   top: 0%;
-  left: 1%;
-  width: 44%;
-  height: 44%;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-image: url("/img/logo.png");
-}
-
-#lobby-news {
-  position: absolute;
-  height: 20%;
-  width: 32%;
-  left: 45%;
-  top: .4%;
-  color: white;
-}
-
-#news-head {
-  position: absolute;
-  top: 2%;
   left: 0%;
   width: 100%;
+  height: 100%;
+  vertical-align: middle;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-image: url("/img/logo2.png");
+}
+
+#lobby-leader {
+  position: absolute;
+  bottom: 0%;
+  left: 5%;
+  width: 90%;
+  height: 70%;
+  border: 1px black;
   font-size: 90%;
+  background-color: #f0f0f0;
+}
+
+#lobby-countdown {
+  position: absolute;
+  top: 0%;
+  width: 100%;
+  height: 1.2em;
+  font-size: 100%;
   font-weight: bold;
   text-align: center;
-  }
+  color: white;
+  white-space: pre;
+}
 
-#news-body {
+#lobby-login {
   position: absolute;
   top: 30%;
   left: 0%;
   width: 100%;
-  height: 70%;
-  font-size: 74%;
+  height: 30%;
+  background-size: contain;
+  margin: 0 auto;
   text-align: center;
-}
-
-#lobby-red {
-  position: absolute;
-  height: 8%;
-  width: 20%;
-  top: 6%;
-  right: 2%;
-  border: 1px solid black;
-  background-color: #900000;
-  text-align: center;
-  color: #f0f0f0;
-  font-size: 120%;
   cursor: pointer;
 }
 
-#lobby-clock {
+#lobby-count {
   position: absolute;
-  top: 1.4%;
-  right: 7%;
+  height: 1.2em;
+  width: 100%;
+  top: 0%;
   color: #f0f0f0;
+  text-align: center;
+  white-space: pre;
+}
+
+#lobby-username {
+  position: absolute;
+  bottom: 18%;
   font-size: 100%;
+  width: 100%;
+  text-align: center;
+  color: #f0f0f0;
+}
+
+#lobby-logout {
+  position: absolute;
+  bottom: 3%;
+  width: 100%;
+  font-size: 80%;
+  text-align: center;
+  cursor: pointer;
+  color: #f0f0f0;
 }
 
 /*
@@ -490,40 +529,26 @@ body {
 .table-box {
   position: absolute;
   box-sizing: border-box;
-  bottom: 0%;
   background-color: #f0f0f0;
   overflow-y: scroll;
+  width: 100%;
+  height: 100%;
+
 }
 
-#ring-info .table-box {
+#ring-info {
+  position: absolute;
+  font-size: 120%;
   width: 70%;
   height: 49%;
-}
-
-#tour-info .table-box {
-  width: 70%;
-  height: 66%;
-}
-
-#sit-info .table-box {
-  width: 70%;
-  height: 66%;
+  left: 0%;
+  bottom: 0%;
 }
 
 /*
-#hydra-info .table-box {
-  width: 70%;
-  height: 48%;
-}
-
-#hydra-detail {
-  position: absolute;
-  top: 32%;
-  width: 84%;
-  left: 8%;
-  text-align: center;
-  color: white;
-  font-size: 100%;
+#ring-info .table-box{
+  width: 100%;
+  height: 100%;
 }
 */
 
@@ -538,15 +563,29 @@ body {
   color: red;
 }
 */
+ 
+/*
+#chat-header {
+  top: 0%;
+  left: 0%;
+  position: absolute;
+  width: 100%;
+  height: 12%;
+  vertical-align: middle;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-image: url("/img/chat.png");
+}
+*/
 
 #main-chat {
-  margin-left: -45%;
-  top: 4%;
-  left: 50%;
+  top: 13%;
+  left: 2%;
   position: absolute;
-  width: 90%;
-  height: 85%;
+  width: 96%;
+  height: 78%;
   color: black;
+  background-color: #f0f0f0;
   overflow-y: hidden;
 }
 
@@ -556,43 +595,14 @@ body {
 
 #social-input {
   position: absolute;
-  width: 88%;
-  height: 6%;
-  left: 4%;
+  width: 96%;
+  height: 1.2em;
+  left: 0%;
   bottom: 0%;
   background-color: white;
   font-size: 80%;
 }
 
-
-#about-tabs {
-  position: absolute;
-  top: 27%;
-  width: 100%;
-  height: 7%;
-}
-
-#about-tabs .lobby-tab {
-  position: relative;
-  display: inline-block;
-  height: 100%;
-}
-
-#about-tabs #soft-tab {
-  width: 50%;
-}
-
-#about-tabs #contact-tab {
-  width: 50%;
-}
-
-.about-box {
-  position: absolute;
-  width: 100%;
-  height: 300%;
-  top: 34%;
-  border: 0;
-}
 
 .main-box {
   position: absolute;
@@ -629,64 +639,14 @@ body {
   cursor: pointer;
 }
 
-#tour-box {
-  height: 73%;
-}
-
-#tour-box .box-header {
-  height: 15%;
-  font-size: 90%;
-}
-
-#tour-box .lob-enroll {
-  position: absolute;
-  width: 90%;
-  left: 5%;
-  text-align: center;
-  top: 28%;
-  color: black;
-}
-
-#tour-box .lob-start {
-  position: absolute;
-  width: 90%;
-  left: 5%;
-  text-align: center;
-  top: 20%;
-  color: black;
-}
-
-#tour-box #reg-tour {
-  position: absolute;
-  height: 8%;
-  width: 90%;
-  left: 5%;  
-  background-color: #076321;
-  color: white;
-  bottom: 11%;
-}
-
-#tour-box #lob-tour {
-  position: absolute;
-  height: 8%;
-  width: 90%;
-  left: 5%;
-  bottom: 2%;  
-  background-color: #076321;
-  color: white;  
-}
-
 #social-box {
   position: absolute;
-  box-sizing: border-box;
   height: 49%;
   width: 30%;
   bottom: 0%;
   left: 70%;
   background-color: #f0f0f0;
   border: 1px solid black;
-}
-
 }
 
 /*
@@ -734,7 +694,7 @@ body {
 
 .table-box thead th {
   text-align: center;
-  border: 1px solid black;
+  background-color: #f7f7f7;
 }
 
 .table-box tbody tr {
@@ -761,6 +721,7 @@ body {
   color: #f0f0f0;
   cursor: pointer;
   white-space: nowrap;
+  font-size: 100%;
 }
 
 .lobby-tab.tab-hover {
@@ -768,7 +729,7 @@ body {
 }
 
 .lobby-tab.select {
-  background-color: #937312;
+  background-color: #167292;
 }
 
 #main-tabs {
@@ -832,20 +793,6 @@ body {
   top: 45%;
 }
 */
-
-#money-tabs .lobby-tab {
-  position: relative;
-  display: inline-block;
-  height: 100%;
-}
-
-#play-tab {
-  width: 50%;
-}
-
-#real-tab {
-  width: 50%;
-}
 
 /*
 #social-tabs {

@@ -47,7 +47,7 @@ $ua->websocket(
     $tx->send('["guest_login"]');
 
     # IMPORTANT: Admin login bookmark should be changed.   
-    $tx->send('["login_book", {"bookmark":"dc17c0317495691235faf2ba1063278f08e2a524"}]');
+    $tx->send('["login_book", {"bookmark":"1d53c9a4e58a0b76f4ab7ad900d8db7814f4d27e"}]');
   }
 );
 

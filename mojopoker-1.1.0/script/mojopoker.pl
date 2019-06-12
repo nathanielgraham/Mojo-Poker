@@ -9,7 +9,7 @@ use EV;
 use Mojo::Server::Daemon;
 use POSIX qw(setsid);
 
-#$ENV{MOJO_MODE}               = 'production';
+$ENV{MOJO_MODE}               = 'development';
 $ENV{MOJO_INACTIVITY_TIMEOUT} = 0;
 $ENV{MOJO_LOG_LEVEL} = 'debug';
 
@@ -22,6 +22,7 @@ my $daemon = Mojo::Server::Daemon->new(
     proxy              => 1,
 );
 
+=pod
 # Fork and kill parent
 die "Can't fork: $!" unless defined( my $pid = fork );
 exit 0 if $pid;
@@ -35,6 +36,7 @@ close $handle;
 # Close filehandles
 open STDIN,  '</dev/null';
 #open STDERR, '>&STDOUT';
+=cut
 
 $daemon->start;
 

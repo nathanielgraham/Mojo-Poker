@@ -1,6 +1,5 @@
 package Ships::Auth;
 use Mojo::Base 'Mojolicious::Controller';
-use Data::Dumper;
 
 sub block {
   my $self = shift;

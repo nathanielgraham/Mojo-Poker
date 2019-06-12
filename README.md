@@ -1,4 +1,4 @@
-![Mojo Poker Logo](/mojopoker-1.0.0/public/img/logo.png)
+![Mojo Poker Logo](/mojopoker-1.1.0/public/img/logo.png)
 
 [![Build Status](https://api.travis-ci.org/nathanielgraham/Mojo-Poker.svg?branch=master)]
 
@@ -33,14 +33,6 @@ To create a new six handed No-Limit Hold'em table for example, issue the followi
     /opt/mojopoker/script/mpadmin.pl create_ring -game_class holdem -limit NL -chair_count 6
 
 See mpadmin.pl --help for a complete list of options. 
-
-## Chat rooms, news, and other housekeeping items
-Issue the following commands to finish setting up the server:
-
-    /opt/mojopoker/script/mpadmin.pl create_channel -channel help
-    /opt/mojopoker/script/mpadmin.pl create_channel -channel strat
-    /opt/mojopoker/script/mpadmin.pl create_channel -channel unmod
-    /opt/mojopoker/script/mpadmin.pl update_news -news 'Welcome to Mojo Poker'
 
 ##  Creating a robot opponent
 An example robot (bender) is included in the most recent release.  

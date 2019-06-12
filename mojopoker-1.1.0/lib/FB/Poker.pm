@@ -567,7 +567,7 @@ sub _poker_cleanup {
   for my $ring (
     map  { $self->table_list->{$_} }
     grep { exists $self->table_list->{$_} }
-    keys %{ $login->ring_play }
+    keys %{ $login->user->ring_play }
     )
   {
     $ring->_unwatch($login);
@@ -575,17 +575,6 @@ sub _poker_cleanup {
     $ring->_unwait($login);
   }
 
-=pod
-  for my $tour (
-    map  { $self->tour_list->{$_} }
-    grep { exists $self->tour_list->{$_} }
-    keys %{ $login->tour_play }
-    )
-  {
-    $tour->_unwatch($login);
-    $tour->unregister($login);
-  }
-=cut
 }
 
 sub _validate_action {

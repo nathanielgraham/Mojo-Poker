@@ -1,0 +1,30 @@
+PRAGMA foreign_keys=OFF;
+BEGIN TRANSACTION;
+DROP TABLE IF EXISTS user;
+CREATE TABLE user (
+        id INTEGER PRIMARY KEY NOT NULL,
+        facebook_id INTEGER,
+        level tinyint(2) NOT NULL DEFAULT 1,
+        remote_address varchar(15),
+        bookmark varchar(40),
+        username varchar(255),
+        handle varchar(255),
+        password varchar(40),
+        email varchar(80),
+        birthday date,
+        chips INTEGER DEFAULT 0,
+        invested INTEGER DEFAULT 0,
+        reg_date datetime,
+        facebook_deleted datetime,
+        last_visit datetime
+);
+
+INSERT INTO "user" VALUES(1,NULL,4,'127.0.0.1','1d53c9a4e58a0b76f4ab7ad900d8db7814f4d27e','admin','admin',NULL,NULL,NULL,0,0,1426168985,NULL,1472577586);
+
+DROP TABLE IF EXISTS facebook_user;
+
+DROP TABLE IF EXISTS user_chips;
+
+CREATE UNIQUE INDEX user_idx1 ON user (facebook_id);
+CREATE INDEX user_idx2 ON user (bookmark);
+COMMIT;

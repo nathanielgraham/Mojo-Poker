@@ -3,18 +3,23 @@ use Mojo::Base 'Mojolicious';
 use lib 'perl5';
 use FB;
 
-has 'address_info' => sub {
+has 'address_block' => sub {
   return {};
 };
 
-has 'address_block' => sub {
-  return {};
+has facebook_app_id => sub {
+   return '431502190982449';
+};
+
+has facebook_secret => sub {
+   return 'dee98631a540b933dd8e2f46e1ab9512';
 };
 
 has fb => sub {
   my $self = shift;
   return FB->new(
     address_block => $self->app->address_block,
+    facebook_secret => $self->facebook_secret,
   );
 };
 
@@ -22,18 +27,8 @@ has fb => sub {
 sub startup {
   my $self = shift;
 
-  # change 'scheme' of request url
-  # force https in production 
-  # note: deprecated. use nginx 
-  #$self->hook(before_dispatch => sub {
-  #  my $c = shift;
-  #  if ($c->req->url->base->scheme eq 'http') {
-  #    $c->req->url->base->scheme('https');
-  #    $c->req->url->base->port(443);
-  #    $c->redirect_to($c->req->url->to_abs);
-  #  }
-  #}) if $ENV{MOJO_MODE} && $ENV{MOJO_MODE} eq 'production';
   $ENV{LIBEV_FLAGS} = 4;
+  $ENV{MOJO_LOG_LEVEL} = 'debug';
 
   # cookie setup
   #$self->sessions->cookie_name('ships');
@@ -49,6 +44,10 @@ sub startup {
   my $b = $r->under( sub { return 1 } ); # don't block anyone
   $b->websocket('/websocket')->to( controller => 'websocket', action => 'service' );
   $b->route('/')->to( controller => 'main', action => 'default' );
+  $r->route('/book')->to( controller => 'main', action => 'book' );
+  $r->route('/privacy')->to( controller => 'main', action => 'privacy' );
+  $r->route('/terms')->to( controller => 'main', action => 'terms' );
+  $r->post('/delete')->to(controller => 'main', action => 'delete');
   $r->route('*')->to(cb => sub { shift->redirect_to('/') });
 }
 
