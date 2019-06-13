@@ -485,13 +485,9 @@
                     var m = 0;
                     var j = 0;
                     $.each(l, function(o, n) {
-                        if (i.ringData[o].director_id == 1) {
-                            m += n
-                        } else {
-                            j += n
-                        }
+                            m += n;
                     });
-                    g = m + i.myData.chips[1];
+                    g = m + i.myData.chips;
                     $("#real-inplay .cash-det").html(j);
                     $("#real-total .cash-det").html(j);
                     $("#play-inplay .cash-det").html(m);
@@ -503,13 +499,14 @@
                     e[j](l)
                 }
             });
-            $("#cash-deposit .cash-det").html(g + "/" + i.myData.invested[1] + " = " + Math.round(g / i.myData.invested[1] * 1000) / 1000)
+            $("#cash-deposit .cash-det").html(g + "/" + i.myData.invested + " = " + Math.round(g / i.myData.invested * 1000) / 1000)
         },
         login_success: function(f) {
             var e = this,
                 h = e.options,
                 g = e.element;
             this.options.myData = f;
+            alert(JSON.stringify(f));
             //e._buildCashier();
             //g.find("#lobby-login").html("Cashier").off("click").click(function() {
             //    $("#poker-main").main("login_info")
@@ -710,7 +707,7 @@
                 $("<tr />").attr({
                     id: "lring" + l,
                     table_id: j.table_id,
-                    did: j.director_id,
+                    //did: j.director_id,
                     game_class: j.game_class
                 }).addClass("lring").append($("<td />").addClass("table-id").html(j.table_id), $("<td />").html(h.gameTabs[j.game_class][0]), $("<td />").addClass().html(m), $("<td />").addClass().html(i), $("<td />").addClass().html(j.chair_count), $("<td />").addClass("plr-count"), $("<td />").addClass("avg-pot"), $("<td />").addClass("plrs-flop"), $("<td />").addClass("hhr")).appendTo(f);
                 e._update_ring_tab(j);

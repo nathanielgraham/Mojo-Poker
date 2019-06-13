@@ -11,8 +11,10 @@ sub default {
     # upgrade websocket scheme to wss
     my $url = $self->url_for('websocket')->to_abs;
     $url->scheme('wss') if $self->req->headers->header('X-Forwarded-For');
+    my $opts = 'ws: "' . $url->to_abs . '"';
+
     $self->stash( 
-       furl => $url->to_abs,
+       opts => $opts,
        facebook_app_id => $self->app->facebook_app_id, 
     );
 
@@ -78,6 +80,24 @@ SQL
     $self->render(json => {url => $status_url, confirmation_code => $data->{user_id}});
 }
 
+sub book {
+    my $self = shift;
+    my $bookmark = param('bookmark');
+    my $url = $self->url_for('websocket')->to_abs;
+    $url->scheme('wss') if $self->req->headers->header('X-Forwarded-For');
+    my $opts = 'ws: "' . $url->to_abs . '", bookmark: "' . $bookmark . '"';
+
+    $self->stash(
+       opts => $opts,
+       facebook_app_id => $self->app->facebook_app_id,
+    );
+
+    $self->render(
+        template => 'main',
+        format   => 'html',
+        handler  => 'ep',
+    );
+}
 
 1;
 

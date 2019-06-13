@@ -44,7 +44,7 @@ sub startup {
   my $b = $r->under( sub { return 1 } ); # don't block anyone
   $b->websocket('/websocket')->to( controller => 'websocket', action => 'service' );
   $b->route('/')->to( controller => 'main', action => 'default' );
-  $r->route('/book')->to( controller => 'main', action => 'book' );
+  $r->route('/book/:bookmark')->to( controller => 'main', action => 'book' );
   $r->route('/privacy')->to( controller => 'main', action => 'privacy' );
   $r->route('/terms')->to( controller => 'main', action => 'terms' );
   $r->post('/delete')->to(controller => 'main', action => 'delete');

@@ -94,7 +94,7 @@ $(document).ready(function()
                         }
                     );
                      
-                    $("#poker-main").main({ws: "<%= $furl %>" }); 
+                    $("#poker-main").main({ <%== $opts %> }); 
                 }
             });
 });

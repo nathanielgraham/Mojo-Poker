@@ -183,6 +183,10 @@
             var j = JSON.stringify(['login', v]);
             this.options.wsock.send(j);
         },
+        login_book: function(v) {
+            var j = JSON.stringify(['login_book', v]);
+            this.options.wsock.send(j);
+        },
         register: function(v) {
             var j = JSON.stringify(['register', v]);
             this.options.wsock.send(j);

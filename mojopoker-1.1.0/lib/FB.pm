@@ -25,15 +25,14 @@ has 'prize_timer' => (
     builder => '_build_prize_timer',
 );
 
-has 'facebook_secret' => (
-   is => 'rw', 
-);
+has 'facebook_secret' => ( is => 'rw', );
 
 # reset timer
 sub _build_prize_timer {
     my $self     = shift;
     my $t        = localtime;
     my $add_days = abs( ( 1 - $t->wday ) % 7 );
+
     #$add_days |= 7;
     $t += $add_days * 24 * 60 * 60;
     $t -= $t->sec;
@@ -153,7 +152,7 @@ sub _build_command {
         ],
         login_book => [ \&login_book, { bookmark => 1 } ],
         login      => [ \&login,      { username => 1, password => 1 } ],
-        authorize  => [ \&authorize,  { status => 1, authResponse => 1 } ],
+        authorize  => [ \&authorize,  { status   => 1, authResponse => 1 } ],
         guest_login    => [ \&guest_login, {} ],
         watch_logins   => [ \&watch_logins ],
         unwatch_logins => [ \&unwatch_logins ],
@@ -178,13 +177,12 @@ sub _build_command {
         ping           => [ \&ping,           {} ],
 
         # ADMIN
-        credit_chips =>
-          [ \&credit_chips, { user_id => 1, chips => 1 }, 4 ],
+        credit_chips => [ \&credit_chips, { user_id => 1, chips => 1 }, 4 ],
 
    #    add_login_chips => [ \&add_login_chips, { login_id => 1, chips => 1 } ],
         logout_all => [ \&logout_all, {}, 4 ],
         logout_login    => [ \&logout_login,    { login_id => 1 }, 4 ],
-        logout_user     => [ \&logout_user,     { user_id => 1 }, 4 ],
+        logout_user     => [ \&logout_user,     { user_id  => 1 }, 4 ],
         create_channel  => [ \&create_channel,  { channel  => 1 }, 4 ],
         destroy_channel => [ \&destroy_channel, { channel  => 1 }, 4 ],
         update_news     => [ \&update_news,     { news     => 1 }, 4 ],
@@ -208,6 +206,7 @@ sub _build_option {
         birthday => qr/^[\w\s_\.\\\-]{40}$/,
         bookmark => qr/^\w{40}$/,
         bitcoin  => qr/^\w{52}$/,
+
         #login_id => qr/^\d{1,12}$/,
         user_id  => qr/^\d{1,12}$/,
         table_id => qr/^\d{1,12}$/,
@@ -291,7 +290,7 @@ sub request {
     }
 
     my $level = $self->command->{$cmd}->[2];
-    if ( $level && $login->level < $level ) {
+    if ( $level && $login->user->level < $level ) {
         $login->req_error;
         $login->send( [ 'permission_denied', { command => $cmd } ] );
         return;
@@ -396,7 +395,7 @@ sub _new_login {
     return unless $connection_id;
     $opts->{id}         = $connection_id;
     $opts->{last_visit} = time;
-    $opts->{db}         = $self->db;
+    #$opts->{db}         = $self->db;
     return FB::Login::WebSocket->new($opts);
 }
 
@@ -469,14 +468,18 @@ sub register {
     # create bookmark
     $opts->{bookmark} = hmac_sha1_hex( $opts->{id}, $self->secret );
 
+    # db handle
+    #$opts->{db}         = $self->db;
+
     # add user
-    $login->user(FB::User->new(%$opts));
+    $login->user( FB::User->new(%$opts) );
     $self->user_map->{ $login->user->id } = $login->id;
+    $login->user->db( $self->db );
 
     # update user
     $self->_update_user( $login, $opts );
-    $self->_credit_chips( $login, { user_id => $login->user->id, chips => 2000 } );
-    $self->_credit_invested( $login, { user_id => $login->user->id, chips => 2000 } );
+    $self->_credit_chips( $login->user->id, 2000);
+    $self->_credit_invested( $login->user->id, 2000);
     $response->[1] = { success => 1, %{ $self->_fetch_login_info($login) } };
     $login->send($response);
 }
@@ -484,7 +487,8 @@ sub register {
 sub _update_user {
 
     my ( $self, $login, $opts ) = @_;
-    $opts->{last_visit}     = time;
+    $opts->{last_visit} = time;
+
     #$opts->{remote_address} = $login->websocket->remote_address
     #  if $login->websocket->is_websocket;
 
@@ -493,7 +497,7 @@ sub _update_user {
       $self->sql->update( 'user', $opts, { id => $opts->{id} } );
     my $sth = $self->db->prepare($stmt);
     $sth->execute(@bind);
-        
+
 }
 
 sub update_login {
@@ -506,6 +510,7 @@ sub update_login {
 sub _update_login {
     my ( $self, $login, $opts ) = @_;
     %$login = ( %$login, %$opts );
+
     #if ( $login->has_user ) {
     #    $self->user_map->{ $login->user->id } = $login->id;
     #    $self->_update_user( $login, $opts );
@@ -525,8 +530,8 @@ sub reload {
     my $total = $inplay + $chips;
 
     if ( $total < 2000 ) {
-        $login->credit_chips( 2000 - $total );
-        $login->credit_invested( 2000 - $total );
+        $self->_credit_chips( $login->user->id, 2000 - $total );
+        $self->_credit_invested( $login->user->id, 2000 - $total );
     }
     $self->login_info($login);
 }
@@ -542,7 +547,9 @@ sub _fetch_login_info {
     my ( $self, $login ) = @_;
 
     my $ring_map = {};
-    for my $t ( map { $self->table_list->{$_} } keys %{ $login->user->ring_play } ) {
+    for my $t ( map { $self->table_list->{$_} }
+        keys %{ $login->user->ring_play } )
+    {
         $ring_map->{ $t->table_id } = 0;
         for my $c ( @{ $t->_find_chairs($login) } ) {
             $ring_map->{ $t->table_id } += $c->chips;
@@ -559,71 +566,73 @@ sub _fetch_login_info {
 sub _fetch_user_info {
     my ( $self, $login ) = @_;
     return unless $login->has_user;
-    my $chips = $self->_fetch_chips($login, { user_id => $login->user->id });
+    my $chips = $self->_fetch_chips( $login->user->id );
     return {
-        id        => $login->user->id,
-        facebook_id    => $login->user->facebook_id,
-        username       => $login->user->username,
-        bookmark       => $login->user->bookmark,
-        level          => $login->user->level,
-        email          => $login->user->email,
-        birthday       => $login->user->birthday,
-        handle         => $login->user->handle,
-        chips          => $chips,
-        last_visit     => $login->user->last_visit,
+        id          => $login->user->id,
+        facebook_id => $login->user->facebook_id,
+        username    => $login->user->username,
+        bookmark    => $login->user->bookmark,
+        level       => $login->user->level,
+        email       => $login->user->email,
+        birthday    => $login->user->birthday,
+        handle      => $login->user->handle,
+        chips       => $chips,
+        last_visit  => $login->user->last_visit,
     };
 }
 
 sub authorize {
     my ( $self, $login, $opts ) = @_;
-   
-    #my $secret = 'dee98631a540b933dd8e2f46e1ab9512';  
-    my $secret = $self->facebook_secret;  
+
+    #my $secret = 'dee98631a540b933dd8e2f46e1ab9512';
+    my $secret = $self->facebook_secret;
     my $signed = $opts->{authResponse}->{signedRequest};
-    my ($encoded_sig, $payload) = split(/\./, $signed, 2);
-    my $data = j(decode_base64($payload));
-    my $response = ['authorize_res', { success => 0}];
-    my $expected_sig = encode_base64(hmac_sha256($payload, $secret), "");
+    my ( $encoded_sig, $payload ) = split( /\./, $signed, 2 );
+    my $data         = j( decode_base64($payload) );
+    my $response     = [ 'authorize_res', { success => 0 } ];
+    my $expected_sig = encode_base64( hmac_sha256( $payload, $secret ), "" );
     $expected_sig =~ tr/\/+/_-/;
     $expected_sig =~ s/=//;
 
-    if ($encoded_sig eq $expected_sig) {
+    if ( $encoded_sig eq $expected_sig ) {
 
-       # signature verified
-       $response->[1] = { success => 1 };  
+        # signature verified
+        $response->[1] = { success => 1 };
 
-       $opts->{ facebook_id } = $data->{user_id};
-       $opts->{ username } = $data->{user_id};
+        $opts->{facebook_id} = $data->{user_id};
+        $opts->{username}    = $data->{user_id};
 
     }
 
     $login->send($response);
-    
+
     # return unless authorized
     return unless $response->[1]->{success};
-    my $user_opts = $self->fetch_user_opts({ facebook_id => $opts->{facebook_id}});
+    my $user_opts =
+      $self->fetch_user_opts( { facebook_id => $opts->{facebook_id} } );
+
     #$login->send(["authorize_res", { user_opts => $user_opts }]);
 
     # already registered, so login
     if ( $user_opts && $user_opts->{id} ) {
-       $login->send(["authorize_res", { msg => 'already registerd' }]);
-       $self->_login($login, { id => $user_opts->{id} });
+        $login->send( [ "authorize_res", { msg => 'already registerd' } ] );
+        $self->_login( $login,
+            { id => $user_opts->{id} } );
     }
 
-    # register new user 
+    # register new user
     else {
-       $login->send(["authorize_res", { msg => 'register' }]);
-       my $un = 'user' . $opts->{facebook_id};
-       $self->register($login, { facebook_id => $opts->{facebook_id}, username =>  $un });
+        $login->send( [ "authorize_res", { msg => 'register' } ] );
+        my $un = 'user' . $opts->{facebook_id};
+        $self->register( $login,
+            { facebook_id => $opts->{facebook_id}, username => $un } );
     }
 }
-
 
 sub _login {
     my ( $self, $login, $opts ) = @_;
 
     my $response = [ 'login_res', { login_id => $login->id } ];
-    #$login->send(["authorize_res", { before_mango => $opts}]);
 
     my $user_opts = $self->fetch_user_opts($opts);
 
@@ -656,22 +665,25 @@ sub _login {
 
     # logout any old connections
     my $old_login_id = $self->user_map->{ $user_opts->{user_id} };
-    my $old_login = $self->login_list->{ $old_login_id } if $old_login_id;
+    my $old_login = $self->login_list->{$old_login_id} if $old_login_id;
 
-    if ($old_login && ref($old_login)) {
+    if ( $old_login && ref($old_login) ) {
         $old_login->send(
             [
                 'forced_logout',
                 { message => 'Another login has been detected.' }
             ]
         );
+
         #$self->_cleanup($old_login);
         $old_login->logout;
     }
 
     # %$login = ( %$login, %$user_opts );
-    $login->user(FB::User->new(%$user_opts));
+    $login->user( FB::User->new(%$user_opts) );
     $self->user_map->{ $login->user->id } = $login->id;
+    $login->user->db( $self->db );
+
     #print Dumper($self->user_map);
 
     $response->[1] = {
@@ -684,6 +696,7 @@ sub _login {
     #$self->_notify_logins();
     #$login->send(['notify_leaders', { leaders => $self->_fetch_leaders }]);
 
+## Please see file perltidy.ERR
     # $self->join_channel($login, {channel => 'main'});
     # $self->_notify_login_watch(
     #    [ 'notify_login', $self->_fetch_login_opts($login) ] );
@@ -736,9 +749,9 @@ sub _notify_leaders {
     my $response = [
         'notify_leaders',
         {
-           logins => $login_count,
-           leaders => $leaders,
-           success => 1,
+            logins  => $login_count,
+            leaders => $leaders,
+            success => 1,
         }
     ];
 
@@ -759,6 +772,7 @@ sub logout {
 
 sub _logout {
     my ( $self, $login ) = @_;
+
     #$self->_cleanup($login);
     $login->logout unless $login->websocket->is_finished;
 }
@@ -780,43 +794,47 @@ sub logout_user {
 }
 
 sub _debit_chips {
-  my ( $self, $login, $opts ) = @_;
-  my $sql     = <<SQL;
+    my ( $self, $user_id, $chips ) = @_;
+    my $sql = <<SQL;
 UPDATE user 
-SET chips = chips - $opts->{chips} 
-WHERE id = $opts->{user_id}
+SET chips = chips - $chips 
+WHERE id = $user_id
 SQL
-  return $self->db->do($sql);
+    return $self->db->do($sql);
 }
 
 sub _credit_chips {
-  my ( $self, $login, $opts ) = @_;
-  my $sql     = <<SQL;
+    my ( $self, $user_id, $chips ) = @_;
+    my $sql = <<SQL;
 UPDATE user 
-SET chips = chips + $opts->{chips} 
-WHERE id = $opts->{user_id} 
+SET chips = chips + $chips 
+WHERE id = $user_id 
 SQL
-  return $self->db->do($sql);
+    return $self->db->do($sql);
 }
 
 sub _fetch_chips {
-  my ( $self, $login, $opts ) = @_;
-  my $sql = <<SQL;
+    my ( $self, $user_id ) = @_;
+    my $sql = <<SQL;
 SELECT chips 
 FROM user 
-WHERE id = $opts->{user_id}
+WHERE id = ?
 SQL
-  return $self->db->selectrow_array($sql);
+
+  my $sth = $self->db->prepare($sql);
+  $sth->execute( $user_id );
+  my $chips = $sth->fetchrow_array || 0;
+  return $chips;
 }
 
 sub _credit_invested {
-  my ( $self, $login, $opts ) = @_;
-  my $sql     = <<SQL;
+    my ( $self, $user_id, $chips ) = @_;
+    my $sql = <<SQL;
 UPDATE user 
-SET invested = invested + $opts->{chips} 
-WHERE id = $opts->{user_id} 
+SET invested = invested + $chips
+WHERE id = $user_id 
 SQL
-  return $self->db->do($sql);
+    return $self->db->do($sql);
 }
 
 sub _cleanup {
@@ -839,8 +857,8 @@ sub _cleanup {
     if ( $login->has_user ) {
 
         # remove from user_map
-        if ($self->user_map->{ $login->user->id } eq $login->id) {
-           delete $self->user_map->{ $login->user->id };
+        if ( $self->user_map->{ $login->user->id } eq $login->id ) {
+            delete $self->user_map->{ $login->user->id };
         }
 
         # update user database
@@ -974,6 +992,7 @@ sub credit_chips {
        $response->[1]->{chips} = $c;
     }
 =cut
+
     $login->send($response);
 }
 

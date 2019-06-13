@@ -65,8 +65,9 @@
       var seat = el.find(".seat" + v.chair).attr("status", "open");
       seat.append(
         $("<div />").addClass("open-graphic").click( function() {
-          var j = $("#lobby-main").lobby("option", "myData.chips");
-          if (j && o.director_id in j) {
+          var j = $("#lobby-main").lobby("option", "myData");
+          alert(JSON.stringify(j));
+          if (j) {
             self.tableBuy(v.chair, false);
           }
           else {
@@ -140,7 +141,8 @@
            sld = m.find(".opt-sld");
 
       var chips = $("#lobby-main").lobby("option", "myData.chips");
-      var roll = chips && o.director_id in chips ? chips[ o.director_id ] : 0;
+      //var roll = chips && o.director_id in chips ? chips[ o.director_id ] : 0;
+      var roll = chips ? chips : 0;
       var max = roll > o.table_max ? o.table_max : roll;
       sld.slider("option", "max", max);
       bnk.html(roll);
