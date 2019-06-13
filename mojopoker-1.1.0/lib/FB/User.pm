@@ -2,13 +2,15 @@ package FB::User;
 use EV;
 use Moo;
 
+has 'db' => ( is => 'rw', );
+
 has 'id' => (
   is       => 'rw',
   required => 1,
 );
 
 has 'facebook_id' => (
-  predicate => 'has_facebook_user_id',
+  predicate => 'has_facebook_id',
   is        => 'rw',
 );
 
@@ -31,49 +33,51 @@ has 'ring_play' => (
   default => sub { return {} },
 );
 
-=pod
-
 sub fetch_chips {
   my $self = shift;
   my $sql = <<SQL;
 SELECT chips 
 FROM user 
-WHERE id = $self->id
+WHERE id = ?
 SQL
-  return $self->db->selectrow_array($sql);
+  my $sth = $self->db->prepare($sql);
+  $sth->execute( $self->id );
+  my $chips = $sth->fetchrow_array || 0;
+  return $chips;
 }
 
 sub debit_chips {
   my ( $self, $chips ) = @_;
+  my $id = $self->id;
   my $sql     = <<SQL;
 UPDATE user 
 SET chips = chips - $chips 
-WHERE user_id = $self->id 
+WHERE id = $id 
 SQL
   return $self->db->do($sql);
 }
 
 sub credit_chips {
   my ( $self, $chips ) = @_;
+  my $id = $self->id;
   my $sql     = <<SQL;
 UPDATE user 
 SET chips = chips + $chips 
-WHERE id = $self->id 
+WHERE id = $id 
 SQL
   return $self->db->do($sql);
 }
 
 sub credit_invested {
   my ( $self, $chips ) = @_;
+  my $id = $self->id;
   my $sql     = <<SQL;
 UPDATE user 
 SET invested = invested + $chips 
-WHERE user_id = $self->id 
+WHERE id = $id 
 SQL
   return $self->db->do($sql);
 }
-
-=cut
 
 has 'username' => (
   is        => 'rw',

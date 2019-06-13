@@ -50,9 +50,10 @@ around '_unseat_chair' => sub {
   my $chips = $chair->player->chips;
   my $r = $orig->( $self, $chair, $login );
   if ($r) {
-    $login->credit_chips( $self->director_id, $chips );
-    delete $login->ring_play->{ $self->table_id };
-    $login->send( [ 'login_update', { chips => $login->fetch_all_chips } ] ) unless $login->websocket->is_finished;
+    #$self->credit_chips( $login->user->id, $chips );
+    $login->user->credit_chips( $login->user->id, $chips );
+    delete $login->user->ring_play->{ $self->table_id };
+    $login->send( [ 'login_update', { chips => $login->user->fetch_chips } ] ) unless $login->websocket->is_finished;
     $self->_lobby_plr_update;
   }
   return 1;
@@ -100,8 +101,8 @@ around 'join' => sub {
     return $r;
   }
 
-  my $balance = $login->fetch_chips( $self->director_id ) || 0;
-  my $debit = $r->{hydra_chips} || $opts->{chips};
+  my $balance = $login->user->fetch_chips || 0;
+  my $debit = $opts->{chips};
   
   if ( $balance < $debit ) {
     $r->{success} = 0;
@@ -111,22 +112,23 @@ around 'join' => sub {
   }
 
   my $player = FB::Poker::Player->new( %$opts, login => $login );
+  $self->sit( $r->{chair}, $player );
 
   #if ($r->{hydra_chairs}) {
-  if ($self->{hydra_flag}) {
-    $player->wait_bb(0);
-    for my $c (@{ $r->{hydra_chairs} }) {
-      $self->sit( $c, $player->clone );
-    }
-  }
-  else {
-    $self->sit( $r->{chair}, $player );
-  }
+  #if ($self->{hydra_flag}) {
+  #  $player->wait_bb(0);
+  #  for my $c (@{ $r->{hydra_chairs} }) {
+  #    $self->sit( $c, $player->clone );
+  #  }
+  #}
+  #else {
+  #  $self->sit( $r->{chair}, $player );
+  #}
 
-  $login->debit_chips( $self->director_id, $debit );
-  $login->ring_play->{ $self->table_id } |= 0;
-  $login->ring_play->{ $self->table_id }++;
-  $login->send( [ 'login_update', { chips => $login->fetch_all_chips } ] );
+  $login->user->debit_chips( $login->user->id, $debit );
+  $login->user->ring_play->{ $self->table_id } |= 0;
+  $login->user->ring_play->{ $self->table_id }++;
+  $login->send( [ 'login_update', { chips => $login->user->fetch_chips } ] );
   $self->_lobby_plr_update;
 
   return $r;
@@ -138,9 +140,12 @@ after '_end_game_reset' => sub {
   # auto_rebuy
   return unless $chair->has_player;
   if ( !$chair->player->chips && $chair->player->auto_rebuy ) {
-    my $avail = $chair->player->login->fetch_chips( $self->director_id );
+    my $user_id = $chair->player->login->user->id;
+    my $avail = $chair->player->login->user->fetch_chips;
+    #my $avail = $self->_fetch_chips( $user_id );
     my $rebuy = $self->table_max > $avail ? $avail : $self->table_max;
-    $chair->player->login->debit_chips( $self->director_id, $rebuy );
+    $chair->player->login->user->debit_chips( $user_id, $rebuy );
+    #$self->debit_chips( $user_id, $rebuy );
     $chair->player->chips($rebuy);
   }
 };

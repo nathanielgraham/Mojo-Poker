@@ -25,7 +25,7 @@ has 'handle' => (
 
 sub _build_handle {
  my $self = shift;
- return $self->login->handle ? $self->login->handle : $self->login->username;
+ return $self->login->user->handle ? $self->login->user->handle : $self->login->user->username;
 }
 
 has 'payout' => (

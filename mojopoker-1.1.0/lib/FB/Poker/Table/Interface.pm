@@ -5,10 +5,10 @@ use Moo::Role;
 #use Data::Dumper;
 use POSIX qw(ceil);
 
-has 'director_id' => (
-  is       => 'rw',
-  required => 1,
-);
+#has 'director_id' => (
+#  is       => 'rw',
+#  required => 1,
+#);
 
 # r, t
 has 'type' => (
@@ -184,7 +184,7 @@ sub _find_chairs {
   my ( $self, $login ) = @_;
   my @chairs;
   for my $chair ( grep { $_->has_player } @{ $self->chairs } ) {
-    if ( $login->id == $chair->player->login->id ) {
+    if ( $login->id eq $chair->player->login->id ) {
       push @chairs, $chair;
     }
   }
@@ -279,7 +279,7 @@ sub _unjoin {
   #my $chair = $self->chairs->[$cid];
   unless ( $chair
     && $chair->has_player
-    && $chair->player->login->id == $login->id )
+    && $chair->player->login->id eq $login->id )
   {
     return {
       success  => 0,
@@ -410,7 +410,7 @@ sub _watch {
     time_bank   => $self->time_bank,
     turn_clock  => $self->turn_clock,
     small_bet   => $self->small_bet,
-    director_id => $self->director_id,
+    #director_id => $self->director_id,
     fix_limit   => $self->fix_limit,
     pot_cap     => $self->pot_cap,
     ante        => $self->ante,
