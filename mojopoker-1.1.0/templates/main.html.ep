@@ -44,7 +44,10 @@
         </div>
       </div>
 
-      <div id="modal-box" class="lobby-modal"></div>
+      <div id="modal-box" class="lobby-modal">
+        <div class="modal-mes"></div>
+        <button class="modal-ok center"></button>
+      </div>
 
       <div id="ring-info" class="tab-info games"></div>
 
@@ -59,9 +62,9 @@
       </div>
 
       <div id="social-box">
-
+        <div id="main-chat"></div>
         <form id="social-form">
-          <input id="social-input" type="text" maxlength="30">
+          <input id="social-input" type="text" maxlength="30"></input>
         </form>
       </div>
     </div>
@@ -89,7 +92,8 @@ $(document).ready(function()
                         {
                             appId      : '<%= $facebook_app_id %>',
                             cookie     : true,
-                            xfbml      : true,
+                            status     : true,
+                            xfbml      : false,
                             version    : 'v3.3'
                         }
                     );

@@ -13,6 +13,12 @@ has 'id' => (
   required => 1,
 );
 
+has 'block' => (
+  is  => 'rw',
+  isa => sub { die "Not a hash!" unless ref( $_[0] ) eq 'HASH' },
+  default => sub { return {} },
+);
+
 has 'user' => (
   is        => 'rw',
   predicate => 'has_user',

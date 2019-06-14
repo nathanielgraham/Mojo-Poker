@@ -33,52 +33,6 @@ has 'ring_play' => (
   default => sub { return {} },
 );
 
-sub fetch_chips {
-  my $self = shift;
-  my $sql = <<SQL;
-SELECT chips 
-FROM user 
-WHERE id = ?
-SQL
-  my $sth = $self->db->prepare($sql);
-  $sth->execute( $self->id );
-  my $chips = $sth->fetchrow_array || 0;
-  return $chips;
-}
-
-sub debit_chips {
-  my ( $self, $chips ) = @_;
-  my $id = $self->id;
-  my $sql     = <<SQL;
-UPDATE user 
-SET chips = chips - $chips 
-WHERE id = $id 
-SQL
-  return $self->db->do($sql);
-}
-
-sub credit_chips {
-  my ( $self, $chips ) = @_;
-  my $id = $self->id;
-  my $sql     = <<SQL;
-UPDATE user 
-SET chips = chips + $chips 
-WHERE id = $id 
-SQL
-  return $self->db->do($sql);
-}
-
-sub credit_invested {
-  my ( $self, $chips ) = @_;
-  my $id = $self->id;
-  my $sql     = <<SQL;
-UPDATE user 
-SET invested = invested + $chips 
-WHERE id = $id 
-SQL
-  return $self->db->do($sql);
-}
-
 has 'username' => (
   is        => 'rw',
   clearer   => 1,

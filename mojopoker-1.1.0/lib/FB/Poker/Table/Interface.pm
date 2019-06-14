@@ -168,10 +168,10 @@ sub _build_watch_list {
 sub _find_chairs_ip {
   my ( $self, $login ) = @_;
   my @chairs;
-  for my $chair ( grep { $_->has_player && $_->player->login->level != 10 }
+  for my $chair ( grep { $_->has_player && $_->player->login->user->level != 10 }
     @{ $self->chairs } )
   {
-    if ( $login->level != 10
+    if ( $login->user->level != 10
       && $login->remote_address eq $chair->player->login->remote_address )
     {
       push @chairs, $chair;
@@ -472,12 +472,12 @@ sub _players_detail {
       in_pot_this_round => $chair->in_pot_this_round,
       is_in_hand        => $chair->is_in_hand,
       login_id          => $chair->player->login->id,
-      user_id           => $chair->player->login->user_id,
+      user_id           => $chair->player->login->user->id,
 
       #sit_out           => $chair->player->sit_out,
     };
 
-    if ( $login && $login->id == $chair->player->login->id ) {
+    if ( $login && $login->id eq $chair->player->login->id ) {
       $res->{cards}      = $self->_fetch_private( $chair->index );
       $res->{auto_muck}  = $chair->player->auto_muck;
       $res->{auto_rebuy} = $chair->player->auto_rebuy;
@@ -1060,7 +1060,7 @@ around qw(deal_down deal_up) => sub {
   my ( $orig, $self, $chair, $count ) = @_;
   return if $self->sp_flag;
   my $cards    = $orig->( $self, $chair, $count );
-  my $user_id  = $chair->player->login->user_id;
+  my $user_id  = $chair->player->login->user->id;
   my $login_id = $chair->player->login->id;
   my $notice   = [
     'deal_hole',
@@ -1084,7 +1084,7 @@ around qw(deal_down deal_up) => sub {
   $notice->[1]->{cards} =
     [ map { $_->up_flag ? $_->rank . $_->suit : undef } @$cards ];
   for my $log ( values %{ $self->watch_list } ) {
-    next if $log->id == $login_id;    #player
+    next if $log->id eq $login_id;    #player
     $log->send($notice);
   }
 };

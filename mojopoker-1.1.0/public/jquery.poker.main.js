@@ -13,14 +13,12 @@
             });
 
             if (!("WebSocket" in window)) {
-                var m = $("#modal-box");
-                m.append(
-                    $("<div />").addClass("modal-mes")
-                    .html("Your browser needs to be updated. Please download Mozilla Firefox."),
-                    $("<button />").addClass("modal-ok center").html("OK").click(function() {
-                        m.hide();
-                    })
-                ).show()
+                $("#modal-box > .modal-mes").html("Update your browser");
+
+                $("#modal-box > .modal-ok").html("OK").click(function() {
+                      $("#modal-box > .modal-mes").hide();
+                });
+                $("#modal-box > .modal-mes").show()
             }
 
             var ws = new WebSocket(o.ws);
@@ -29,6 +27,7 @@
                 self._recModal('Connection closed.');
             }
             ws.onclose = function(e) {
+                //alert("closed");
                 self._recModal('Connection closed.');
             }
             ws.onopen = function(e) {
@@ -58,6 +57,10 @@
             */
             self._img_preload();
             //self._msgHandler('watch_tour_res', { tour_id: 1 });
+            $("#modal-box > .modal-mes").click(function() {
+               self._create();
+            });
+
         },
 
         _img_preload: function() {
@@ -106,24 +109,21 @@
 
         _recModal: function(t) {
 
-            var self = this,
-                m = $("#modal-box");
-            m.empty();
+            var h = this,
+                f = this.element.find("#modal-box"),
+                j = $("<div />").addClass("modal-mes").html(t),
+                e = $("<button />").addClass("modal-ok center").html("Reconnect"),
+                g = f.width();
+            f.append(j, e.click(function() {
+                f.hide();
+                h._create();
+            })).show();
 
-            m.append(
-                $("<div />").addClass("modal-mes").html(t),
-                $("<button />").addClass("modal-ok center").html("Reconnect")
-                .click(function() {
-                    //m.empty();
-                    //m.hide();
-                    self.element.empty();
-                    self._create();
-                }),
-                $("<button />").addClass("modal-cancel center").html("Cancel")
-                .click(function() {
-                    self.destroy();
-                })
-            ).show();
+           //$("#modal-box > .modal-mes").html("ASFASDF").show();
+           //$("#modal-box > .modal-ok").html("reconnect").click(function() { 
+           //   self.element.empty();
+           //   self._create();
+           //});
         },
         watch_tour: function(v) {
             this.options.wsock.send(JSON.stringify(['watch_tour', v]));

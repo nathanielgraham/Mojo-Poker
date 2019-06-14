@@ -51,9 +51,11 @@ around '_unseat_chair' => sub {
   my $r = $orig->( $self, $chair, $login );
   if ($r) {
     #$self->credit_chips( $login->user->id, $chips );
-    $login->user->credit_chips( $login->user->id, $chips );
+    $self->db->credit_chips( $login->user->id, $chips );
+    #$login->user->credit_chips( $login->user->id, $chips );
     delete $login->user->ring_play->{ $self->table_id };
-    $login->send( [ 'login_update', { chips => $login->user->fetch_chips } ] ) unless $login->websocket->is_finished;
+    $login->send( [ 'login_update', { chips => $self->db->fetch_chips( $login->user->id )}]) unless $login->websocket->is_finished;
+    #$login->send( [ 'login_update', { chips => $login->user->fetch_chips } ] ) unless $login->websocket->is_finished;
     $self->_lobby_plr_update;
   }
   return 1;
@@ -101,7 +103,8 @@ around 'join' => sub {
     return $r;
   }
 
-  my $balance = $login->user->fetch_chips || 0;
+  my $balance = $self->db->fetch_chips( $login->user->id ) || 0;
+  #my $balance = $login->user->fetch_chips || 0;
   my $debit = $opts->{chips};
   
   if ( $balance < $debit ) {
@@ -125,10 +128,13 @@ around 'join' => sub {
   #  $self->sit( $r->{chair}, $player );
   #}
 
-  $login->user->debit_chips( $login->user->id, $debit );
+  $self->db->debit_chips( $login->user->id, $debit );
+  #$login->user->debit_chips( $login->user->id, $debit );
   $login->user->ring_play->{ $self->table_id } |= 0;
   $login->user->ring_play->{ $self->table_id }++;
-  $login->send( [ 'login_update', { chips => $login->user->fetch_chips } ] );
+  $login->send( [ 'login_update', { chips => $self->db->fetch_chips( $login->user->id ) } ] );
+
+  #$login->send( [ 'login_update', { chips => $login->user->fetch_chips } ] );
   $self->_lobby_plr_update;
 
   return $r;
@@ -141,10 +147,12 @@ after '_end_game_reset' => sub {
   return unless $chair->has_player;
   if ( !$chair->player->chips && $chair->player->auto_rebuy ) {
     my $user_id = $chair->player->login->user->id;
-    my $avail = $chair->player->login->user->fetch_chips;
+    my $avail = $self->db->fetch_chips($user_id);
+    #my $avail = $chair->player->login->user->fetch_chips;
     #my $avail = $self->_fetch_chips( $user_id );
     my $rebuy = $self->table_max > $avail ? $avail : $self->table_max;
-    $chair->player->login->user->debit_chips( $user_id, $rebuy );
+    $self->db->debit_chips( $user_id, $rebuy );
+    #$chair->player->login->user->debit_chips( $user_id, $rebuy );
     #$self->debit_chips( $user_id, $rebuy );
     $chair->player->chips($rebuy);
   }

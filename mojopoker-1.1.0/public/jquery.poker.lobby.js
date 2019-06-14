@@ -418,25 +418,12 @@
                     $("#poker-main").main("authorize", res);
                 };
             });
-            FB.Event.subscribe('auth.login', e.login_event);
-            FB.Event.subscribe('auth.logout', e.logout_event);
+            //FB.Event.subscribe('auth.login', e.login_event);
+            //FB.Event.subscribe('auth.logout', e.logout_event);
 
-        },
-        login_event: function() {
-            FB.getLoginStatus(function(res) {
-                if (res.status == 'connected') {
-                    //FB.api('/me', {fields: "id,name,picture"}, function(res2) {
-                    //alert(JSON.stringify(res2));
-                    //  $("#poker-main").main("authorize", res2);
-                    //});
-                    $("#poker-main").main("authorize", res);
-                };
-            });
-
-           //$("#poker-main").main("authorize", res2);
         },
         logout_event: function() {
-           $("#poker-main").main(["logout"]);
+        //   $("#poker-main").main("logout");
         },
         modal_message: function(i) {
             var h = this,
@@ -506,7 +493,7 @@
                 h = e.options,
                 g = e.element;
             this.options.myData = f;
-            alert(JSON.stringify(f));
+            //alert(JSON.stringify(f));
             //e._buildCashier();
             //g.find("#lobby-login").html("Cashier").off("click").click(function() {
             //    $("#poker-main").main("login_info")
@@ -581,7 +568,6 @@
         notify_leaders: function(f) {
             //alert(JSON.stringify(f));
             var table = $("#lobby-leader tbody");
-/*
             table.empty();
             $.each(f.leaders, function(index, obj) {
                 var row = $("<tr >").append("<td >").html(index + 1);
@@ -590,7 +576,6 @@
                 });
                 table.append(row);
             });
-*/
         },
         notify_login: function(f) {
             var e = this,

@@ -4,7 +4,8 @@ use Moo;
 with 'FB::Poker';
 
 use feature qw(state);
-use DBI;
+#use DBI;
+use FB::Db;
 use SQL::Abstract;
 use Mojo::JSON qw(j);
 use Digest::SHA qw(hmac_sha1_hex hmac_sha256);
@@ -16,7 +17,6 @@ use FB::User;
 use Time::Piece;
 use Time::Seconds;
 use MIME::Base64;
-use Data::Dumper;
 
 has 'cycle_event' => ( is => 'rw', );
 
@@ -72,23 +72,27 @@ has 'start_time' => (
     default => sub { return time },
 );
 
-has 'sql' => (
-    is => 'rw',
-    isa =>
-      sub { die "Not a SQL::Abstract!" unless $_[0]->isa('SQL::Abstract') },
-    builder => '_build_sql',
+#has 'sql' => (
+#    is => 'rw',
+#    isa =>
+#      sub { die "Not a SQL::Abstract!" unless $_[0]->isa('SQL::Abstract') },
+#    builder => '_build_sql',
+#);
+
+#sub _build_sql {
+#    my $self = shift;
+#    return SQL::Abstract->new;
+#}
+
+has 'db' => ( 
+   is => 'rw', 
+   isa => sub { die "Not a FB::Db" unless $_[0]->isa('FB::Db') },
+   builder => '_build_db',
 );
-
-sub _build_sql {
-    my $self = shift;
-    return SQL::Abstract->new;
-}
-
-has 'db' => ( is => 'rw', );
 
 sub _build_db {
     my $self = shift;
-    return DBI->connect( "dbi:SQLite:dbname=/opt/mojopoker/db/fb.db", "", "" );
+    return FB::Db->new;
 }
 
 has 'login_list' => (
@@ -333,7 +337,6 @@ sub _fetch_login_opts {
     my ( $self, $login ) = @_;
     return {
         login_id       => $login->id,
-        user_id        => $login->user->id,
         remote_address => $login->remote_address,
     };
 }
@@ -413,9 +416,6 @@ sub _guest_login {
 sub guest_login {
     my ( $self, $login ) = @_;
 
-    #$login->timeout(EV::timer 10, 0, sub { $self->logout($login) });
-    #$login->credit_chips( 1, 2000 );
-    #$login->credit_invested( 1, 2000 );
     $self->login_list->{ $login->id } = $login;
     $login->send(
         [
@@ -427,18 +427,17 @@ sub guest_login {
         ]
     );
 
-    #    $self->_notify_login_watch(
-    #        [ 'notify_login', $self->_fetch_login_opts($login) ] );
-
-    #    $self->_watch_logins($login);
     $self->_watch_lobby($login);
+    $self->_login_snap($login);
     $self->_notify_logins();
-    $login->send( [ 'notify_leaders', { leaders => $self->_fetch_leaders } ] );
+    $login->send( [ 'notify_leaders', { leaders => $self->db->fetch_leaders } ] );
 }
 
 sub register {
     my ( $self, $login, $opts ) = @_;
+
     my $response = ['register_res'];
+
     if ( $login->has_user ) {
         $response->[1] = {
             success => 0,
@@ -448,57 +447,33 @@ sub register {
         $login->send($response);
         return;
     }
-    $opts->{reg_date} = time;
-    $opts->{level}    = 2;
-    $opts->{handle}   = $opts->{username} if $opts->{username};
-    my ( $stmt, @bind ) = $self->sql->insert( 'user', $opts );
-    my $sth = $self->db->prepare($stmt);
-    $sth->execute(@bind);
-    if ( $self->db->err ) {
-        $response->[1] = {
-            success  => 0,
-            username => $opts->{username},
-            message  => 'username already taken ... or something.',
-        };
-        $login->send($response);
-        return;
-    }
-    $opts->{id} = $self->db->last_insert_id( "", "", "", "" );
-
-    # create bookmark
-    $opts->{bookmark} = hmac_sha1_hex( $opts->{id}, $self->secret );
-
-    # db handle
-    #$opts->{db}         = $self->db;
 
     # add user
-    $login->user( FB::User->new(%$opts) );
+    $login->user( $self->db->new_user($opts) );
     $self->user_map->{ $login->user->id } = $login->id;
-    $login->user->db( $self->db );
+    #$login->user->db( $self->db );
 
     # update user
-    $self->_update_user( $login, $opts );
-    $self->_credit_chips( $login->user->id, 2000);
-    $self->_credit_invested( $login->user->id, 2000);
-    $response->[1] = { success => 1, %{ $self->_fetch_login_info($login) } };
+    #$self->_update_user( $login, $opts );
+    $self->db->credit_chips( $login->user->id, 2000);
+    $self->db->credit_invested( $login->user->id, 2000);
+    $response->[1] = { success => 1, %{ $self->_fetch_user_info($login) } };
     $login->send($response);
 }
 
-sub _update_user {
+#sub _update_user {
 
-    my ( $self, $login, $opts ) = @_;
-    $opts->{last_visit} = time;
+#    my ( $self, $login, $opts ) = @_;
+#    $opts->{last_visit} = time;
 
     #$opts->{remote_address} = $login->websocket->remote_address
     #  if $login->websocket->is_websocket;
 
-    #print Dumper($opts);
-    my ( $stmt, @bind ) =
-      $self->sql->update( 'user', $opts, { id => $opts->{id} } );
-    my $sth = $self->db->prepare($stmt);
-    $sth->execute(@bind);
-
-}
+#    my ( $stmt, @bind ) =
+#      $self->sql->update( 'user', $opts, { id => $opts->{id} } );
+#    my $sth = $self->db->prepare($stmt);
+#    $sth->execute(@bind);
+#}
 
 sub update_login {
     my ( $self, $login, $opts ) = @_;
@@ -521,17 +496,18 @@ sub _update_login {
 sub reload {
 
     my ( $self, $login ) = @_;
-    my $login_info = $self->_fetch_login_info($login);
+
     my $inplay     = 0;
-    for my $v ( values %{ $login_info->{ring_play} } ) {
+    for my $v ( values %{ $login->user->ring_play } ) {
         $inplay += $v;
     }
-    my $chips = $login_info->fetch_chips;
+
+    my $chips = $self->db->fetch_chips($login->user->id);
     my $total = $inplay + $chips;
 
     if ( $total < 2000 ) {
-        $self->_credit_chips( $login->user->id, 2000 - $total );
-        $self->_credit_invested( $login->user->id, 2000 - $total );
+        $self->db->credit_chips( $login->user->id, 2000 - $total );
+        $self->credit_invested( $login->user->id, 2000 - $total );
     }
     $self->login_info($login);
 }
@@ -546,19 +522,9 @@ sub login_info {
 sub _fetch_login_info {
     my ( $self, $login ) = @_;
 
-    my $ring_map = {};
-    for my $t ( map { $self->table_list->{$_} }
-        keys %{ $login->user->ring_play } )
-    {
-        $ring_map->{ $t->table_id } = 0;
-        for my $c ( @{ $t->_find_chairs($login) } ) {
-            $ring_map->{ $t->table_id } += $c->chips;
-        }
-    }
     return {
         %{ $self->_fetch_user_info($login) },
         login_id  => $login->id,
-        ring_play => $ring_map,
         success   => 1,
     };
 }
@@ -566,7 +532,8 @@ sub _fetch_login_info {
 sub _fetch_user_info {
     my ( $self, $login ) = @_;
     return unless $login->has_user;
-    my $chips = $self->_fetch_chips( $login->user->id );
+    my $chips = $self->db->fetch_chips( $login->user->id );
+
     return {
         id          => $login->user->id,
         facebook_id => $login->user->facebook_id,
@@ -577,6 +544,7 @@ sub _fetch_user_info {
         birthday    => $login->user->birthday,
         handle      => $login->user->handle,
         chips       => $chips,
+        #ring_play   => $login->user->ring_play,
         last_visit  => $login->user->last_visit,
     };
 }
@@ -605,19 +573,16 @@ sub authorize {
     }
 
     $login->send($response);
-
     # return unless authorized
     return unless $response->[1]->{success};
-    my $user_opts =
-      $self->fetch_user_opts( { facebook_id => $opts->{facebook_id} } );
 
-    #$login->send(["authorize_res", { user_opts => $user_opts }]);
+    my $user = $self->db->fetch_user( { facebook_id => $opts->{facebook_id} } );
 
     # already registered, so login
-    if ( $user_opts && $user_opts->{id} ) {
+    if ( $user && $user->id ) {
         $login->send( [ "authorize_res", { msg => 'already registerd' } ] );
-        $self->_login( $login,
-            { id => $user_opts->{id} } );
+        $login->user( $user );
+        $self->_login( $login );
     }
 
     # register new user
@@ -630,21 +595,21 @@ sub authorize {
 }
 
 sub _login {
-    my ( $self, $login, $opts ) = @_;
+    my ( $self, $login ) = @_;
+    #my ( $self, $login, $opts ) = @_;
 
     my $response = [ 'login_res', { login_id => $login->id } ];
 
-    my $user_opts = $self->fetch_user_opts($opts);
+    #my $user_opts = $self->fetch_user_opts($opts);
 
-    #$login->send(["authorize_res", { mango => $user_opts}]);
-    unless ( $user_opts && $user_opts->{user_id} ) {
+    unless ( $login->has_user ) {
         $response->[1]->{success} = 0;
         $response->[1]->{message} = 'Login failed.';
         $login->send($response);
         return;
     }
 
-    if ( $user_opts->{user_id} == 1 ) {
+    if ( $login->user && $login->user->id == 1 ) {
         unless ( $login->remote_address eq '127.0.0.1' ) {
             $response->[1]->{success} = 0;
             $response->[1]->{message} = 'No remote admin access.';
@@ -653,18 +618,18 @@ sub _login {
         }
     }
 
-    if ( $login->has_user ) {
-        $response->[1]->{success} = 0;
-        $response->[1]->{message} = 'You are already logged in.';
-        $login->send($response);
-        return;
-    }
+    #if ( $login->has_user ) {
+    #    $response->[1]->{success} = 0;
+    #    $response->[1]->{message} = 'You are already logged in.';
+    #    $login->send($response);
+    #    return;
+    #}
 
     #$login->user(FB::User->new(%$user_opts));
     #$self->user_map->{ $login->user->id } = $login->id;
 
     # logout any old connections
-    my $old_login_id = $self->user_map->{ $user_opts->{user_id} };
+    my $old_login_id = $self->user_map->{ $login->user->id };
     my $old_login = $self->login_list->{$old_login_id} if $old_login_id;
 
     if ( $old_login && ref($old_login) ) {
@@ -680,26 +645,22 @@ sub _login {
     }
 
     # %$login = ( %$login, %$user_opts );
-    $login->user( FB::User->new(%$user_opts) );
+    # $login->user( FB::User->new(%$user_opts) );
     $self->user_map->{ $login->user->id } = $login->id;
-    $login->user->db( $self->db );
 
-    #print Dumper($self->user_map);
+    #$login->user->db( $self->db );
 
     $response->[1] = {
         %{ $response->[1] },
         success => 1,
         %{ $self->_fetch_login_info($login) }
     };
+
     $login->send($response);
 
     #$self->_notify_logins();
     #$login->send(['notify_leaders', { leaders => $self->_fetch_leaders }]);
 
-## Please see file perltidy.ERR
-    # $self->join_channel($login, {channel => 'main'});
-    # $self->_notify_login_watch(
-    #    [ 'notify_login', $self->_fetch_login_opts($login) ] );
 }
 
 #sub _force_logout {
@@ -710,14 +671,23 @@ sub _login {
 
 sub login {
     my ( $self, $login, $opts ) = @_;
-    $self->_login( $login, $opts, { username => 1, password => 1 } );
+    my $user = $self->db->fetch_user( $opts );
+    $login->user($user); 
+    $self->_login( $login );
+
+    #$self->_login( $login, $opts, { username => 1, password => 1 } );
 }
 
 sub login_book {
-    my ( $self, $login, $opts ) = @_;
-    $self->_login( $login, $opts, { bookmark => 1 } );
+    my ( $self, $login, $opts ) = @_; 
+    my $user = $self->db->fetch_user( $opts );
+    $login->user($user); 
+    $self->_login( $login );
+
+#    $self->_login( $login, $opts, { bookmark => 1 } );
 }
 
+=pod
 sub fetch_user_opts {
     my ( $self, $opts ) = @_;
     my ( $stmt, @bind ) = $self->sql->select( 'user', '*', $opts );
@@ -727,6 +697,7 @@ sub fetch_user_opts {
     $href->{user_id} = $href->{id};
     return $href;
 }
+=cut
 
 sub _fetch_leaders {
     my $self = shift;
@@ -742,7 +713,7 @@ SQL
 
 sub _notify_leaders {
     my $self    = shift;
-    my $leaders = $self->_fetch_leaders;
+    my $leaders = $self->db->fetch_leaders;
 
     my $login_count = keys %{ $self->login_list };
 
@@ -793,6 +764,8 @@ sub logout_user {
     $login->send($response);
 }
 
+=pod
+
 sub _debit_chips {
     my ( $self, $user_id, $chips ) = @_;
     my $sql = <<SQL;
@@ -837,6 +810,8 @@ SQL
     return $self->db->do($sql);
 }
 
+=cut
+
 sub _cleanup {
     my ( $self, $login ) = @_;
 
@@ -862,7 +837,7 @@ sub _cleanup {
         }
 
         # update user database
-        $self->_update_user( $login, $self->_fetch_user_info($login) );
+        $self->db->update_user( $self->_fetch_user_info($login), $login->user->id );
 
         # cashout: update user_chips
     }
@@ -985,12 +960,14 @@ sub credit_chips {
     #my $login_id = $self->user_map->{ $opts->{user_id} };
 
 =pod
+
     if (exists($self->user_map->{ $opts->{user_id} })) {
        my $log = $self->login_list->{ $opts->{user_id} };
        my $c = $log->credit_chips($opts->{chips});
        $response->[1]->{success} = 1;
        $response->[1]->{chips} = $c;
     }
+
 =cut
 
     $login->send($response);
@@ -1003,7 +980,7 @@ sub cycle300 {
 
 sub BUILD {
     my $self = shift;
-    $self->db( $self->_build_db );
+    #$self->db( $self->_build_db );
     $self->option( { %{ $self->option }, %{ $self->poker_option } } );
     $self->command( { %{ $self->command }, %{ $self->poker_command } } );
     $self->_create_channel( { channel => 'main' } );

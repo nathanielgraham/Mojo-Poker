@@ -167,14 +167,11 @@ body {
 
 .modal-ok {
   position: absolute;
-  bottom: 8%;
-  left: 22%;
+  bottom: 20%;
+  left: 50%;
   height: 14%;
-  width: 22%;
-}
-
-.modal-ok.center {
-  left: 39%;
+  width: 30%;
+  margin-left: -15%;
 }
 
 .modal-cancel {
@@ -579,30 +576,37 @@ body {
 */
 
 #main-chat {
-  top: 13%;
+  top: 3%;
   left: 2%;
   position: absolute;
   width: 96%;
-  height: 78%;
+  height: 84%;
   color: black;
   background-color: #f0f0f0;
   overflow-y: hidden;
 }
 
 .chat-msg {
-  font-size: 80%;
+  font-size: 100%;
+}
+
+#social-form {
+  position: absolute;
+  width: 96%;
+  height: 1.3em;
+  left: 0%;
+  bottom: 0%;
 }
 
 #social-input {
   position: absolute;
-  width: 96%;
-  height: 1.2em;
+  width: 100%;
+  height: 100%;
   left: 0%;
   bottom: 0%;
   background-color: white;
-  font-size: 80%;
+  font-size: 100%;
 }
-
 
 .main-box {
   position: absolute;

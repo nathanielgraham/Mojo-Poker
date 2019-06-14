@@ -25,6 +25,8 @@ sub _build_hydra_flag {
   return;
 }
 
+has 'db' => ( is => 'rw', );
+
 has 'auto_play_event' => ( is => 'rw', );
 
 has 'new_game_delay' => (

@@ -11,7 +11,7 @@ use POSIX qw(setsid);
 
 $ENV{MOJO_MODE}               = 'development';
 $ENV{MOJO_INACTIVITY_TIMEOUT} = 0;
-$ENV{MOJO_LOG_LEVEL} = 'debug';
+$ENV{MOJO_LOG_LEVEL} = 'error';
 
 my @listen = ('http://*:3000');
 

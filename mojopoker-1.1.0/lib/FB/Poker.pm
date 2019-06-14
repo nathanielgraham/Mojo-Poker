@@ -17,6 +17,7 @@ sub _build_table_maker {
     return FB::Poker::Table::Maker->new( lobby_watch => $self->lobby_watch, );
 }
 
+=pod
 has 'pdb' => (
     is      => 'rw',
     builder => '_build_pdb',
@@ -27,6 +28,7 @@ sub _build_pdb {
     return DBI->connect( "dbi:SQLite:dbname=/opt/mojopoker/db/poker.db", "",
         "" );
 }
+=cut
 
 has 'table_count' => (
     is      => 'rw',
@@ -195,7 +197,20 @@ sub _build_poker_option {
         chips     => qr/^[-+]?[0-9]*\.?[0-9]+$/,
         fix_limit => qr/^\d{1,10}$/,
 
-        limit    => qr/^(NL|PL|FL)$/,
+        limit => qr/^(NL|PL|FL)$/,
+
+        chair_count => qr/^[\w_]{1,20}$/,
+        small_blind => qr/^[\w_]{1,20}$/,
+        big_blind   => qr/^[\w_]{1,20}$/,
+        ante        => qr/^[\w_]{1,20}$/,
+        turn_clock  => qr/^[\w_]{1,20}$/,
+        time_bank   => qr/^[\w_]{1,20}$/,
+        eval_high   => qr/^[\w_]{1,20}$/,
+        eval_low    => qr/^[\w_]{1,20}$/,
+        hi_mult     => qr/^[\w_]{1,20}$/,
+        low_mult    => qr/^[\w_]{1,20}$/,
+        class       => qr/^[\w_]{1,20}$/,
+
         card_idx => sub {
             my $aref = shift;
             return unless $aref && ref $aref eq 'ARRAY' && scalar @$aref <= 7;
@@ -206,12 +221,15 @@ sub _build_poker_option {
         },
     );
 
+=pod
     # game options
     my $sth = $self->pdb->prepare('SELECT (name) FROM game_option');
     $sth->execute;
     while ( my $opt = $sth->fetchrow_array ) {
         $option{$opt} = $opt_reg;
     }
+=cut
+
     return {%option};
 }
 
@@ -245,6 +263,7 @@ has 'tour_count' => (
 sub _create_ring {
     my ( $self, $login, $opts ) = @_;
     $opts->{table_id} = $self->table_count( $self->table_count + 1 );
+    $opts->{db} = $self->db;
 
     #$opts->{director_id} = $login->user_id;
     my $game = $self->table_maker->ring_table($opts);
@@ -474,7 +493,7 @@ sub table_chips {
 
     #my $director_id = $table->director_id;
 
-    if ( $opts->{chips} > $self->_fetch_chips( $login->user->id ) ) {
+    if ( $opts->{chips} > $self->db->fetch_chips( $login->user->id ) ) {
         $response->[1]->{message} = 'Not enough chips.';
         $login->send($response);
         return;
@@ -487,7 +506,7 @@ sub table_chips {
         table_id => $table->table_id,
 
         #director_id => $director_id,
-        balance => $self->_fetch_chips( $login->user->id ),
+        balance => $self->db->fetch_chips( $login->user->id ),
         chips   => $player->chips,
         chair   => $chair->index,
     };
@@ -577,18 +596,19 @@ sub _poker_cleanup {
 
     $self->_unwatch_lobby($login);
 
-    # remove login from table list
-    for my $ring (
-        map  { $self->table_list->{$_} }
-        grep { exists $self->table_list->{$_} }
-        keys %{ $login->user->ring_play }
-      )
-    {
-        $ring->_unwatch($login);
-        $ring->_unjoin_all($login);
-        $ring->_unwait($login);
+    # remove user from table list
+    if ( $login->has_user ) {
+        for my $ring (
+            map  { $self->table_list->{$_} }
+            grep { exists $self->table_list->{$_} }
+            keys %{ $login->user->ring_play }
+          )
+        {
+            $ring->_unwatch($login);
+            $ring->_unjoin_all($login);
+            $ring->_unwait($login);
+        }
     }
-
 }
 
 sub _validate_action {
@@ -625,7 +645,7 @@ sub _validate_action {
       if defined $rv->{table}->action;
     if (   $chair
         && $chair->has_player
-        && $chair->player->login->id == $login->id )
+        && $chair->player->login->id eq $login->id )
     {
         $rv->{chair} = $chair->index;
     }
@@ -1037,6 +1057,7 @@ sub pick_game {
     $o->{big_blind}   = $table->big_blind   if $table->big_blind;
 
     $o->{wait_list} = $table->wait_list if $table->wait_list;
+    $o->{db} = $self->db;
 
     #$o->{tournament} = $table->tournament if $table->can('tournament');
 
