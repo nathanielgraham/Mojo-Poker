@@ -161,7 +161,7 @@ sub _build_command {
         watch_logins   => [ \&watch_logins ],
         unwatch_logins => [ \&unwatch_logins ],
         login_info     => [ \&login_info ],
-        reload         => [ \&reload ],
+        reload         => [ \&reload, {} , 2 ],
         update_login   => [
             \&update_login,
             {
@@ -173,11 +173,11 @@ sub _build_command {
             }
         ],
         logout         => [ \&logout,         {} ],
-        block          => [ \&block,          { login_id => 1 } ],
-        unblock        => [ \&unblock,        { login_id => 1 } ],
-        join_channel   => [ \&join_channel,   { channel => 1 } ],
-        unjoin_channel => [ \&unjoin_channel, { channel => 1 } ],
-        write_channel  => [ \&write_channel,  { channel => 1, message => 1 } ],
+        block          => [ \&block,          { login_id => 1 }, 2 ],
+        unblock        => [ \&unblock,        { login_id => 1 }, 2 ],
+        join_channel   => [ \&join_channel,   { channel => 1 }, 2 ],
+        unjoin_channel => [ \&unjoin_channel, { channel => 1 }, 2 ],
+        write_channel  => [ \&write_channel,  { channel => 1, message => 1 },2 ],
         ping           => [ \&ping,           {} ],
 
         # ADMIN
@@ -294,9 +294,10 @@ sub request {
     }
 
     my $level = $self->command->{$cmd}->[2];
-    if ( $level && $login->user->level < $level ) {
+    my $login_level = $login->has_user ? $login->user->level : 0;
+    if ( $level && $login_level < $level ) {
         $login->req_error;
-        $login->send( [ 'permission_denied', { command => $cmd } ] );
+        $login->send( [ 'permission_denied', { success => 0, command => $cmd } ] );
         return;
     }
 

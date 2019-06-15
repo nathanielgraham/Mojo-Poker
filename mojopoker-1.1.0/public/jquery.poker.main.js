@@ -1,4 +1,5 @@
-;(function($, window, document, undefined) {
+;
+(function($, window, document, undefined) {
     $.widget('poker.main', {
 
         _create: function() {
@@ -6,29 +7,39 @@
                 o = self.options,
                 el = self.element;
 
-            //      el.attr("id", "poker-main");
-
             $.each(o, function(key, value) {
                 self._setOption(key, value);
             });
 
             if (!("WebSocket" in window)) {
-                $("#modal-box > .modal-mes").html("Update your browser");
 
-                $("#modal-box > .modal-ok").html("OK").click(function() {
-                      $("#modal-box > .modal-mes").hide();
+                var h = this;
+
+                $("#modal-box").dialog({
+                    title: "Upgrade your browser",
+                    position: {
+                        my: "center",
+                        at: "center",
+                        of: window
+                    },
+                    modal: true,
+                    buttons: [{
+                        text: "Logout",
+                        click: function() {
+                            h._destroy();
+                        }
+                    }]
                 });
-                $("#modal-box > .modal-mes").show()
+
             }
 
             var ws = new WebSocket(o.ws);
 
             ws.onerror = function(e) {
-                self._recModal('Connection closed.');
+                self._recModal();
             }
             ws.onclose = function(e) {
-                //alert("closed");
-                self._recModal('Connection closed.');
+                self._recModal();
             }
             ws.onopen = function(e) {
                 ws.send(JSON.stringify(['guest_login']));
@@ -46,21 +57,8 @@
                 lobbyMain: lo
             });
 
-            /*
-                  el.append(
-                    $("<div />").attr("id", "table-ring"),
-                    $("<div />").attr("id", "table-tour"),
-                    $("<div />").attr("id", "table-fast"),
-                    $("<div />").attr("id", "tour-lobby"),
-                    lo
-                  );
-            */
             self._img_preload();
             //self._msgHandler('watch_tour_res', { tour_id: 1 });
-            $("#modal-box > .modal-mes").click(function() {
-               self._create();
-            });
-
         },
 
         _img_preload: function() {
@@ -107,23 +105,25 @@
             this._super('_destroy');
         },
 
-        _recModal: function(t) {
+        _recModal: function() {
+            var h = this;
 
-            var h = this,
-                f = this.element.find("#modal-box"),
-                j = $("<div />").addClass("modal-mes").html(t),
-                e = $("<button />").addClass("modal-ok center").html("Reconnect"),
-                g = f.width();
-            f.append(j, e.click(function() {
-                f.hide();
-                h._create();
-            })).show();
-
-           //$("#modal-box > .modal-mes").html("ASFASDF").show();
-           //$("#modal-box > .modal-ok").html("reconnect").click(function() { 
-           //   self.element.empty();
-           //   self._create();
-           //});
+            $("#modal-box").dialog({
+                title: "Connection closed",
+                position: {
+                    my: "center",
+                    at: "center",
+                    of: window
+                },
+                modal: true,
+                buttons: [{
+                    text: "Reconnect",
+                    click: function() {
+                        $(this).dialog("close");
+                        h._create();
+                    }
+                }]
+            });
         },
         watch_tour: function(v) {
             this.options.wsock.send(JSON.stringify(['watch_tour', v]));

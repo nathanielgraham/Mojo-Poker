@@ -71,6 +71,22 @@
   color: green;
 }
 
+.modal-ok {
+  position: absolute;
+  bottom: 8%;
+  left: 14%;
+  height: auto;
+  width: 30%;
+}
+
+.modal-cancel {
+  position: absolute;
+  bottom: 8%;
+  right: 14%;
+  height: auto;
+  width: 30%;
+}
+
 .opt-head {
   position: absolute;
   text-align: center;

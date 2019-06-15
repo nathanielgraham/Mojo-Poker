@@ -135,15 +135,15 @@ sub _build_poker_command {
         'destroy_ring' => [ \&destroy_ring, { table_id => 1 }, 4 ],
         'join_ring'    => [
             \&join_ring,
-            { %{ $self->table_option }, table_id => 1, chair => 0, chips => 0 }
+            { %{ $self->table_option }, table_id => 1, chair => 0, chips => 0 }, 2
         ],
-        'unjoin_ring'   => [ \&unjoin_ring,   { table_id => 1, chair   => 0 } ],
-        'wait_ring'     => [ \&wait_ring,     { table_id => 1 } ],
-        'unwait_ring'   => [ \&unwait_ring,   { table_id => 1 } ],
+        'unjoin_ring'   => [ \&unjoin_ring,   { table_id => 1, chair   => 0 }, 2 ],
+#        'wait_ring'     => [ \&wait_ring,     { table_id => 1 } ],
+#        'unwait_ring'   => [ \&unwait_ring,   { table_id => 1 } ],
         'watch_table'   => [ \&watch_table,   { table_id => 1, tour_id => 0 } ],
         'unwatch_table' => [ \&unwatch_table, { table_id => 1, tour_id => 0 } ],
         'table_chips' =>
-          [ \&table_chips, { table_id => 1, chair => 1, chips => 1 } ],
+          [ \&table_chips, { table_id => 1, chair => 1, chips => 1 }, 2 ],
         'watch_lobby'   => [ \&watch_lobby,   {} ],
         'unwatch_lobby' => [ \&unwatch_lobby, {} ],
         'table_info'    => [ \&table_info,    { table_id => 1, tour_id => 0 } ],
@@ -152,29 +152,29 @@ sub _build_poker_command {
             { %{ $self->table_option }, table_id => 1, tour_id => 0 }
         ],
         'table_chat' =>
-          [ \&table_chat, { table_id => 1, tour_id => 0, message => 1 } ],
-        'bet' => [ \&bet, { table_id => 1, chips => 1, tour_id => 0 } ],
-        'check' => [ \&check, { table_id => 1, tour_id  => 0 } ],
-        'fold'  => [ \&fold,  { table_id => 1, tour_id  => 0 } ],
-        'draw'  => [ \&draw,  { table_id => 1, card_idx => 1, tour_id => 0 } ],
+          [ \&table_chat, { table_id => 1, tour_id => 0, message => 1 }, 2 ],
+        'bet' => [ \&bet, { table_id => 1, chips => 1, tour_id => 0 }, 2 ],
+        'check' => [ \&check, { table_id => 1, tour_id  => 0 }, 2 ],
+        'fold'  => [ \&fold,  { table_id => 1, tour_id  => 0 }, 2 ],
+        'draw'  => [ \&draw,  { table_id => 1, card_idx => 1, tour_id => 0 }, 2 ],
         'discard' =>
-          [ \&discard, { table_id => 1, card_idx => 1, tour_id => 0 } ],
+          [ \&discard, { table_id => 1, card_idx => 1, tour_id => 0 }, 2 ],
 
       # tournaments
       #'create_tour' => [
       #  #\&create_tour, { %{ $self->game_option }, %{ $self->tour_option } }, 4
       #  \&create_tour, $self->tour_option, 4
       #],
-        'watch_tour'   => [ \&watch_tour,   { tour_id => 1 } ],
-        'unwatch_tour' => [ \&unwatch_tour, { tour_id => 1 } ],
-        'open_tour'    => [ \&open_tour,    { tour_id => 1 } ],
-        'start_tour'   => [ \&start_tour,   { tour_id => 1 } ],
-        'reg_tour'     => [ \&reg_tour,     { tour_id => 1 } ],
-        'unreg_tour'   => [ \&unreg_tour,   { tour_id => 1 } ],
+      #  'watch_tour'   => [ \&watch_tour,   { tour_id => 1 } ],
+      #  'unwatch_tour' => [ \&unwatch_tour, { tour_id => 1 } ],
+      #  'open_tour'    => [ \&open_tour,    { tour_id => 1 } ],
+      #  'start_tour'   => [ \&start_tour,   { tour_id => 1 } ],
+      #  'reg_tour'     => [ \&reg_tour,     { tour_id => 1 } ],
+      #  'unreg_tour'   => [ \&unreg_tour,   { tour_id => 1 } ],
 
         # dealers choice
         'pick_game' =>
-          [ \&pick_game, { table_id => 1, tour_id => 0, game => 1 } ],
+          [ \&pick_game, { table_id => 1, tour_id => 0, game => 1 }, 2 ],
 
         # admin
     };

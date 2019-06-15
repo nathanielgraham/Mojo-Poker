@@ -411,34 +411,40 @@
             }, 1000);
             FB.getLoginStatus(function(res) {
                 if (res.status == 'connected') {
-                    //FB.api('/me', {fields: "id,name,picture"}, function(res2) {
-                    //alert(JSON.stringify(res2));
-                    //  $("#poker-main").main("authorize", res2);
-                    //});
-                    $("#poker-main").main("authorize", res);
-                };
+                    e._login_handler(res);
+                } else {
+                    FB.login(function(res) {
+                       e._login_handler(res);
+                    });
+                }
             });
-            //FB.Event.subscribe('auth.login', e.login_event);
-            //FB.Event.subscribe('auth.logout', e.logout_event);
+            // render login button
+            //$("login-logout").css().click();
+        },
+        _login_handler: function(res) {
+           $("#poker-main").main("authorize", res);
+        },
+        modal_message: function(t, title) {
+            var h = this;
 
-        },
-        logout_event: function() {
-        //   $("#poker-main").main("logout");
-        },
-        modal_message: function(i) {
-            var h = this,
-                f = this.element.find("#modal-box"),
-                j = $("<div />").addClass("modal-mes").html(i),
-                e = $("<button />").addClass("modal-ok center").html("OK"),
-                g = f.width();
-            f.append(j, e.click(function() {
-                f.hide()
-            })).show();
-            setTimeout(function() {
-                f.fadeOut(1200, function() {
-                    $(this).children().remove()
-                })
-            }, 2000)
+            title |= 'Attention';
+            $("#modal-text").empty().text(t);
+            $("#modal-box").dialog({
+                title: title,
+                position: {
+                    my: "center",
+                    at: "center",
+                    of: window
+                },
+                modal: true,
+                buttons: [{
+                    text: "OK",
+                    click: function() {
+                        $("#modal-text").empty();
+                        $(this).dialog("close");
+                    }
+                }]
+            });
         },
         _buildCashier: function(f) {
             var e = this,
@@ -508,13 +514,26 @@
         },
         authorize_res: function(f) {
             //alert(JSON.stringify(f));
+            var h = this;
             if (f.success) {
                 //h.myData = f;
                 //$("#lobby-username").html(h.myData.name);
-                this.options.myData.username = f.name;
-                this.login_success(f)
-            }
 
+                FB.api('/me', {fields: "id,name,picture"}, function(res2) {
+                   //alert(JSON.stringify(res2));
+                });
+
+                // render logout button
+                //$("login-logout").css().click();
+
+                // render cashier button
+                //$("cashier").css().click();
+
+                h.options.myData.username = f.name;
+                h.login_success(f);
+            } else {
+               h.modal_message('Bad Credentials', 'Login to Facebook and try again.');
+            }
         },
         login_update: function(f) {
             var e = this,
