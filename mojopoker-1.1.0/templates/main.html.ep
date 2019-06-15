@@ -23,18 +23,18 @@
         <div id="table-ring"></div>
 
         <div id="lobby-main">
-            <div id="lobby-head1">
+            <div id="lobby-head2">
                 <div id="lobby-board"></div>
                 <div id="lobby-leader"></div>
-                <div id="lobby-countdown"><span></span></div>
+                <div id="lobby-countdown">Next winner in <span></span></div>
             </div>
 
-            <div id="lobby-head2">
+            <div id="lobby-head1">
                 <div id="lobby-logo"></div>
             </div>
 
             <div id="lobby-head3">
-                <div id="lobby-count">Players Online:<span></span></div>
+                <div id="lobby-count">Online now: <span></span></div>
                 <div id="lobby-loginout"></div>
                 <div id="lobby-cashier"></div>
                 <div id="lobby-name"></div>

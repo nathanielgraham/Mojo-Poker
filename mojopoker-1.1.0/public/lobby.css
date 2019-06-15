@@ -31,27 +31,47 @@ body {
     position: absolute;
     top: 0%;
     left: 0%;
-    width: 37%;
-    height: 25%;
+    width: 28%;
+    height: 30%;
     text-align: center;
 }
 
 #lobby-head2 {
     position: absolute;
     top: 0%;
-    left: 37%;
-    width: 26%;
-    height: 25%;
+    left: 28%;
+    width: 44%;
+    height: 30%;
     text-align: center;
 }
 
 #lobby-head3 {
     position: absolute;
     top: 0%;
-    left: 63%;
-    width: 37%;
-    height: 25%;
+    left: 72%;
+    width: 28%;
+    height: 30%;
     text-align: center;
+}
+
+#lobby-board {
+    position: absolute;
+    width: 100%;
+    height:20%;
+    background-position: center top;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-image: url("/img/leaderboard.png");
+}
+
+#lobby-logo {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-position: center top;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-image: url("/img/logo2.png");
 }
 
 #lobby-logo {
@@ -66,22 +86,21 @@ body {
 
 #lobby-leader {
     position: absolute;
-    bottom: 0%;
-    left: 5%;
-    width: 90%;
-    height: 70%;
+    bottom: 2%;
+    left: 4%;
+    width: 92%;
+    height: 64%;
     border: 1px black;
-    font-size: 90%;
+    font-size: 110%;
     background-color: #f0f0f0;
 }
 
 #lobby-countdown {
     position: absolute;
-    top: 0%;
+    top: 20%;
     width: 100%;
     height: 1.2em;
     font-size: 100%;
-    font-weight: bold;
     text-align: center;
     color: white;
     white-space: pre;
@@ -89,28 +108,35 @@ body {
 
 #lobby-loginout {
     position: absolute;
-    top: 30%;
+    top: 20%;
     left: 0%;
     width: 100%;
-    height: 30%;
+    height: 28%;
     margin: 0 auto;
     text-align: center;
     cursor: pointer;
     background-position: center center;
     background-size: contain;
     background-repeat: no-repeat;
-    background-image: url("/img/login.png");
+}
 
+.login {
+    background-image: url("/img/login.png");
+}
+
+.logout {
+    background-image: url("/img/logout.png");
 }
 
 #lobby-cashier {
     position: absolute;
-    top: 65%;
+    top: 48%;
     left: 0%;
     width: 100%;
-    height: 30%;
+    height: 28%;
     margin: 0 auto;
     text-align: center;
+    display: none;
     cursor: pointer;
     background-position: center center;
     background-size: contain;
@@ -124,14 +150,16 @@ body {
     width: 100%;
     top: 0%;
     color: #f0f0f0;
+    font-size: 120%;
+    font-weight: bold;
     text-align: center;
     white-space: pre;
 }
 
 #lobby-name {
     position: absolute;
-    bottom: 18%;
-    font-size: 100%;
+    bottom: 5%;
+    font-size: 110%;
     width: 100%;
     text-align: center;
     color: #f0f0f0;
@@ -167,7 +195,7 @@ body {
     position: absolute;
     font-size: 120%;
     width: 70%;
-    height: 49%;
+    height: 46%;
     left: 0%;
     bottom: 0%;
 }
@@ -275,7 +303,7 @@ body {
 
 #social-box {
     position: absolute;
-    height: 49%;
+    height: 46%;
     width: 30%;
     bottom: 0%;
     left: 70%;
@@ -368,19 +396,19 @@ body {
 
 #game-tabs1 {
     position: absolute;
-    top: 27%;
+    top: 30%;
 }
 
 #game-tabs2 {
-    top: 33%;
+    top: 36%;
 }
 
 #game-tabs3 {
-    top: 39%;
+    top: 42%;
 }
 
 #game-tabs4 {
-    top: 45%;
+    top: 48%;
 }
 
 #tabs>[type=game] .lobby-tab {

@@ -30,7 +30,7 @@
                 22: ["Seat", "int"],
                 23: ["Block", "int"],
                 24: ["Player Pool", "int"],
-                25: ["Rank", "int"],
+                25: ["#", "int"],
                 26: ["Rating", "int"]
             },
             ringCols: [1, 11, 2, 3, 4, 5, 7, 8, 9],
@@ -391,7 +391,7 @@
                 chips: f.chips
             };
 
-            $("#lobby-username").html(h.myData.username);
+            $("#lobby-name").html(h.myData.username);
 
             h.distance = f.timer;
 
@@ -402,27 +402,29 @@
                 var hours = Math.floor((h.distance % (86400)) / (3600));
                 var minutes = Math.floor((h.distance % 3600) / 60);
                 var seconds = Math.floor(h.distance % 60);
+
                 counter.html(days + 'd ' + hours + 'h ' + minutes + 'm ' + seconds + 's');
-                //counter.html(h.distance);
 
                 if (h.distance <= 0) {
                     clearInterval(h.clockTimer);
                 }
             }, 1000);
+
+            e._check_login_status();
+
+        },
+        _check_login_status: function() {
             FB.getLoginStatus(function(res) {
                 if (res.status == 'connected') {
-                    e._login_handler(res);
+                    $("#poker-main").main("authorize", res);
                 } else {
-                    FB.login(function(res) {
-                       e._login_handler(res);
-                    });
+                   $("#lobby-loginout").removeClass("logout").addClass("login").off('click').click(function() {
+                      FB.login(function(r) {
+                         $("#poker-main").main("authorize", r);
+                      });
+                   });
                 }
             });
-            // render login button
-            //$("login-logout").css().click();
-        },
-        _login_handler: function(res) {
-           $("#poker-main").main("authorize", res);
         },
         modal_message: function(t, title) {
             var h = this;
@@ -478,7 +480,7 @@
                     var m = 0;
                     var j = 0;
                     $.each(l, function(o, n) {
-                            m += n;
+                        m += n;
                     });
                     g = m + i.myData.chips;
                     $("#real-inplay .cash-det").html(j);
@@ -504,7 +506,7 @@
             //g.find("#lobby-login").html("Cashier").off("click").click(function() {
             //    $("#poker-main").main("login_info")
             //});
-            $("#lobby-username").html(h.myData.username)
+            $("#lobby-name").html(h.myData.username)
         },
         login_res: function(f) {
             if (f.success) {
@@ -514,13 +516,26 @@
         },
         authorize_res: function(f) {
             //alert(JSON.stringify(f));
-            var h = this;
+            var t = this,
+                o = t.options,
+                e = t.element;
             if (f.success) {
-                //h.myData = f;
+                $.extend(o.myData, f);
                 //$("#lobby-username").html(h.myData.name);
 
-                FB.api('/me', {fields: "id,name,picture"}, function(res2) {
-                   //alert(JSON.stringify(res2));
+                $("#lobby-loginout").removeClass("login").addClass("logout").off('click').click(function() {
+                    FB.logout(function() {
+                       $("#poker-main").main("logout");
+                    });
+                });
+                $("#lobby-cashier").off('click').click(function() {
+                   alert('cashier');
+                }).show();
+
+                FB.api('/me', {
+                    fields: "id,name,picture"
+                }, function(res2) {
+                    alert(JSON.stringify(res2));
                 });
 
                 // render logout button
@@ -529,10 +544,10 @@
                 // render cashier button
                 //$("cashier").css().click();
 
-                h.options.myData.username = f.name;
-                h.login_success(f);
+                t.options.myData.username = f.name;
+                t.login_success(f);
             } else {
-               h.modal_message('Bad Credentials', 'Login to Facebook and try again.');
+                //h.modal_message('Login and tyr again', 'Bad Credentials');
             }
         },
         login_update: function(f) {
