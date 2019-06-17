@@ -500,6 +500,10 @@ sub _update_profile {
     $login->user->handle($opts->{first_name});
     $login->user->profile_pic($opts->{picture}->{data}->{url});
 
+    # update user database
+    my $ui = $self->_fetch_user_info($login);
+    $self->db->update_user( $ui, $login->user->id );
+
     return { success => 1, %{ $self->_fetch_user_info($login) } };
 }
 

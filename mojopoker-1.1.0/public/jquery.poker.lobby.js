@@ -85,6 +85,8 @@
                 e = v.options,
                 f = v.element;
 
+            clearInterval(e.clockTimer);
+
             $("#lobby-name").hide();
             $("#lobby-chips").hide();
             $("#main-chat").empty();
@@ -261,6 +263,8 @@
                 username: f.username,
                 chips: f.chips
             };
+
+            clearInterval(h.clockTimer); 
 
             //$("#lobby-name").html(h.myData.username);
 
