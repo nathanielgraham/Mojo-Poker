@@ -11,6 +11,10 @@
                 self._setOption(key, value);
             });
 
+            $("#lobby-name").hide();
+            $("#lobby-chips").hide();
+            $("#main-chat").empty();
+
             if (!("WebSocket" in window)) {
 
                 var h = this;
@@ -125,6 +129,12 @@
                 }]
             });
         },
+        fetch_cashier: function(v) {
+            this.options.wsock.send(JSON.stringify(['fetch_cashier', v]));
+        },
+        update_profile: function(v) {
+            this.options.wsock.send(JSON.stringify(['update_profile', v]));
+        },
         watch_tour: function(v) {
             this.options.wsock.send(JSON.stringify(['watch_tour', v]));
         },
@@ -222,6 +232,28 @@
                 el = self.element;
 
             var fnMap = {
+                'fetch_cashier_res': function(v) {
+                    $("#cashier-inplay span").html(v.inplay);
+                    $("#cashier-inbank span").html(v.inbank);
+                    $( "#cashier" ).dialog({
+                       position: { my: "center", at: "center", of: window },
+                       resizable: false,
+                       height: "auto",
+                       width: 240,
+                       modal: true,
+                       buttons: {
+                          "Reload chips": function() {
+                              $("#poker-main").main("reload");
+                              $( this ).dialog( "close" );
+                          }
+                       }
+                    });
+                    $( "#cashier" ).dialog( "moveToTop" );
+                    //o.lobbyMain.lobby('update_profile_res', v);
+                },
+                'update_profile_res': function(v) {
+                    o.lobbyMain.lobby('update_profile_res', v);
+                },
                 'join_channel_res': function(v) {
                     o.lobbyMain.lobby('join_channel_res', v);
                 },
@@ -264,12 +296,19 @@
                     });
                 },
                 'notify_message': function(v) {
-                    if (v.tour_id) {
-
-                    } else if (v.table_id) {
-                        el.find("#tring" + v.table_id).table_ring('notify_message', v);
+                    if (v.table_id) {
+                       var table = $("#tring" + v.table_id);
+                       var msgs = table.find(".chat-box .chat-msg");
+                       if (msgs.length > 20) {
+                          msgs.first().remove();
+                       }
+                       table.table_ring('notify_message', v);
                     } else {
-                        o.lobbyMain.lobby('notify_message', v);
+                       var msgs = $("#main-chat .chat-msg");
+                       if (msgs.length > 20) {
+                          msgs.first().remove();
+                       }
+                       o.lobbyMain.lobby('notify_message', v);
                     }
                 },
                 'player_update': function(v) {

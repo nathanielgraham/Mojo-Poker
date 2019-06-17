@@ -75,9 +75,11 @@ sub update_user {
 sub fetch_leaders {
     my $self = shift;
     my $sql  = <<SQL;
-SELECT username, ROUND((chips*1.0/invested),3) AS rating 
+SELECT username, ROUND((chips*1.0/invested),3) * 1000 AS rating 
 FROM user
+WHERE id != 1 
 ORDER BY rating DESC
+LIMIT 20
 SQL
     my $ary_ref = $self->dbh->selectall_arrayref($sql);
     return $ary_ref;

@@ -130,8 +130,9 @@ around 'join' => sub {
 
   $self->db->debit_chips( $login->user->id, $debit );
   #$login->user->debit_chips( $login->user->id, $debit );
-  $login->user->ring_play->{ $self->table_id } |= 0;
-  $login->user->ring_play->{ $self->table_id }++;
+  #$login->user->ring_play->{ $self->table_id } |= 0;
+  $login->user->ring_play->{ $self->table_id } = 0;
+  #$login->user->ring_play->{ $self->table_id }++;
   $login->send( [ 'login_update', { chips => $self->db->fetch_chips( $login->user->id ) } ] );
 
   #$login->send( [ 'login_update', { chips => $login->user->fetch_chips } ] );

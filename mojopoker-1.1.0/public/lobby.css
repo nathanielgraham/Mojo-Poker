@@ -20,6 +20,9 @@ body {
     top: 50%;
 }
 
+#cashier {
+    display: none;
+}
 #table-ring {
     position: absolute;
     display: block;
@@ -92,6 +95,7 @@ body {
     height: 64%;
     border: 1px black;
     font-size: 110%;
+    text-align: left;
     background-color: #f0f0f0;
 }
 
@@ -108,7 +112,7 @@ body {
 
 #lobby-loginout {
     position: absolute;
-    top: 20%;
+    top: 15%;
     left: 0%;
     width: 100%;
     height: 28%;
@@ -130,7 +134,7 @@ body {
 
 #lobby-cashier {
     position: absolute;
-    top: 48%;
+    top: 39%;
     left: 0%;
     width: 100%;
     height: 28%;
@@ -158,7 +162,16 @@ body {
 
 #lobby-name {
     position: absolute;
-    bottom: 5%;
+    bottom: 18%;
+    font-size: 110%;
+    width: 100%;
+    text-align: center;
+    color: #f0f0f0;
+}
+
+#lobby-chips {
+    position: absolute;
+    bottom: 2%;
     font-size: 110%;
     width: 100%;
     text-align: center;
@@ -198,6 +211,7 @@ body {
     height: 46%;
     left: 0%;
     bottom: 0%;
+    text-align: left;
 }
 
 /*

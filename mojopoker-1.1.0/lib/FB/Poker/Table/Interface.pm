@@ -473,6 +473,7 @@ sub _players_detail {
       is_in_hand        => $chair->is_in_hand,
       login_id          => $chair->player->login->id,
       user_id           => $chair->player->login->user->id,
+      profile_pic       => $chair->player->login->user->profile_pic,
 
       #sit_out           => $chair->player->sit_out,
     };
@@ -607,6 +608,7 @@ after 'sit' => sub {
     handle   => $player->handle,
     chips    => $player->chips,
     chair    => $chair,
+    profile_pic => $player->login->user->profile_pic,
   }]);
 };
 

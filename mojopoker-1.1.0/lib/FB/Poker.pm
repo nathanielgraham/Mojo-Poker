@@ -137,6 +137,10 @@ sub _build_poker_command {
             \&join_ring,
             { %{ $self->table_option }, table_id => 1, chair => 0, chips => 0 }, 2
         ],
+        'fetch_cashier'  => [ \&fetch_cashier ],
+        'reload'         => [ \&reload, {}, 2 ],
+
+
         'unjoin_ring'   => [ \&unjoin_ring,   { table_id => 1, chair   => 0 }, 2 ],
 #        'wait_ring'     => [ \&wait_ring,     { table_id => 1 } ],
 #        'unwait_ring'   => [ \&unwait_ring,   { table_id => 1 } ],
@@ -259,6 +263,57 @@ has 'tour_count' => (
   default => sub { return 0 },
 );
 =cut
+
+sub _fetch_inplay {
+    my ( $self, $login ) = @_;
+
+    my $inplay = 0;
+
+    for my $ring (
+       map  { $self->table_list->{$_} }
+       grep { exists $self->table_list->{$_} }
+       keys %{ $login->user->ring_play }
+    ) {
+       for my $chair (
+         grep { $_->has_player && $_->player->login->id eq $login->id} @{ $ring->chairs }
+       ) {
+         $inplay += $chair->chips;
+       }
+   }
+   return $inplay;
+}
+
+sub fetch_cashier {
+    my ( $self, $login ) = @_;
+
+    my $inplay = $self->_fetch_inplay($login);
+
+    my $chips = $self->db->fetch_chips( $login->user->id );
+
+    $login->send(["fetch_cashier_res", {
+       login_id => $login->id,
+       user_id => $login->user->id,
+       inplay => $inplay,
+       inbank => $chips,
+    }]);
+}
+
+sub reload {
+
+    my ( $self, $login ) = @_;
+
+    my $inplay = $self->_fetch_inplay($login);
+
+    my $chips = $self->db->fetch_chips( $login->user->id );
+    my $total = $inplay + $chips;
+
+    if ( $total < 2000 ) {
+        $self->db->credit_chips( $login->user->id, 2000 - $total );
+        $self->db->credit_invested( $login->user->id, 2000 - $total );
+    }
+    $self->login_info($login);
+}
+
 
 sub _create_ring {
     my ( $self, $login, $opts ) = @_;
@@ -499,7 +554,7 @@ sub table_chips {
         return;
     }
 
-    $self->_debit_chips( $login->user->id, $opts->{chips} );
+    $self->db->debit_chips( $login->user->id, $opts->{chips} );
     $player->chips( $player->chips + $opts->{chips} );
 
     my $re = {

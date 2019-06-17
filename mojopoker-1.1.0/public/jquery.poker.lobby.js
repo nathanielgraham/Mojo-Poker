@@ -33,7 +33,7 @@
                 25: ["#", "int"],
                 26: ["Rating", "int"]
             },
-            ringCols: [1, 11, 2, 3, 4, 5, 7, 8, 9],
+            ringCols: [25, 11, 2, 3, 4, 5, 7, 8, 9],
             leaderCols: [25, 20, 26],
             socialCols: [17, 18, 19],
             hydraCols: [1, 11, 2, 3, 4, 24],
@@ -85,14 +85,12 @@
                 e = v.options,
                 f = v.element;
 
+            $("#lobby-name").hide();
+            $("#lobby-chips").hide();
+            $("#main-chat").empty();
+
             // leaderboard table
             $("#lobby-leader").append(v._buildTable(e.leaderCols));
-
-            // login button
-            //$("#lobby-login").html("Log-In").click(function() {
-            //    $("#login-box").show();
-            //    $("#login-name").focus()
-            //});
 
             // logout button
             $("#lobby-logout").click(function() {
@@ -122,32 +120,6 @@
                     id: o + "-tab",
                     info: o
                 }).addClass("lobby-tab").html(m[0]))
-            });
-
-            // signup
-            var na = $("#new-account");
-            na.submit(function(f) {
-                f.preventDefault();
-                na.hide();
-                if ($("#signup-pw").val() !== $("#signup-cp").val()) {
-                    v.modal_message("Passwords don't match")
-                } else {
-                    var o = {
-                        username: $("#signup-un").val(),
-                        password: $("#signup-pw").val()
-                    };
-                    if ($("#signup-em").val()) {
-                        o.email = h.val()
-                    }
-                    $("#poker-main").main("register", o)
-                }
-            });
-
-            $("#new-account .modal-ok").html("OK").click(function() {
-                $("#signup-form").submit()
-            });
-            $("new-account .modal-cancel").html("Cancel").click(function() {
-                na.hide()
             });
 
             // clicking behavior
@@ -192,53 +164,6 @@
             });
             v.resizeLobby();
             $("#social-input").focus();
-
-
-            /*
-            FB.getLoginStatus(function(res) {
-                if (res.status == 'connected') {
-                    //FB.api('/me', {fields: "id,name,picture"}, function(res2) {
-                    //alert(JSON.stringify(res2));
-                    //  $("#poker-main").main("authorize", res2);
-                    //});
-                    $("#poker-main").main("authorize", res);
-                };
-            });
-            // In your HTML:
-            <input type="button" value="Login" onclick="FB.login();">
-            <input type="button" value="Logout" onclick="FB.logout();">
-
-            // In your onload method:
-            FB.Event.subscribe('auth.login', login_event);
-            FB.Event.subscribe('auth.logout', logout_event);
-            // In your JavaScript code:
-            var login_event = function(response) {
-              console.log("login_event");
-              console.log(response.status);
-              console.log(response);
-            }
-
-            var logout_event = function(response) {
-              console.log("logout_event");
-              console.log(response.status);
-              console.log(response);
-            }
-            */
-        },
-        _filter_money: function(f) {
-            var e = this,
-                i = e.options,
-                g = e.element;
-            var h = g.find(".tab-info.games.select tbody tr:visible");
-            if (f == "real") {
-                h.filter("[did!=1]").show();
-                h.filter("[did=1]").hide()
-            } else {
-                if (f == "play") {
-                    h.filter("[did=1]").show();
-                    h.filter("[did!=1]").hide()
-                }
-            }
         },
         watch_table_res: function(f) {
             var e = this,
@@ -246,21 +171,6 @@
                 g = e.element;
             $("#table-ring").append($("<div />").attr("id", "tring" + f.table_id).table_ring(f))
         },
-        /*
-                watch_tour_res: function(f) {
-                    var e = this,
-                        h = e.options,
-                        g = e.element;
-                    $.extend(f, {
-                        tourData: h.tourData[f.tour_id],
-                        tourClasses: h.tourClasses,
-                        gameState: h.gameState,
-                        gameTabs: h.gameTabs,
-                        epochDiff: h.epochDiff
-                    });
-                    $("#tour-lobby").append($("<div />").attr("id", "tour" + f.tour_id).tour(f))
-                },
-        */
         _destroy: function() {},
         /*
                 _buildRing: function(i) {
@@ -290,56 +200,15 @@
             var f = this;
             var e;
             if (g.success) {
-                e = "Registered! Welcome " + g.username + "!";
                 f.login_success(g)
-            } else {
-                e = g.message
-            }
-            this.modal_message(e)
+            } 
         },
-        _buildLogin: function() {
-            var g = this,
-                l = g.options,
-                i = g.element,
-                j = i.find("#login-box"),
-                e = $("<input />").attr({
-                    id: "login-name",
-                    name: "username",
-                    placeholder: "Username",
-                    type: "text",
-                    maxlength: 12,
-                    pattern: "[A-Za-z]([0-9a-zA-Z_]){3,12}"
-                }).prop({
-                    autofocus: true,
-                    required: true
-                }),
-                h = $("<input />").attr({
-                    id: "login-pass",
-                    placeholder: "Password",
-                    maxlength: 12,
-                    name: "password",
-                    type: "password"
-                }).prop({
-                    required: true
-                });
-            j.append($("<div />").addClass("modal-header").html("Log-In"), $("<form />").attr("id", "login-form").append($("<div />").attr("id", "label-name").html("Username:"), e, $("<div />").attr("id", "label-pass").html("Password:"), h).submit(function(f) {
-                f.preventDefault();
-                $("#poker-main").main("login", {
-                    username: e.val(),
-                    password: h.val()
-                });
-                j.hide()
-            }), $("<button />").attr({
-                id: "login-create"
-            }).html("Create New Account").click(function() {
-                j.hide();
-                $("#new-account").show();
-                $("#signup-name").focus()
-            }), $("<button />").addClass("modal-ok").html("OK").click(function() {
-                $("#login-form").submit()
-            }), $("<button />").addClass("modal-cancel").html("Cancel").click(function() {
-                j.hide()
-            }))
+        update_profile_res: function(g) {
+            var f = this;
+            var e;
+            if (g.success) {
+                f._update_lobby(g)
+            }
         },
         _buildTable: function(h) {
             var e = this,
@@ -384,6 +253,8 @@
             var e = this,
                 h = e.options,
                 g = e.element;
+            e._update_lobby(f);
+
             h.epochDiff = (new Date).getTime() - (f.epoch * 1000);
             h.myData = {
                 login_id: f.login_id,
@@ -391,7 +262,7 @@
                 chips: f.chips
             };
 
-            $("#lobby-name").html(h.myData.username);
+            //$("#lobby-name").html(h.myData.username);
 
             h.distance = f.timer;
 
@@ -448,65 +319,20 @@
                 }]
             });
         },
-        _buildCashier: function(f) {
-            var e = this,
-                h = e.options,
-                g = e.element;
-            g.append($("<div />").attr("id", "cashier").addClass("big-modal").append($("<div />").attr("id", "cash-head").html("CASHIER"), $("<div />").attr("id", "cash-close").click(function() {
-                $("#cashier").hide()
-            }), $("<div />").attr("id", "cash-one").append($("<div />").attr("id", "pers-head").addClass("head").html("Personal Information"), $("<div />").attr("id", "cash-user").addClass("cash-block").append($("<div />").addClass("cash-cat").html("Username:"), $("<div />").addClass("cash-det")), $("<div />").attr("id", "cash-email").addClass("cash-block").append($("<div />").addClass("cash-cat").html("Email:"), $("<div />").addClass("cash-det")), $("<div />").attr("id", "cash-deposit").addClass("cash-block").append($("<div />").addClass("cash-cat").html("Rating:"), $("<div />").addClass("cash-det").html("0"))), $("<div />").attr("id", "cash-two").append($("<div />").attr("id", "acct-head").addClass("head").html("Account Balance"), $("<div />").attr("id", "play-head").addClass("head").html("PLAY MONEY"), $("<div />").attr("id", "play-avail").addClass("cash-block").append($("<div />").addClass("cash-cat").html("Available:"), $("<div />").addClass("cash-det")), $("<div />").attr("id", "play-inplay").addClass("cash-block").append($("<div />").addClass("cash-cat").html("In Play:"), $("<div />").addClass("cash-det")), $("<div />").attr("id", "play-total").append($("<div />").addClass("cash-cat").html("Total:"), $("<div />").addClass("cash-det"))), $("<div />").attr("id", "cash-three").append($("<button />").attr("id", "cash-reload").html("Reload Chips").click(function() {
-                $("#poker-main").main("reload")
-            }), $("<button />").attr("id", "cash-leave").html("Leave Cashier").click(function() {
-                $("#cashier").hide()
-            }))))
-        },
-        _updateCashier: function() {
-            var f = this,
-                i = f.options,
-                h = f.element;
-            var g;
-            var e = {
-                username: function(j) {
-                    $("#cash-user .cash-det").html(j)
-                },
-                email: function(j) {
-                    $("#cash-email .cash-det").html(j)
-                },
-                chips: function(j) {
-                    $("#real-avail .cash-det").html(0);
-                    $("#play-avail .cash-det").html(j[1])
-                },
-                ring_play: function(l) {
-                    var m = 0;
-                    var j = 0;
-                    $.each(l, function(o, n) {
-                        m += n;
-                    });
-                    g = m + i.myData.chips;
-                    $("#real-inplay .cash-det").html(j);
-                    $("#real-total .cash-det").html(j);
-                    $("#play-inplay .cash-det").html(m);
-                    $("#play-total .cash-det").html(g)
-                }
-            };
-            $.each(i.myData, function(j, l) {
-                if (j in e) {
-                    e[j](l)
-                }
-            });
-            $("#cash-deposit .cash-det").html(g + "/" + i.myData.invested + " = " + Math.round(g / i.myData.invested * 1000) / 1000)
-        },
         login_success: function(f) {
             var e = this,
                 h = e.options,
                 g = e.element;
-            this.options.myData = f;
+            //this.options.myData = f;
+            $("#lobby-name").show();
+            $("#lobby-chips").show();
+            e._update_lobby(f)
             //alert(JSON.stringify(f));
             //e._buildCashier();
             //g.find("#lobby-login").html("Cashier").off("click").click(function() {
             //    $("#poker-main").main("login_info")
             //});
-            $("#lobby-name").html(h.myData.username)
+            //$("#lobby-name").html(h.myData.username)
         },
         login_res: function(f) {
             if (f.success) {
@@ -520,32 +346,28 @@
                 o = t.options,
                 e = t.element;
             if (f.success) {
-                $.extend(o.myData, f);
+                //$.extend(o.myData, f);
                 //$("#lobby-username").html(h.myData.name);
 
                 $("#lobby-loginout").removeClass("login").addClass("logout").off('click').click(function() {
                     FB.logout(function() {
                        $("#poker-main").main("logout");
+                       $("#lobby-cashier").hide();
                     });
                 });
                 $("#lobby-cashier").off('click').click(function() {
-                   alert('cashier');
+                   //alert('cashier');
+                   $("#poker-main").main("fetch_cashier");
                 }).show();
 
+                //FB.api('/111374336789924', {
                 FB.api('/me', {
-                    fields: "id,name,picture"
-                }, function(res2) {
-                    alert(JSON.stringify(res2));
+                   fields: "first_name,last_name,picture"
+                    //fields: "id,name,picture"
+                }, function(re) {
+                   $("#poker-main").main("update_profile", re);
                 });
 
-                // render logout button
-                //$("login-logout").css().click();
-
-                // render cashier button
-                //$("cashier").css().click();
-
-                t.options.myData.username = f.name;
-                t.login_success(f);
             } else {
                 //h.modal_message('Login and tyr again', 'Bad Credentials');
             }
@@ -554,6 +376,7 @@
             var e = this,
                 h = e.options,
                 g = e.element;
+            e._update_lobby(f);
             h.myData = f
         },
         login_info_res: function(f) {
@@ -562,11 +385,8 @@
                 g = e.element;
             if (f.success) {
                 h.myData = f;
-                e._updateCashier();
-                $("#cashier").show()
-            } else {
-                e.modal_message(f.message)
-            }
+                //$("#cashier").show()
+            } 
         },
         join_channel_res: function(f) {
             var e = this,
@@ -584,17 +404,26 @@
             var f = this,
                 l = f.options,
                 h = f.element;
+
             /* don't block
                         if (l.loginData[g.from] && l.loginData[g.from]["block"]) {
                             return
                         }
             */
-            var m = l.loginData[g.from];
-            var i = m ? m.username : "Guest" + g.from;
-            var j = m ? m.color : "black";
+
+            //alert(JSON.stringify(g));
+            var ud = l.loginData[g.from];
+            var color = (ud && ud.color) ? ud : 'black';
             var e = h.find("#" + g.channel + "-chat");
 
-            e.append($("<div />").addClass("chat-msg").append($("<a />").addClass("chat-handle").html(i).css("color", j), $("<span />").html(": " + g.message)));
+            // keep chat window tidy
+            //var msgs = e.find(".chat-msg");
+
+            //if (msgs.length > 19) {
+            //   msgs.first().remove();
+            //}
+
+            e.append($("<div />").addClass("chat-msg").append($("<a />").addClass("chat-handle").html(g.username).css("color", color), $("<span />").html(": " + g.message)));
             e.animate({
                 scrollTop: e[0].scrollHeight
             })
@@ -639,72 +468,6 @@
             delete h.loginData[f.login_id];
             g.find("#social-info .table-box tbody tr[login_id=" + f.login_id + "]").remove()
         },
-        /*
-        // tournament related functions
-                notify_create_tour: function(f) {
-                    var e = this,
-                        h = e.options,
-                        g = e.element;
-                    e.notify_destroy_tour(f);
-                    e._add_tour(f)
-                },
-                notify_destroy_tour: function(e) {
-                    delete this.options.tourData[e.tour_id];
-                    this.element.find("#ltour" + e.tour_id).remove()
-                },
-                tour_snap: function(f) {
-                    var e = this,
-                        i = e.options,
-                        h = e.element;
-                    var g = h.find("#tour-info tbody");
-                    g.empty();
-                    $.each(f, function(j, l) {
-                        e._add_tour(l)
-                    })
-                },
-                _add_tour: function(l) {
-                    var p = this,
-                        f = p.options,
-                        h = p.element;
-                    var i = h.find("#tour-info tbody");
-                    var g = (new Date(l.start_time * 1000 + f.epochDiff)).toString().split(/\s/);
-                    var n = g[4].split(":");
-                    l.start = g[1] + " " + g[2] + " " + n[0] + ":" + n[1];
-                    var j = l.game_class == "dealers" ? "--" : l.limit;
-                    l.desc = l.desc ? l.desc : j + " " + f.gameTabs[l.game_class][0];
-                    var e = (new Date(l.end_time * 1000 + f.epochDiff)).toString().split(/\s/);
-                    var m = e[4].split(":");
-                    l.end = e[1] + " " + e[2] + " " + m[0] + ":" + m[1];
-                    l.class_name = f.tourClasses[l.tour_class];
-                    f.tourData[l.tour_id] = l;
-                    $("<tr />").attr({
-                        id: "ltour" + l.tour_id,
-                        tour_id: l.tour_id,
-                        did: l.director_id,
-                        game_class: l.game_class
-                    }).append($("<td />").html(l.tour_id), $("<td />").html(l.start), $("<td />").html(l.desc), $("<td />").html(l.buy_in + l.entry_fee), $("<td />").addClass("ltour-state"), $("<td />").addClass("ltour-enrolled")).appendTo(i);
-                    p._update_tour_tab(l)
-                },
-                _update_tour_tab: function(j) {
-                    var f = this,
-                        i = f.options,
-                        h = f.element;
-                    var g = h.find("#ltour" + j.tour_id);
-                    var e = {
-                        state: function(l) {
-                            g.find(".ltour-state").html(i.gameState[j.state])
-                        },
-                        enrolled: function(l) {
-                            g.find(".ltour-enrolled").html(l)
-                        }
-                    };
-                    $.each(j, function(l, m) {
-                        if (l in e) {
-                            e[l](m)
-                        }
-                    })
-                },
-        */
         ring_snap: function(f) {
             var e = this,
                 h = e.options,
@@ -746,21 +509,32 @@
             delete this.options.ringData[e.table_id];
             this.element.find("#lring" + e.table_id).remove()
         },
-        /*
-                notify_lt_update: function(f) {
-                    var e = this,
-                        h = e.options,
-                        g = e.element;
-                    $.extend(h.tourData[f.tour_id], f);
-                    e._update_tour_tab(f)
-                },
-        */
         notify_lr_update: function(f) {
             var e = this,
                 h = e.options,
                 g = e.element;
             $.extend(h.ringData[f.table_id], f);
             e._update_ring_tab(f)
+        },
+        _update_lobby: function(g) {
+            var t = this,
+                o = t.options;
+
+            $.extend(o.myData, g);
+
+            var e = {
+                chips: function(l) {
+                    $("#lobby-chips span").html(l);
+                },
+                username: function(l) {
+                    $("#lobby-name").html(l);
+                }
+            };
+            $.each(g, function(l, m) {
+                if (l in e) {
+                    e[l](m)
+                }
+            })
         },
         _update_ring_tab: function(g) {
             var f = this,

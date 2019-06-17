@@ -13,8 +13,8 @@
     <!--
   <link rel="stylesheet" href="jquery-ui.min.css" type="text/css">
 -->
-    <link rel="stylesheet" href="cards.min.css" type="text/css">
-    <link rel="stylesheet" href="table.min.css" type="text/css">
+    <link rel="stylesheet" href="cards.css" type="text/css">
+    <link rel="stylesheet" href="table.css" type="text/css">
     <link rel="stylesheet" href="lobby.css" type="text/css">
 </head>
 
@@ -39,10 +39,17 @@
                 <div id="lobby-cashier"></div>
                 <div id="lobby-name"></div>
                 <div id="lobby-profile"></div>
+                <div id="lobby-chips">Chips: <span></span></div>
             </div>
 
             <div id="modal-box">
                <div id="modal-text"></div>
+            </div>
+
+            <div id="cashier" title="Cashier">
+                <p>2000 chips reload maximum</p>
+                <p id="cashier-inplay">Chips in play: <span></span></p>
+                <p id="cashier-inbank">Chips in bank: <span></span></p>
             </div>
 
             <div id="ring-info" class="tab-info games"></div>

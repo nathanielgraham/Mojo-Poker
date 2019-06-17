@@ -103,7 +103,7 @@ sub _build_dealer {
 
 has 'time_bank' => (
   is      => 'rw',
-  default => sub { return 30 },
+  default => sub { return 100 },
 );
 
 has 'pot_cap' => ( is => 'rw', );
@@ -163,7 +163,7 @@ sub _build_small_bet {
 
 has 'turn_clock' => (
   is      => 'rw',
-  default => sub { return 15 },
+  default => sub { return 30 },
 );
 
 has 'community_cards' => (

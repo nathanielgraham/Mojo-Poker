@@ -44,19 +44,22 @@ sub _build_buffer {
 
 sub write {
   my ($self, $login_id, $opts) = @_;
+  my $login = $self->logins->{$login_id};
+  return unless ($login && $login->has_user) || $login_id eq 'd';
   push(@{ $self->buffer }, { 
-    login_id => $login_id, 
+    login_id => $login->id, 
+    username => $login->user->username, 
     message => $opts->{message},
   });
   shift(@{ $self->buffer }) if scalar @{ $self->buffer } > $self->buffer_size;
   for my $log (values %{ $self->logins }) {
-    unless (exists $log->block->{$login_id}) {
+    unless (exists $log->block->{$login->id}) {
       $log->send([ 'notify_message', { 
         channel  => $self->channel, 
         table_id => $self->table_id, 
-        tour_id  => $self->tour_id, 
+        username => $login->user->username, 
         message  => $opts->{message}, 
-        from     => $login_id 
+        from     => $login->id 
       } ]);
     }
   }
@@ -80,6 +83,7 @@ sub refresh {
       table_id => $self->table_id,
       tour_id  => $self->tour_id,
       message  => $_->{message},
+      username => $_->{username},
       from     => $_->{login_id},
     }
   } @{ $self->buffer } ] ]; 

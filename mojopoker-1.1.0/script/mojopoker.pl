@@ -9,7 +9,7 @@ use EV;
 use Mojo::Server::Daemon;
 use POSIX qw(setsid);
 
-$ENV{MOJO_MODE}               = 'development';
+$ENV{MOJO_MODE}               = 'production';
 $ENV{MOJO_INACTIVITY_TIMEOUT} = 0;
 $ENV{MOJO_LOG_LEVEL} = 'error';
 
@@ -33,10 +33,11 @@ open my $handle, '>', 'mojopoker.pid';
 print $handle $$;
 close $handle;
 
+=cut
 # Close filehandles
 open STDIN,  '</dev/null';
-#open STDERR, '>&STDOUT';
-=cut
+open STDERR, '>&STDOUT';
+#open STDERR, '>/dev/null';
 
 $daemon->start;
 

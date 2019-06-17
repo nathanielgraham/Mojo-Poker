@@ -629,6 +629,7 @@
   background-size: 100%;
   background-repeat: no-repeat;
   background-image: url("/img/avitar_default.png");
+  border-radius: 50%;
 }
 
 .table[chair-count='10'] .seat[pos='1'] .avitar-graphic,
@@ -650,7 +651,7 @@
   text-align: center;
   font-weight: bold;
   font-size: 90%;
-  width: 11%;
+  width: 12%;
   color: #FFF;
 }
 
@@ -672,7 +673,7 @@
 .table[chair-count='6'] .seat[pos='1'] .chips,
 .table[chair-count='6'] .seat[pos='2'] .chips,
 .table[chair-count='6'] .seat[pos='3'] .chips {
-  margin-left: 1.6%;
+  margin-left: 1%;
 }
 
 /* .table[chair-count='6'] .seat[pos='0'] .titlebar, */
@@ -690,7 +691,7 @@
 .table[chair-count='10'] .seat[pos='9'] .chips,
 .table[chair-count='6'] .seat[pos='4'] .chips,
 .table[chair-count='6'] .seat[pos='5'] .chips {
-  margin-left: 6.2%;
+  margin-left: 6%;
 }
 
 .seat .chips {

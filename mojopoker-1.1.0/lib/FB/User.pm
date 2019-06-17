@@ -9,8 +9,16 @@ has 'id' => (
   required => 1,
 );
 
+has 'first_name' => ( is => 'rw', );
+has 'last_name' => ( is => 'rw', );
+
 has 'facebook_id' => (
   predicate => 'has_facebook_id',
+  is        => 'rw',
+);
+
+has 'profile_pic' => (
+  predicate => 'has_profile_pic',
   is        => 'rw',
 );
 

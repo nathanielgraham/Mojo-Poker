@@ -28,7 +28,6 @@ sub startup {
   my $self = shift;
 
   $ENV{LIBEV_FLAGS} = 4;
-  $ENV{MOJO_LOG_LEVEL} = 'debug';
 
   # cookie setup
   #$self->sessions->cookie_name('ships');
