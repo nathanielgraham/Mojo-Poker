@@ -43,6 +43,15 @@ sub privacy {
     );
 }
 
+sub leader {
+    my $self = shift;
+    $self->render(
+        template => 'leader',
+        format   => 'html',
+        handler  => 'ep',
+    );
+}
+
 sub delete {
     my $self = shift;
     my $signed_request = $self->param('signed_request');
@@ -65,9 +74,14 @@ SQL
     my $uid = $self->fb->db->selectrow_array;
 =cut
 
+    my $return = {url => undef, confirmation_code => undef};
     my $status_url = "https://mojopoker.xyz/deleted?code=";
     my $secret = $self->app->facebook_secret;
     my ($encoded_sig, $payload) = split(/\./, $signed_request, 2);
+    unless ($encoded_sig && $payload) {
+       $self->render(json => $return);
+       return;
+    }
     my $data = j(decode_base64($payload));
     my $expected_sig = encode_base64(hmac_sha256($payload, $secret), "");
     $expected_sig =~ tr/\/+/_-/;
@@ -77,7 +91,7 @@ SQL
       #verified; okay to do something with $data
     }
 
-    $self->render(json => {url => $status_url, confirmation_code => $data->{user_id}});
+    $self->render(json => $return);
 }
 
 sub book {

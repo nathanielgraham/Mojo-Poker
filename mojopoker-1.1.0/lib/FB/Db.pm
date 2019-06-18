@@ -75,14 +75,25 @@ sub update_user {
 sub fetch_leaders {
     my $self = shift;
     my $sql  = <<SQL;
-SELECT username, ROUND((chips*1.0/invested),3) * 1000 AS rating 
+SELECT username, ROUND((chips - invested)*1.00 / invested, 2) * 100 AS profit, chips
 FROM user
 WHERE id != 1 
-ORDER BY rating DESC
+ORDER BY profit DESC
 LIMIT 20
 SQL
     my $ary_ref = $self->dbh->selectall_arrayref($sql);
     return $ary_ref;
+}
+
+sub reset_leaders {
+    my $self = shift;
+
+    my $sql = <<SQL;
+UPDATE user 
+SET chips = 200, invested = 200 
+SQL
+    return $self->dbh->do($sql);
+
 }
 
 sub debit_chips {

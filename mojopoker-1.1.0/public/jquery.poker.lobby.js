@@ -31,10 +31,10 @@
                 23: ["Block", "int"],
                 24: ["Player Pool", "int"],
                 25: ["#", "int"],
-                26: ["Rating", "int"]
+                26: ["Profit", "string"]
             },
             ringCols: [25, 11, 2, 3, 4, 5, 7, 8, 9],
-            leaderCols: [25, 20, 26],
+            leaderCols: [25, 20, 26, 21],
             socialCols: [17, 18, 19],
             hydraCols: [1, 11, 2, 3, 4, 24],
             loginData: {},
@@ -97,6 +97,18 @@
             // logout button
             $("#lobby-logout").click(function() {
                 $("#poker-main").main("logout")
+            });
+
+            // help button
+            $("#lobby-head2").on("click", function() {
+                $( "#lobby-help" ).dialog({
+                   modal: true,
+                   buttons: {
+                      Ok: function() {
+                         $( this ).dialog( "close" );
+                      }
+                   }
+                });
             });
 
             // build game tabs
@@ -264,28 +276,35 @@
                 chips: f.chips
             };
 
-            clearInterval(h.clockTimer); 
-
             //$("#lobby-name").html(h.myData.username);
+           
+            e._reset_timer(f.timer);
 
-            h.distance = f.timer;
+            e._check_login_status();
+
+        },
+        _reset_timer: function(t) {
+            var e = this,
+                h = e.options;
+
+            clearInterval(h.clockTimer); 
+            h.distance = t;
 
             var counter = $("#lobby-countdown > span");
+
             h.clockTimer = setInterval(function() {
                 h.distance -= 1;
-                var days = Math.floor(h.distance / (86400));
+                //var days = Math.floor(h.distance / (86400));
                 var hours = Math.floor((h.distance % (86400)) / (3600));
                 var minutes = Math.floor((h.distance % 3600) / 60);
                 var seconds = Math.floor(h.distance % 60);
 
-                counter.html(days + 'd ' + hours + 'h ' + minutes + 'm ' + seconds + 's');
+                counter.html(hours + 'h ' + minutes + 'm ' + seconds + 's');
 
                 if (h.distance <= 0) {
-                    clearInterval(h.clockTimer);
+                    e._reset_timer(604800);
                 }
             }, 1000);
-
-            e._check_login_status();
 
         },
         _check_login_status: function() {
@@ -381,14 +400,15 @@
                 h = e.options,
                 g = e.element;
             e._update_lobby(f);
-            h.myData = f
+            //h.myData = f
         },
         login_info_res: function(f) {
             var e = this,
                 h = e.options,
                 g = e.element;
             if (f.success) {
-                h.myData = f;
+                e._update_lobby(f);
+                // h.myData = f;
                 //$("#cashier").show()
             } 
         },
@@ -437,9 +457,25 @@
             var table = $("#lobby-leader tbody");
             table.empty();
             $.each(f.leaders, function(index, obj) {
+                var count = 1;
                 var row = $("<tr >").append("<td >").html(index + 1);
                 $.each(obj, function(key, value) {
-                    row.append($("<td >").html(value));
+                    //row.append($("<td >").html(value));
+                    col = $("<td >").html(value);
+                    if (count == 2) {
+                       if (value < 0) {
+                          col.addClass("red");
+                          col.html(value + '%'); 
+                       } else {
+                          col.addClass("green");
+                          col.html('+' + value + '%'); 
+                       }
+             
+                    } else {
+                       col.html(value);
+                    }
+                    row.append(col);
+                    count++;
                 });
                 table.append(row);
             });

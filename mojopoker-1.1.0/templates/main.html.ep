@@ -46,8 +46,15 @@
                <div id="modal-text"></div>
             </div>
 
+            <div id="lobby-help" title="How it Works">
+               <p>Players are ranked by profitability, not chip count. Each player starts out with 200 chips and tries to build their bankroll throughout the day. When the clock strikes midnight, the most profitable player wins.</p>
+
+               <p>Players who loose all their chips can reload at the cashier anytime, but not without damaging their profitability ranking. Remember, the goal isn't to end up with the most chips, but rather to make the most out of what you receive (profit).</p>
+
+               <p>When the clock strikes midnight, trophies are awarded and the leaderboard resets back to zero.</p>
+            </div> 
+
             <div id="cashier" title="Cashier">
-                <p>2000 chips reload maximum</p>
                 <p id="cashier-inplay">Chips in play: <span></span></p>
                 <p id="cashier-inbank">Chips in bank: <span></span></p>
             </div>
@@ -69,6 +76,12 @@
                 <form id="social-form">
                     <input id="social-input" type="text" maxlength="30"></input>
                 </form>
+            </div>
+            <div id="lobby-footer">
+               <a href="leaderboard" target="_blank">How It Woks</a>
+               <a href="https://www.facebook.com/nathaniel.graham.35513?ref=bookmarks" target="_blank" >Contact</a>
+               <a href="privacy" target="_blank">Privacy Policy</a>
+               <a href="terms" target="_blank">Terms and Conditions</a>
             </div>
         </div>
     </div>

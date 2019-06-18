@@ -15,8 +15,9 @@ sub block {
       my $strikes = ++$self->app->address_info->{$address}->{strikes};
       my $sec = $now - $fast || 1;
       my $sec_per_strike = $sec / $strikes;
-      #print "SEC: $sec, STRIKES: $strikes, AVG: $sec_per_strike, NOW: $now, FAST: $fast\n";
+      print "SEC: $sec, STRIKES: $strikes, AVG: $sec_per_strike, NOW: $now, FAST: $fast\n";
       if ($sec_per_strike < .1 && $strikes > 20) {
+      #if ($sec_per_strike < .2 && $strikes > 20) {
         # blocked
         $self->app->address_block->{$address}++;
         return 0;

@@ -33,17 +33,18 @@ has 'facebook_secret' => ( is => 'rw', );
 sub _build_prize_timer {
     my $self     = shift;
     my $t        = localtime;
-    my $add_days = abs( ( 1 - $t->wday ) % 7 );
-    $add_days |= 7;
-    $t += $add_days * 24 * 60 * 60;
+
     $t -= $t->sec;
     $t -= $t->min * 60;
     $t -= $t->hour * 60 * 60;
+    $t += 24 * 60 * 60;
 
-    # next Sunday
     my $seconds = $t - localtime;
-    return EV::timer $seconds, 604800, sub {
+    return EV::timer $seconds, 0, sub {
         $self->prize_timer( $self->_build_prize_timer );
+        $self->db->reset_leaders;
+        $self->_update_all_logins;
+        $self->_notify_leaders;
     };
 }
 
@@ -459,8 +460,8 @@ sub register {
 
     # update user
     #$self->_update_user( $login, $opts );
-    $self->db->credit_chips( $login->user->id, 2000 );
-    $self->db->credit_invested( $login->user->id, 2000 );
+    $self->db->credit_chips( $login->user->id, 200 );
+    $self->db->credit_invested( $login->user->id, 200 );
 
     # update user database
     my $ui = $self->_fetch_user_info($login);
@@ -514,11 +515,21 @@ sub login_info {
     $login->send($response);
 }
 
+sub _update_all_logins {
+    my $self = shift;
+    for my $log ( values %{ $self->login_list } ) {
+        my $log_info = $self->_fetch_login_info($log); 
+
+        $log->send(["login_update", { %{ $log_info } } ]); 
+    }
+}
+
+
 sub _fetch_login_info {
     my ( $self, $login ) = @_;
-
+    my $info = $self->_fetch_user_info($login);
     return {
-        %{ $self->_fetch_user_info($login) },
+        %{ $info },
         login_id => $login->id,
         success  => 1,
     };
@@ -526,12 +537,11 @@ sub _fetch_login_info {
 
 sub _fetch_user_info {
     my ( $self, $login ) = @_;
-    return unless $login->has_user;
+    return { } unless $login->has_user;
     my $chips = $self->db->fetch_chips( $login->user->id );
 
     return {
         id => $login->user->id,
-
         facebook_id => $login->user->facebook_id,
         username => $login->user->username,
         bookmark => $login->user->bookmark,
@@ -695,18 +705,6 @@ sub fetch_user_opts {
     return $href;
 }
 =cut
-
-sub _fetch_leaders {
-    my $self = shift;
-    my $sql  = <<SQL;
-SELECT username, ROUND((chips*1.0/invested),3) AS rating 
-FROM user
-ORDER BY rating DESC
-SQL
-
-    my $ary_ref = $self->db->selectall_arrayref($sql);
-    return $ary_ref;
-}
 
 sub _notify_leaders {
     my $self    = shift;

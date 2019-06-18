@@ -242,7 +242,7 @@
                        width: 240,
                        modal: true,
                        buttons: {
-                          "Reload chips": function() {
+                          "Reload": function() {
                               $("#poker-main").main("reload");
                               $( this ).dialog( "close" );
                           }

@@ -301,15 +301,14 @@ sub fetch_cashier {
 sub reload {
 
     my ( $self, $login ) = @_;
-
     my $inplay = $self->_fetch_inplay($login);
 
     my $chips = $self->db->fetch_chips( $login->user->id );
     my $total = $inplay + $chips;
 
-    if ( $total < 2000 ) {
-        $self->db->credit_chips( $login->user->id, 2000 - $total );
-        $self->db->credit_invested( $login->user->id, 2000 - $total );
+    if ( $total < 200 ) {
+        $self->db->credit_chips( $login->user->id, 200 - $total );
+        $self->db->credit_invested( $login->user->id, 200 - $total );
     }
     $self->login_info($login);
 }
