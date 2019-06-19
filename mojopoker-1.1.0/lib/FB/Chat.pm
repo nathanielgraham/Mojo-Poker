@@ -44,22 +44,35 @@ sub _build_buffer {
 
 sub write {
   my ($self, $login_id, $opts) = @_;
-  my $login = $self->logins->{$login_id};
-  return unless ($login && $login->has_user) || $login_id eq 'd';
+
+  my ($lid, $un);
+  if ($login_id eq 'd') {
+     $un  = 'Dealer';
+     $lid = 'd';
+  }
+  else {
+     my $login = $self->logins->{$login_id};
+     return unless ($login && $login->has_user);
+     $un = $login->user->username; 
+     $lid = $login->id;
+  }
+
+  # my $login = $self->logins->{$login_id};
+  #return unless ($login && $login->has_user) || $login_id eq 'd';
   push(@{ $self->buffer }, { 
-    login_id => $login->id, 
-    username => $login->user->username, 
+    login_id => $lid, 
+    username => $un, 
     message => $opts->{message},
   });
   shift(@{ $self->buffer }) if scalar @{ $self->buffer } > $self->buffer_size;
   for my $log (values %{ $self->logins }) {
-    unless (exists $log->block->{$login->id}) {
+    unless (exists $log->block->{$lid}) {
       $log->send([ 'notify_message', { 
         channel  => $self->channel, 
         table_id => $self->table_id, 
-        username => $login->user->username, 
+        username => $un, 
         message  => $opts->{message}, 
-        from     => $login->id 
+        from     => $lid 
       } ]);
     }
   }

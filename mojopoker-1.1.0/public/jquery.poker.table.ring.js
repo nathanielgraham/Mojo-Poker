@@ -142,10 +142,10 @@
       var chips = $("#lobby-main").lobby("option", "myData.chips");
       //var roll = chips && o.director_id in chips ? chips[ o.director_id ] : 0;
       chips = chips ? chips : 0;
-      var roll = chips ? chips : 0;
-      var max = roll > o.table_max ? o.table_max : roll;
-      sld.slider("option", "max", max);
-      bnk.html(roll);
+      // var roll = chips ? chips : 0;
+      // var max = roll > o.table_max ? o.table_max : roll;
+      //sld.slider("option", "max", max);
+      bnk.html(chips);
       var h = add ? "Get Chips" : "Buy in";
       head.html(h);
  

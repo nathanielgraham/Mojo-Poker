@@ -74,7 +74,7 @@
             <div id="social-box">
                 <div id="main-chat"></div>
                 <form id="social-form">
-                    <input id="social-input" type="text" maxlength="30"></input>
+                    <input id="social-input" autocomplete="off" type="text" maxlength="30"></input>
                 </form>
             </div>
             <div id="lobby-footer">

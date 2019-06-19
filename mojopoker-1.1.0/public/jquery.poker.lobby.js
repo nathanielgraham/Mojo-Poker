@@ -52,7 +52,7 @@
                 all: ["All", 1],
                 dealers: ["Dealer's Choice", 1],
                 holdem: ["Hold'em", 1],
-                holdemjokers: ["Hold'em (Jokers Wild)", 1],
+                holdemjokers: ["Hold'em (Jokers)", 1],
                 pineapple: ["Pineapple", 1],
                 crazypine: ["Crazy Pineapple", 1],
                 omaha: ["Omaha", 1],
@@ -62,7 +62,7 @@
                 courcheval: ["Courcheval", 2],
                 courchevalhilo: ["Courcheval Hi-Lo", 2],
                 fivedraw: ["5 Card Draw", 2],
-                drawjokers: ["5 Card Draw (Jokers Wild)", 2],
+                drawjokers: ["5 Card Draw (Jokers)", 2],
                 drawdeuces: ["5 Card Draw (Deuces)", 3],
                 singledraw27: ["2-7 Single Draw", 3],
                 tripledraw27: ["2-7 Triple Draw", 3],
@@ -436,9 +436,11 @@
             */
 
             //alert(JSON.stringify(g));
-            var ud = l.loginData[g.from];
-            var color = (ud && ud.color) ? ud : 'black';
-            var e = h.find("#" + g.channel + "-chat");
+            //var info = f.login_info[g.from];
+            //var color = (info && info.color) ? info.color : 'black';
+            var color = 'black';
+
+            var e = $("#" + g.channel + "-chat");
 
             // keep chat window tidy
             //var msgs = e.find(".chat-msg");

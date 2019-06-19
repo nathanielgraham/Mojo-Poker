@@ -1194,8 +1194,9 @@
                 o = self.options,
                 el = self.element;
 
-            var info = o.login_info[opts.from];
-            var color = (info && info.color) ? info.color : 'black';
+            //var info = o.login_info[opts.from];
+            //var color = (info && info.color) ? info.color : 'black';
+            var color = 'black';
 
             o.chatBox.append(
                 $("<div />").addClass("chat-msg").append(

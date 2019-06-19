@@ -206,7 +206,7 @@ sub _build_option {
         password => qr/^[a-zA-Z0-9\s!@#\$%^&\*\(\)_]{2,20}$/,
         handle   => qr/^[a-zA-Z0-9\s!@#\$%^&\*\(\)_]{2,20}$/,
         channel  => qr/^[\w\s_]{1,20}$/,
-        message  => qr/^[\w\s\.\,\?!@#\$%^&\*\(\)_]{2,80}$/,
+        message  => qr/^[\w\s\.\,\?!@#\$%^&\*\(\)_]{1,255}$/,
         email    => qr/^\w{2,20}@\w{2,20}\.\w{3,8}/,
         birthday => qr/^[\w\s_\.\\\-]{40}$/,
         bookmark => qr/^\w{40}$/,
@@ -881,6 +881,7 @@ sub unjoin_channel {
 
 sub write_channel {
     my ( $self, $login, $opts ) = @_;
+
     if ( !exists $self->channels->{ $opts->{channel} } ) {
         $login->send(
             [

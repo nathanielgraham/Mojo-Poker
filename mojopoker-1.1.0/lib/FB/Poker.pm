@@ -156,7 +156,7 @@ sub _build_poker_command {
             { %{ $self->table_option }, table_id => 1, tour_id => 0 }
         ],
         'table_chat' =>
-          [ \&table_chat, { table_id => 1, tour_id => 0, message => 1 }, 2 ],
+          [ \&table_chat, { table_id => 1, message => 1 }, 2 ],
         'bet' => [ \&bet, { table_id => 1, chips => 1, tour_id => 0 }, 2 ],
         'check' => [ \&check, { table_id => 1, tour_id  => 0 }, 2 ],
         'fold'  => [ \&fold,  { table_id => 1, tour_id  => 0 }, 2 ],
@@ -537,7 +537,7 @@ sub table_chips {
     unless ( $chair
         && $chair->has_player
         && !$chair->is_in_hand
-        && $chair->player->login->id == $login->id )
+        && $chair->player->login->id eq $login->id )
     {
         $response->[1] = { success => 0, message => 'Hand not over.', %$opts };
         $login->send($response);
@@ -1044,19 +1044,7 @@ sub unreg_tour {
 
 sub _fetch_table {
     my ( $self, $opts ) = @_;
-    if ( $opts->{tour_id} ) {
-        my $tour = $self->tour_list->{ $opts->{tour_id} };
-        return unless $tour;
-        return $tour->tables->{ $opts->{table_id} };
-    }
-    elsif ( $opts->{ff_id} ) {
-        my $ff = $self->ff_list->{ $opts->{ff_id} };
-        return unless $ff;
-        return $ff->tables->{ $opts->{table_id} };
-    }
-    else {
-        return $self->table_list->{ $opts->{table_id} };
-    }
+    return $self->table_list->{ $opts->{table_id} };
 }
 
 sub table_chat {
