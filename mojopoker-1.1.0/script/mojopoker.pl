@@ -11,7 +11,7 @@ use POSIX qw(setsid);
 
 $ENV{MOJO_MODE}               = 'production';
 $ENV{MOJO_INACTIVITY_TIMEOUT} = 0;
-$ENV{MOJO_LOG_LEVEL} = 'error';
+$ENV{MOJO_LOG_LEVEL} = 'fatal';
 
 my @listen = ('http://*:3000');
 
@@ -22,8 +22,8 @@ my $daemon = Mojo::Server::Daemon->new(
     proxy              => 1,
 );
 
-=pod
 
+=pod
 # Fork and kill parent
 die "Can't fork: $!" unless defined( my $pid = fork );
 exit 0 if $pid;
@@ -33,7 +33,6 @@ POSIX::setsid or die "Can't start a new session: $!";
 open my $handle, '>', 'mojopoker.pid';
 print $handle $$;
 close $handle;
-
 =cut
 
 # Close filehandles

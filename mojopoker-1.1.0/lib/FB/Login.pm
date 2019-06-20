@@ -21,6 +21,7 @@ has 'block' => (
 
 has 'user' => (
   is        => 'rw',
+  isa       => sub { die unless $_[0]->isa('FB::User') },
   predicate => 'has_user',
 );
 

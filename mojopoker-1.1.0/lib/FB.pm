@@ -460,8 +460,8 @@ sub register {
 
     # update user
     #$self->_update_user( $login, $opts );
-    $self->db->credit_chips( $login->user->id, 200 );
-    $self->db->credit_invested( $login->user->id, 200 );
+    $self->db->credit_chips( $login->user->id, 400 );
+    $self->db->credit_invested( $login->user->id, 400 );
 
     # update user database
     my $ui = $self->_fetch_user_info($login);
@@ -557,12 +557,15 @@ sub _fetch_user_info {
 sub authorize {
     my ( $self, $login, $opts ) = @_;
 
-    #my $secret = 'dee98631a540b933dd8e2f46e1ab9512';
+    my $response     = [ 'authorize_res', { success => 0 } ];
     my $secret = $self->facebook_secret;
     my $signed = $opts->{authResponse}->{signedRequest};
     my ( $encoded_sig, $payload ) = split( /\./, $signed, 2 );
+    unless ($encoded_sig && $payload) {
+       $login->send($response);
+       return;
+    }
     my $data         = j( decode_base64($payload) );
-    my $response     = [ 'authorize_res', { success => 0 } ];
     my $expected_sig = encode_base64( hmac_sha256( $payload, $secret ), "" );
     $expected_sig =~ tr/\/+/_-/;
     $expected_sig =~ s/=//;
@@ -585,7 +588,7 @@ sub authorize {
 
     #print Dumper($user->username);
     # already registered, so login
-    if ( $user && $user->id ) {
+    if ( $user && ref $user eq 'FB::User' && $user->id ) {
         $login->send( [ "authorize_res", { msg => 'already registerd' } ] );
         $login->user($user);
         $self->_login($login);
@@ -679,6 +682,13 @@ sub _login {
 sub login {
     my ( $self, $login, $opts ) = @_;
     my $user = $self->db->fetch_user($opts);
+
+    unless (ref $user eq 'FB::User') {
+       $login->send(["login_res", { success => 0, reason => "No such user" }]);
+       $self->logout($login);
+       return;
+    }
+
     $login->user($user);
     $self->_login($login);
 
@@ -688,6 +698,12 @@ sub login {
 sub login_book {
     my ( $self, $login, $opts ) = @_;
     my $user = $self->db->fetch_user($opts);
+
+    unless (ref $user eq 'FB::User') {
+       $login->send(["login_book_res", { success => 0, reason => "No such user" }]);
+       $self->logout($login);
+       return;
+    }
     $login->user($user);
     $self->_login($login);
 

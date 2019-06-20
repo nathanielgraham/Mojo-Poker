@@ -957,11 +957,13 @@
   left: 48%;
   top: 51%;
 }
-.table[chair-count='6'] .seat[pos='1'] .chip, .seat[pos='1'] .size {
+.table[chair-count='6'] .seat[pos='1'] .chip, 
+.table[chair-count='6'] .seat[pos='1'] .size {
   left: 23%;
   top: 44%;
 }
-.table[chair-count='6'] .seat[pos='2'] .chip, .seat[pos='2'] .size {
+.table[chair-count='6'] .seat[pos='2'] .chip, 
+.table[chair-count='6'] .seat[pos='2'] .size {
   left: 26%;
   top: 23%;
 }
@@ -974,45 +976,60 @@
   left: 49%;
   top: 20%;
 }
-.table[chair-count='6'] .seat[pos='4'] .chip, .seat[pos='4'] .size {
+.table[chair-count='6'] .seat[pos='4'] .chip, 
+.table[chair-count='6'] .seat[pos='4'] .size {
   left: 66%;
   top: 22%;
 }
-.table[chair-count='6'] .seat[pos='5'] .chip, .seat[pos='5'] .size {
+.table[chair-count='6'] .seat[pos='5'] .chip, 
+.table[chair-count='6'] .seat[pos='5'] .size {
   left: 72%;
   top: 42%;
 }
 
-.table[chair-count='10'] .seat[pos='1'] .chip, .seat[pos='1'] .size {
+.table[chair-count='10'] .seat[pos='1'] .chip, 
+.table[chair-count='10'] .seat[pos='1'] .size {
   left: 72%;
   top: 42%;
 }
 
-.table[chair-count='10'] .seat[pos='2'] .chip, .seat[pos='2'] .size {
+.table[chair-count='10'] .seat[pos='2'] .chip, 
+.table[chair-count='10'] .seat[pos='2'] .size {
   left: 72%;
   top: 42%;
 }
-.table[chair-count='10'] .seat[pos='3'] .chip, .seat[pos='3'] .size {
+
+.table[chair-count='10'] .seat[pos='3'] .chip, 
+.table[chair-count='10'] .seat[pos='3'] .size {
   left: 72%;
   top: 42%;
 }
-.table[chair-count='10'] .seat[pos='4'] .chip, .seat[pos='4'] .size {
+
+.table[chair-count='10'] .seat[pos='4'] .chip, 
+.table[chair-count='10'] .seat[pos='4'] .size {
   left: 72%;
   top: 42%;
 }
-.table[chair-count='10'] .seat[pos='6'] .chip, .seat[pos='6'] .size {
+
+.table[chair-count='10'] .seat[pos='6'] .chip, 
+.table[chair-count='10'] .seat[pos='6'] .size {
   left: 67%;
   top: 21%;
 }
-.table[chair-count='10'] .seat[pos='7'] .chip, .seat[pos='7'] .size {
+
+.table[chair-count='10'] .seat[pos='7'] .chip, 
+.table[chair-count='10'] .seat[pos='7'] .size {
   left: 72%;
   top: 42%;
 }
-.table[chair-count='10'] .seat[pos='8'] .chip, .seat[pos='8'] .size {
+
+.table[chair-count='10'] .seat[pos='8'] .chip, 
+.table[chair-count='10'] .seat[pos='8'] .size {
   left: 72%;
   top: 42%;
 }
-.table[chair-count='10'] .seat[pos='9'] .chip, .seat[pos='9'] .size {
+.table[chair-count='10'] .seat[pos='9'] .chip, 
+.table[chair-count='10'] .seat[pos='9'] .size {
   left: 72%;
   top: 42%;
 }

@@ -56,7 +56,7 @@ sub fetch_user {
     my $sth = $self->dbh->prepare($stmt);
     $sth->execute(@bind);
     my $href = $sth->fetchrow_hashref;
-    return unless $href;
+    return unless $href && $href->{id};
     $href->{user_id} = $href->{id};
     return FB::User->new(%$href);
     #return $user;
@@ -90,7 +90,7 @@ sub reset_leaders {
 
     my $sql = <<SQL;
 UPDATE user 
-SET chips = 200, invested = 200 
+SET chips = 400, invested = 400 
 SQL
     return $self->dbh->do($sql);
 
