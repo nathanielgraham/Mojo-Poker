@@ -118,7 +118,7 @@
             var si = $("#social-input");
             $("#social-form").submit(function(m) {
                 m.preventDefault();
-                var y = /^[\w\s\.\,\?!@#\$%^&\*\(\)_]{0,30}$/;
+                var y = /^[\w\s\.\,\?!@#\$%^&\*\(\)_]{0,90}$/;
                 if (y.test(si.val())) {
                     $("#poker-main").main("write_channel", {
                         channel: 'main',
@@ -443,13 +443,25 @@
             var e = $("#" + g.channel + "-chat");
 
             // keep chat window tidy
-            //var msgs = e.find(".chat-msg");
 
             //if (msgs.length > 19) {
             //   msgs.first().remove();
             //}
 
-            e.append($("<div />").addClass("chat-msg").append($("<a />").addClass("chat-handle").html(g.username).css("color", color), $("<span />").html(": " + g.message)));
+/*
+            e.append($("<div />").addClass("chat-msg").append( $("<div />").addClass("chat-pic").css("background-image", "url(" + g.profile_pic + ")"), $("<div />").addClass("chat-content").html(g.username + ': ' + g.message)));
+
+*/
+            e.append($("<div />").addClass("chat-msg").append( $("<span />").addClass("chat-pic").css("background-image", "url(" + g.profile_pic+ ")"), $("<span />").addClass("chat-content").html(g.username + ': ' + g.message)));
+
+
+// , $("<span />").addClass("chat-handle").html(g.username + ': ').css("color", color))));
+
+
+/*
+            e.append($("<div />").addClass("chat-msg").append( $("<div />").addClass("chat-pic").css("background-image", "url(" + g.profile_pic+ ")"), $("<span />").addClass("chat-content").html(g.username + ': ' + g.message)));
+*/
+
             e.animate({
                 scrollTop: e[0].scrollHeight
             })

@@ -1200,8 +1200,9 @@
 
             o.chatBox.append(
                 $("<div />").addClass("chat-msg").append(
-                    $("<a />").addClass("chat-handle").html(opts.username).css("color", color),
-                    $("<span />").html(': ' + opts.message)
+                    $("<div />").html(': ' + opts.message).prepend( 
+                      $("<span />").addClass("chat-handle").html(opts.username).css("color", color)
+                    )
                 )
             );
             o.chatBox.animate({

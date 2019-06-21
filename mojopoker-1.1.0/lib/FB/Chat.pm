@@ -45,7 +45,7 @@ sub _build_buffer {
 sub write {
   my ($self, $login_id, $opts) = @_;
 
-  my ($lid, $un);
+  my ($lid, $un, $pic);
   if ($login_id eq 'd') {
      $un  = 'Dealer';
      $lid = 'd';
@@ -54,6 +54,7 @@ sub write {
      my $login = $self->logins->{$login_id};
      return unless ($login && $login->has_user);
      $un = $login->user->username; 
+     $pic = $login->user->profile_pic; 
      $lid = $login->id;
   }
 
@@ -62,8 +63,10 @@ sub write {
   push(@{ $self->buffer }, { 
     login_id => $lid, 
     username => $un, 
+    profile_pic => $pic, 
     message => $opts->{message},
   });
+
   shift(@{ $self->buffer }) if scalar @{ $self->buffer } > $self->buffer_size;
   for my $log (values %{ $self->logins }) {
     unless (exists $log->block->{$lid}) {
@@ -71,6 +74,7 @@ sub write {
         channel  => $self->channel, 
         table_id => $self->table_id, 
         username => $un, 
+        profile_pic => $pic, 
         message  => $opts->{message}, 
         from     => $lid 
       } ]);
@@ -94,7 +98,7 @@ sub refresh {
     {
       channel  => $self->channel, 
       table_id => $self->table_id,
-      tour_id  => $self->tour_id,
+      profile_pic => $_->{profile_pic},
       message  => $_->{message},
       username => $_->{username},
       from     => $_->{login_id},

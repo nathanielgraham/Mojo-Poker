@@ -236,7 +236,9 @@
 }
 
 .chat-msg {
+  position: relative;
   padding-top: .1%;
+  font-size: 90%
 }
 
 .chat-box {
@@ -246,7 +248,6 @@
   bottom: .2%;
   left: .2%;
   background-color: white;
-  font-size: 80%;
   color: black;
   overflow-y: scroll;
   padding-left: 1%;
