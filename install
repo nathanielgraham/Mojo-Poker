@@ -22,9 +22,9 @@ ln -sf $INSTALL_PATH/mojopoker-1.1.0/script/mpadmin.pl $BIN_PATH
 ln -sf $INSTALL_PATH/mojopoker-1.1.0/script/wsshell.pl $BIN_PATH
 
 cd $INSTALL_PATH/mojopoker/db
-#sqlite3 fb.db < fb.schema
-#sqlite3 poker.db < poker.schema
-#chmod 666 *
+sqlite3 fb.db < fb.schema
+sqlite3 poker.db < poker.schema
+chmod 666 *
 
 chmod 755 $INSTALL_PATH/mojopoker/script/*
 

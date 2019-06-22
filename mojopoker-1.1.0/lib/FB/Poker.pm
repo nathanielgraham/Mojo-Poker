@@ -141,10 +141,11 @@ sub _build_poker_command {
         'reload'         => [ \&reload, {}, 2 ],
 
 
+        'auto_match'    => [ \&auto_match,   { }, 2 ],
         'unjoin_ring'   => [ \&unjoin_ring,   { table_id => 1, chair   => 0 }, 2 ],
 #        'wait_ring'     => [ \&wait_ring,     { table_id => 1 } ],
 #        'unwait_ring'   => [ \&unwait_ring,   { table_id => 1 } ],
-        'watch_table'   => [ \&watch_table,   { table_id => 1, tour_id => 0 } ],
+        'watch_table'   => [ \&watch_table,   { table_id => 1, auto_seat => 0, chair_id => 0 } ],
         'unwatch_table' => [ \&unwatch_table, { table_id => 1, tour_id => 0 } ],
         'table_chips' =>
           [ \&table_chips, { table_id => 1, chair => 1, chips => 1 }, 2 ],
@@ -313,6 +314,39 @@ sub reload {
     $self->login_info($login);
 }
 
+sub auto_match {
+    my ( $self, $login ) = @_;
+    for my $table ( values %{ $self->table_list }) {
+       my ($has_player, $has_seat);
+       #for my $chair (@{ $table->chairs }) {
+       for my $chair ( 0 .. $#{ $table->chairs } ) {
+
+          if ($table->chairs->[$chair]->has_player) {
+             $has_player = 1;
+             if ( $has_seat ) {
+                $login->send(["auto_match_res", { 
+                   success => 1, 
+                   table_id => $table->table_id,
+                   chair_id => $chair,
+                }]);
+                return;
+             }
+          } 
+          else {
+             $has_seat = 1;
+             if ( $has_player ) {
+                $login->send(["auto_match_res", { 
+                   success => 1, 
+                   table_id => $table->table_id,
+                   chair_id => $chair,
+                }]);
+                return;
+             }
+          }
+       }
+    }
+    $login->send(["auto_match_res", { success => 0 }]);
+}
 
 sub _create_ring {
     my ( $self, $login, $opts ) = @_;
@@ -440,6 +474,8 @@ sub watch_table {
         return;
     }
     $response->[1] = $table->watch($login);
+    $response->[1]->{auto_seat} = $opts->{auto_seat} if $opts->{auto_seat};
+    $response->[1]->{chair_id} = $opts->{chair_id} if $opts->{chair_id};
     $login->send($response);
     if ( $response->[1]->{success} ) {
 
@@ -882,7 +918,7 @@ sub draw {
         for my $log ( values %{ $table->watch_list } ) {
 
             $response->[1]->{card_map} =
-              $login->id == $log->id ? $card_map : $hide_map;
+              $login->id eq $log->id ? $card_map : $hide_map;
             $log->send( [ 'notify_draw', $response->[1], ] );
         }
         $table->action_done;

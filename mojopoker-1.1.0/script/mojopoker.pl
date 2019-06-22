@@ -22,8 +22,6 @@ my $daemon = Mojo::Server::Daemon->new(
     proxy              => 1,
 );
 
-
-=pod
 # Fork and kill parent
 die "Can't fork: $!" unless defined( my $pid = fork );
 exit 0 if $pid;
@@ -33,7 +31,6 @@ POSIX::setsid or die "Can't start a new session: $!";
 open my $handle, '>', 'mojopoker.pid';
 print $handle $$;
 close $handle;
-=cut
 
 # Close filehandles
 open STDIN,  '</dev/null';
@@ -42,6 +39,6 @@ open STDERR, '>&STDOUT';
 
 $daemon->start;
 
-#open STDOUT, '>/dev/null';
+open STDOUT, '>/dev/null';
 
 EV::run;

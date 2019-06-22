@@ -94,6 +94,11 @@
             // leaderboard table
             $("#lobby-leader").append(v._buildTable(e.leaderCols));
 
+            // auto match button
+            $("#lobby-match").click(function() {
+                $("#poker-main").main("auto_match")
+            });
+
             // logout button
             $("#lobby-logout").click(function() {
                 $("#poker-main").main("logout")
@@ -184,6 +189,10 @@
                 h = e.options,
                 g = e.element;
             $("#table-ring").append($("<div />").attr("id", "tring" + f.table_id).table_ring(f))
+
+            if (f.auto_seat && f.chair_id) {
+               $("#tring" + f.table_id + " .seat" + f.chair_id + " > .open-graphic").click();
+            }
         },
         _destroy: function() {},
         /*

@@ -28,19 +28,24 @@ body {
 
 #lobby-footer {
     position: absolute;
-    width: 90%;
+    width: 100%;
     height: 10%;
     bottom: -13%;
     font-size: 90%;
-    left: 5%;
+    left: 0%;
     text-align: center;
+}
+
+#lobby-footer > .fb-like {
+    bottom: 0%;
+    display: inline;
+    padding-right: 3%;
 }
 
 #lobby-footer a {
     bottom: 0%;
-    position: block;
     display: inline;
-    padding-right: 8%;
+    padding-right: 3%;
     color: #f0f0f0;
 }
 
@@ -104,24 +109,26 @@ body {
     background-image: url("/img/leaderboard.png");
 }
 
-#lobby-logo {
+#lobby-match {
     position: absolute;
     width: 100%;
-    height: 100%;
-    background-position: center top;
+    height: 52%;
+    bottom: 4%;
+    background-position: center center;
     background-size: contain;
     background-repeat: no-repeat;
-    background-image: url("/img/logo2.png");
-}
+    background-image: url("/img/auto.png");
+} 
 
 #lobby-logo {
     position: absolute;
     width: 100%;
-    height: 100%;
+    height: 39%;
+    top: 0%;
     background-position: center center;
     background-size: contain;
     background-repeat: no-repeat;
-    background-image: url("/img/logo2.png");
+    background-image: url("/img/title3.png");
 }
 
 #lobby-leader {

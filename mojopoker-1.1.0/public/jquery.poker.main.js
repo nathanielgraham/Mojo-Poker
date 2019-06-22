@@ -109,6 +109,27 @@
             this._super('_destroy');
         },
 
+        _notify_modal: function(message) {
+            var h = this;
+
+            $("#modal-box").empty();
+            $("#modal-box").dialog({
+                title: "Alert",
+                position: {
+                    my: "center",
+                    at: "center",
+                    of: window
+                },
+                modal: false,
+                buttons: [{
+                    text: message,
+                    click: function() {
+                        $(this).dialog("close");
+                        h._create();
+                    }
+                }]
+            });
+        },
         _recModal: function() {
             var h = this;
 
@@ -128,6 +149,9 @@
                     }
                 }]
             });
+        },
+        auto_match: function(v) {
+            this.options.wsock.send(JSON.stringify(['auto_match', v]));
         },
         fetch_cashier: function(v) {
             this.options.wsock.send(JSON.stringify(['fetch_cashier', v]));
@@ -250,6 +274,15 @@
                     });
                     $( "#cashier" ).dialog( "moveToTop" );
                     //o.lobbyMain.lobby('update_profile_res', v);
+                },
+                'auto_match_res': function(v) {
+                    if (v.success && v.table_id && v.chair_id) {
+                       self.watch_table({table_id:v.table_id,chair_id:v.chair_id,auto_seat:1}); 
+                    }
+                    else {
+                       self._notify_modal('Unable to find match.');
+                    }
+                    //o.lobbyMain.lobby('auto_match_res', v);
                 },
                 'update_profile_res': function(v) {
                     o.lobbyMain.lobby('update_profile_res', v);
@@ -462,9 +495,8 @@
                 },
                 //'unwatch_ring_res': function(v) {
                 'unwatch_table_res': function(v) {
-                    if (v.tour_id) {
 
-                    } else if (v.table_id) {
+                    if (v.table_id) {
                         el.find("#tring" + v.table_id).remove();
                     }
 
@@ -474,19 +506,10 @@
                 //'watch_ring_res': function(v) {
                 'watch_table_res': function(v) {
                     //alert('watch_ring_res: ' + JSON.stringify(v) );
-                    //self._msgHandler('unwatch_ring_res', v);
-                    // var ring = $("<div />)").attr('id', 'tring' + v.table_id);
 
-                    if (v.tour_id && v.success) {
-
-                    } else if (v.table_id && v.success) {
+                    if (v.table_id && v.success) {
                         self._msgHandler('unwatch_table_res', v);
-                        //o.lobbyMain.lobbyfind("#table-ring").append(
                         o.lobbyMain.lobby('watch_table_res', v);
-                        //el.find(".stacked").draggable("option", "stack", ".stacked");
-                        //el.find("#table-ring").append(
-                        //  $("<div />").attr('id', 'tring' + v.table_id).table_ring(v)
-                        //);
                     }
                 },
                 'watch_tour_res': function(v) {

@@ -3,11 +3,16 @@
 <html>
 
 <head>
-    <title>Poker with Friends</title>
+    <title>Poker With Friends</title>
     <meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
     <meta name="description" content="Poker with Friends">
     <meta name="keywords" content="poker friends facebook games">
     <meta property="fb:app_id" content="431502190982449">
+    <meta property="og:url"           content="https://mojopoker.xyz" />
+    <meta property="og:type"          content="website" />
+    <meta property="og:title"         content="Poker With Friends" />
+    <meta property="og:description"   content="Chat and play poker with friends" />
+    <meta property="og:image"         content="https://mojopoker.xyz/img/SCREENSHOT.png" />
     <link href="favicon.png" rel="icon" type="image/x-png">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <!--
@@ -19,6 +24,7 @@
 </head>
 
 <body>
+    <div id="fb-root"></div>
     <div id="poker-main">
         <div id="table-ring"></div>
 
@@ -30,7 +36,14 @@
             </div>
 
             <div id="lobby-head1">
+<!--
+                <div id="lobby-like">
+                   <div class="fb-like" data-href="https://mojopoker.xyz/" data-width="" data-layout="button_count" data-action="like" data-size="small" data-show-faces="false" data-share="true"></div>
+
+                </div>
+-->
                 <div id="lobby-logo"></div>
+                <div id="lobby-match"></div>
             </div>
 
             <div id="lobby-head3">
@@ -78,6 +91,7 @@
                 </form>
             </div>
             <div id="lobby-footer">
+               <div class="fb-like" data-href="https://mojopoker.xyz/" data-width="" data-layout="button_count" data-action="like" data-size="small" data-show-faces="false" data-share="true"></div>
                <a href="leaderboard" target="_blank">How It Woks</a>
                <a href="https://www.facebook.com/nathaniel.graham.35513?ref=bookmarks" target="_blank" >Contact</a>
                <a href="privacy" target="_blank">Privacy Policy</a>
@@ -110,6 +124,7 @@
                         cookie: true,
                         status: true,
                         xfbml: false,
+                        autoLogAppEvents: true,
                         version: 'v3.3'
                     });
 
