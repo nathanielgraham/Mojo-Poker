@@ -11,20 +11,6 @@ with 'FB::Poker::Blinds';
 with 'FB::Poker::Ante';
 with 'FB::Poker::Draw';
 
-has 'hydra_fold' => (
-  is      => 'rw',
-  default => sub { return 0 },
-);
-
-has 'hydra_flag' => (
-  is      => 'rw',
-  builder => '_build_hydra_flag',
-);
-
-sub _build_hydra_flag {
-  return;
-}
-
 has 'db' => ( is => 'rw', );
 
 has 'auto_play_event' => ( is => 'rw', );
@@ -35,7 +21,7 @@ has 'new_game_delay' => (
 );
 
 sub _build_new_game_delay {
-  return 4;
+  return 6;
 }
 
 has 'show_name' => ( is => 'rw', );
@@ -138,7 +124,7 @@ sub _fetch_max_bet {
   if ( $self->pot_cap && $limit > $self->pot_cap ) {
     $limit = $self->pot_cap;
   }
-  return $limit;
+  return $limit < 0 ? 0 : $limit;
 }
 
 has 'small_bet' => (
@@ -163,7 +149,7 @@ sub _build_small_bet {
 
 has 'turn_clock' => (
   is      => 'rw',
-  default => sub { return 30 },
+  default => sub { return 40 },
 );
 
 has 'community_cards' => (
@@ -419,7 +405,7 @@ sub action_done {
   return unless ( defined $self->action && !$self->game_over );
   $self->chairs->[ $self->action ]->has_acted(1);
 
-  if ( $self->live_chair_count < 2 || $self->hydra_fold ) {
+  if ( $self->live_chair_count < 2 ) {
 
     # ZERO OR ONE PLAYERS
     $self->new_game_delay(0);
@@ -435,7 +421,6 @@ sub action_done {
   my $betting_done = $self->betting_done;
 
   #if ( $betting_done && $self->auto_play_ok && $self->have_chips_count < 2 ) {
-  #my $ap_count = $self->hydra_flag ? int( $self->chair_count / 2 ) : 2;
   if ( $betting_done && $self->auto_play_ok && $self->have_chips_count < 2 ) {
     $self->ap_flag(1);    #auto play flag
     $self->clear_action;
@@ -624,8 +609,8 @@ sub bet {
 sub _fetch_call_amt {
   my $self = shift;
   if ( defined $self->action && $self->chairs->[ $self->action ] ) {
-    return $self->last_bet -
-      $self->chairs->[ $self->action ]->in_pot_this_round;
+    my $call = $self->last_bet - $self->chairs->[ $self->action ]->in_pot_this_round;
+    return $call > 0 ? $call : 0;
   }
 }
 
@@ -655,6 +640,7 @@ sub post {
     $bet = $max_bet;
   }
 
+  $bet = $self->chairs->[$chair]->chips if $bet > $self->chairs->[$chair]->chips;
   my $total_bet = $bet + $self->chairs->[$chair]->in_pot_this_round;
 
   # must match current bet unless all in
@@ -682,7 +668,7 @@ sub round_bet {
   if ( $self->next_round > 1 && $bet != $chips ) {
     $bet -= ( $raise_amount % $self->small_bet );
   }
-  return $bet;
+  return $bet > 0 ? $bet : 0;
 }
 
 sub fold {
@@ -690,16 +676,6 @@ sub fold {
   my $chair = $self->chairs->[ $self->action ];
   $self->_fold($chair);
 
-  if ( $self->hydra_flag ) {
-    my $login_id = $chair->player->login->id;
-    $self->hydra_fold(1);
-    for my $c ( grep { $_->has_player && $_->player->login->id == $login_id } @{ $self->chairs } ) { 
-      $self->_fold($c);
-    }
-  }
-  else {
-    $self->_fold($chair);
-  }
   return 1;
 }
 
@@ -736,10 +712,13 @@ sub end_game {
   if ( $self->live_chair_count > 1 ) {
     $self->score;
     $self->showdown;
-    $self->new_game_delay(4);
+    #$self->new_game_delay(6);
+    $self->new_game_delay( $self->_build_new_game_delay );
+
   }
   else {
-    $self->new_game_delay(4);
+    #$self->new_game_delay(6);
+    $self->new_game_delay( $self->_build_new_game_delay );
   }
   $self->payout;
   $self->pot(0);
@@ -749,7 +728,6 @@ sub end_game {
   $self->clear_sp_flag;
   $self->clear_ap_flag;
   $self->reset_chairs;
-  $self->hydra_fold(0) if $self->hydra_flag;
   $self->game_over(1);
 }
 

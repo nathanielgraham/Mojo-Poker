@@ -117,7 +117,6 @@ sub _build_game_option {
 
         #director_id => 0,
         game_class => 1,
-        hydra_flag => 0,
     };
 }
 
@@ -148,7 +147,7 @@ sub _build_poker_command {
         'watch_table'   => [ \&watch_table,   { table_id => 1, auto_seat => 0, chair_id => 0 } ],
         'unwatch_table' => [ \&unwatch_table, { table_id => 1, tour_id => 0 } ],
         'table_chips' =>
-          [ \&table_chips, { table_id => 1, chair => 1, chips => 1 }, 2 ],
+          [ \&table_chips, { table_id => 1, chair => 0, chips => 0, deposit => 0 }, 2 ],
         'watch_lobby'   => [ \&watch_lobby,   {} ],
         'unwatch_lobby' => [ \&unwatch_lobby, {} ],
         'table_info'    => [ \&table_info,    { table_id => 1, tour_id => 0 } ],
@@ -307,9 +306,9 @@ sub reload {
     my $chips = $self->db->fetch_chips( $login->user->id );
     my $total = $inplay + $chips;
 
-    if ( $total < 200 ) {
-        $self->db->credit_chips( $login->user->id, 200 - $total );
-        $self->db->credit_invested( $login->user->id, 200 - $total );
+    if ( $total < 400 ) {
+        $self->db->credit_chips( $login->user->id, 400 - $total );
+        $self->db->credit_invested( $login->user->id, 400 - $total );
     }
     $self->login_info($login);
 }
@@ -569,35 +568,55 @@ sub table_chips {
         return;
     }
 
-    my $chair = $table->chairs->[ $opts->{chair} ];
-    unless ( $chair
-        && $chair->has_player
-        && !$chair->is_in_hand
-        && $chair->player->login->id eq $login->id )
+    my $chair;
+    for my $c (@{ $table->chairs }) {
+       $chair = $c if ($c->has_player && $c->player->login->id eq $login->id); 
+    }
+
+    #my $chair = $table->chairs->[ $opts->{chair} ];
+    #unless ( $chair
+    #    && $chair->has_player
+    #    && !$chair->is_in_hand )
+
+    unless ($chair && !$chair->is_in_hand)
     {
         $response->[1] = { success => 0, message => 'Hand not over.', %$opts };
         $login->send($response);
         return;
     }
-    my $player = $table->chairs->[ $chair->index ]->player;
 
-    #my $director_id = $table->director_id;
+    #my $player = $table->chairs->[ $chair->index ]->player;
+    #unless ( $opts->{chips} > 0 ) {
+    #    $response->[1]->{message} = 'Invalid amt';
+    #    $login->send($response);
+    #    return;
+    #}
 
-    if ( $opts->{chips} > $self->db->fetch_chips( $login->user->id ) ) {
+    if ( $opts->{deposit} ) {
+       my $keep = ($table->table_min + $table->table_max) / 2;
+       my $deposit = $chair->player->chips - $keep;
+       unless ($deposit > 0) {
+          $response->[1]->{message} = 'Invalid amt';
+          $login->send($response);
+          return;
+       }
+       $self->db->credit_chips( $login->user->id, $deposit );
+       $chair->player->chips( $keep );
+    }
+    elsif ( $opts->{chips} && $opts->{chips} > $self->db->fetch_chips( $login->user->id ) ) {
         $response->[1]->{message} = 'Not enough chips.';
         $login->send($response);
         return;
     }
-
-    $self->db->debit_chips( $login->user->id, $opts->{chips} );
-    $player->chips( $player->chips + $opts->{chips} );
+    else {
+       $self->db->debit_chips( $login->user->id, $opts->{chips} );
+       $chair->player->chips( $chair->player->chips + $opts->{chips} );
+    }
 
     my $re = {
         table_id => $table->table_id,
-
-        #director_id => $director_id,
         balance => $self->db->fetch_chips( $login->user->id ),
-        chips   => $player->chips,
+        chips   => $chair->player->chips,
         chair   => $chair->index,
     };
 
@@ -704,25 +723,8 @@ sub _poker_cleanup {
 sub _validate_action {
     my ( $self, $login, $opts ) = @_;
     my $rv = { success => 1 };
-    if ( $opts->{tour_id} ) {
-        my $tour = $self->tour_list->{ $opts->{tour_id} };
-        unless ($tour) {
-            return { success => 0, message => 'No such tournament', %$opts };
-        }
-        $rv->{table}   = $tour->tables->{ $opts->{table_id} };
-        $rv->{tour_id} = $tour->tour_id;
-    }
-    elsif ( $opts->{ff_id} ) {
-        my $ff = $self->ff_list->{ $opts->{ff_id} };
-        unless ($ff) {
-            return { success => 0, message => 'No such fastfold', %$opts };
-        }
-        $rv->{table} = $ff->tables->{ $opts->{table_id} };
-        $rv->{ff_id} = $ff->ff_id;
-    }
-    else {
-        $rv->{table} = $self->table_list->{ $opts->{table_id} };
-    }
+
+    $rv->{table} = $self->table_list->{ $opts->{table_id} };
 
     if ( !defined $rv->{table} ) {
         return { success => 0, message => 'No such table', %$opts };

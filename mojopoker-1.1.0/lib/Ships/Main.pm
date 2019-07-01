@@ -55,27 +55,8 @@ sub leader {
 sub delete {
     my $self = shift;
     my $signed_request = $self->param('signed_request');
-    #my $user_id = $self->param('user_id');
-
-=pod
-    my $del  = <<SQL;
-UPDATE deleted_date = CURRENT_TIMESTAMP 
-FROM facebook_user
-WHERE facebook_user_id = $user_id
-SQL
-
-    $self->fb->db->do($sql);
-
-    my $read  = <<SQL;
-SELECT user_id
-FROM facebook_user
-WHERE facebook_user_id = $user_id
-SQL
-    my $uid = $self->fb->db->selectrow_array;
-=cut
-
     my $return = {url => undef, confirmation_code => undef};
-    my $status_url = "https://mojopoker.xyz/deleted?code=";
+    my $status_url = "https://mojopoker.xyz/deletion?id=";
     my $secret = $self->app->facebook_secret;
     my ($encoded_sig, $payload) = split(/\./, $signed_request, 2);
     unless ($encoded_sig && $payload) {
@@ -87,11 +68,58 @@ SQL
     $expected_sig =~ tr/\/+/_-/;
     $expected_sig =~ s/=//;
 
-    if ($encoded_sig eq $expected_sig) {
+    if ($encoded_sig eq $expected_sig && exists $data->{user_id}) {
       #verified; okay to do something with $data
-    }
+       my $read  = <<SQL;
+SELECT id, bookmark
+FROM user
+WHERE facebook_id = $data->{user_id}
+SQL
+       my ($id, $bookmark) = $self->app->fb->db->dbh->selectrow_array($read);
 
+       unless ($id && $bookmark) {
+          $self->render(json => $return);
+          return;
+       }
+
+       my $delete = <<SQL;
+UPDATE user SET facebook_id = NULL, facebook_deleted = CURRENT_TIMESTAMP
+WHERE id = $id
+SQL
+       $self->app->fb->db->dbh->do($delete);
+       $status_url .= $bookmark;
+       $return->{url} = $status_url;
+       $return->{confirmation_code} = $bookmark;
+
+    }
     $self->render(json => $return);
+}
+
+sub deletion {
+    my $self = shift;
+    my $id = $self->param('id');
+   
+    return unless $id;
+
+    my $sql  = <<SQL;
+SELECT facebook_deleted 
+FROM user
+WHERE bookmark = '$id'
+SQL
+
+    my $deleted = $self->app->fb->db->dbh->selectrow_array($sql);
+
+    return unless $deleted;
+
+    $self->stash(
+       deleted => $deleted,
+    );
+
+    $self->render(
+        template => 'deletion',
+        format   => 'html',
+        handler  => 'ep',
+    );
 }
 
 sub book {

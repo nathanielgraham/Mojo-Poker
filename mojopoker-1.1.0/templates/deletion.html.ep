@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>PWF Data Deletion</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+</head>
+
+<body>
+
+   <p>Data associated with this user was deleted on <%= $deleted %> </p>
+
+</body>
+
+</html>

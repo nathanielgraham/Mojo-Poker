@@ -55,9 +55,7 @@
                 <div id="lobby-chips">Chips: <span></span></div>
             </div>
 
-            <div id="modal-box">
-               <div id="modal-text"></div>
-            </div>
+            <div id="modal-box"></div>
 
             <div id="lobby-help" title="How it Works">
                <p>Players are ranked by profitability. Each player starts out with 400 chips and tries to build their bankroll throughout the day. When the clock strikes midnight, the most profitable player wins.</p>

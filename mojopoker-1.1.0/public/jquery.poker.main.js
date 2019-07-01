@@ -113,6 +113,7 @@
             var h = this;
 
             $("#modal-box").empty();
+            $("#modal-box").append( $("<p />").html(message)  );
             $("#modal-box").dialog({
                 title: "Alert",
                 position: {
@@ -122,10 +123,9 @@
                 },
                 modal: false,
                 buttons: [{
-                    text: message,
+                    text: "Okay",
                     click: function() {
                         $(this).dialog("close");
-                        h._create();
                     }
                 }]
             });
@@ -133,6 +133,7 @@
         _recModal: function() {
             var h = this;
 
+            $("#modal-box").empty();
             $("#modal-box").dialog({
                 title: "Connection closed",
                 position: {

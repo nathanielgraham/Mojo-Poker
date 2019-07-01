@@ -34,7 +34,6 @@ close $handle;
 
 # Close filehandles
 open STDIN,  '</dev/null';
-#open STDERR, '>./errors';
 open STDERR, '>&STDOUT';
 
 $daemon->start;

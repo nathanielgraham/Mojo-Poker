@@ -41,8 +41,8 @@ sub _build_wait_list {
 
 sub _build_auto_start {
   my $self = shift;
-  return $self->hydra_flag ? $self->chair_count : 2;
-  #return 2;
+  #return $self->hydra_flag ? $self->chair_count : 2;
+  return 2;
 }
 
 around '_unseat_chair' => sub {
@@ -141,17 +141,21 @@ around 'join' => sub {
   return $r;
 };
 
-after '_end_game_reset' => sub {
-  my ( $self, $chair ) = @_;
+#after '_end_game_reset' => sub {
+#  my ( $self, $chair ) = @_;
+before 'begin_auto_start' => sub {
+  my $self = shift;
 
   # auto_rebuy
-  return unless $chair->has_player;
-  if ( !$chair->player->chips && $chair->player->auto_rebuy ) {
+  CHAIR: for my $chair (@{ $self->chairs }) {
+    next CHAIR unless ($chair->has_player && $chair->player->auto_rebuy);
+    next CHAIR if $chair->player->chips;
     my $user_id = $chair->player->login->user->id;
     my $avail = $self->db->fetch_chips($user_id);
     #my $avail = $chair->player->login->user->fetch_chips;
     #my $avail = $self->_fetch_chips( $user_id );
-    my $rebuy = $self->table_max > $avail ? $avail : $self->table_max;
+    my $rebuy = ($self->table_min + $self->table_max) / 2;
+    $rebuy = $rebuy > $avail ? $avail : $rebuy;
     $self->db->debit_chips( $user_id, $rebuy );
     #$chair->player->login->user->debit_chips( $user_id, $rebuy );
     #$self->debit_chips( $user_id, $rebuy );
@@ -161,9 +165,8 @@ after '_end_game_reset' => sub {
 
 before 'new_game' => sub {
   my $self = shift;
-  $self->_notify_lobby_watch(
 
-    #[ 'notify_lobby_update', $self->_fetch_lobby_update ]
+  $self->_notify_lobby_watch(
     [ 'notify_lr_update', $self->_fetch_lobby_update ]
   );
 };
@@ -173,6 +176,10 @@ after 'end_game' => sub {
 
   $self->_notify_lobby_watch(
     [ 'notify_lr_update', $self->_fetch_lobby_update ] );
+
+#  $self->_notify_lobby_watch(
+#    [ 'table_snap',  $self->_table_detail ] );
+
   $self->auto_start_game( $self->new_game_delay );
 };
 

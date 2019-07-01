@@ -5,9 +5,10 @@
 
         options: {
             heightToWidth: 3 / 4,
-            windowRatio: 1 / 2,
-            windowMin: 1 / 3,
-            windowMax: 15 / 20,
+            widthToHeight: 4 / 3,
+            windowDefault: .8,
+            windowMin: .5,
+            windowMax: .92,
             dfd: new jQuery.Deferred(),
             shoe_css: {
                 left: '26%',
@@ -214,7 +215,7 @@
             $.each(o, function(key, value) {
                 self._setOption(key, value);
             });
-            self.resizeTable(o.windowRatio);
+            self.resizeTable(o.windowDefault);
         },
 
         _tableMsg: function(mes) {
@@ -294,8 +295,36 @@
                 self._resizeMin(res);
             });
         },
-        resizeTable: function(ratio, to, le) {
+        resizeTable: function(sz) {
 
+            var h = this.options,
+                //e = this.element,
+                winWidth = window.innerWidth,
+                winHeight = window.innerHeight,
+                newWidth = winWidth * sz,
+                newHeight = winHeight * sz,
+                newWidthToHeight = newWidth / newHeight;
+
+            if (newWidthToHeight > h.widthToHeight) {
+                newWidth = newHeight * h.widthToHeight;
+            } else { // window height is too high relative to desired game height
+                newHeight = newWidth / h.widthToHeight;
+            }
+
+            this.element.css({
+                position: "absolute",
+                height: newHeight + "px",
+                width: newWidth + "px",
+                fontSize: (newWidth / 680) + "em",
+                left: ((winWidth - newWidth) / 2) + "px",
+                top: ((winHeight - newHeight) / 2) + "px"
+/*
+                marginTop: (-newHeight / 2) + "px",
+                marginLeft: (-newWidth / 2) + "px",
+*/
+            });
+
+/*
             var o = this.options,
                 //l = $("#lobby-main"),
                 l = $(window),
@@ -315,6 +344,7 @@
                 top: to,
                 left: le
             });
+*/
         },
         _buildStack: function(chips, stack) {
             var sizes = this.options.chipSizes;

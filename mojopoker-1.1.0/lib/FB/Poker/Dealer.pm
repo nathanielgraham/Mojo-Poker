@@ -38,6 +38,7 @@ sub shuffle_cards {
 
 sub shuffle_deck {
   my $self = shift;
+  $self->deck->discards([]);
   $self->deck( $self->_build_deck );
   $self->shuffle_cards( $self->deck );
 }

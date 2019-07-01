@@ -114,6 +114,7 @@ body {
     width: 100%;
     height: 52%;
     bottom: 4%;
+    cursor: pointer;
     background-position: center center;
     background-size: contain;
     background-repeat: no-repeat;

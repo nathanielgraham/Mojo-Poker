@@ -164,7 +164,6 @@ sub _build_command {
         unwatch_logins => [ \&unwatch_logins ],
         login_info     => [ \&login_info ],
         #fetch_cashier  => [ \&fetch_cashier ],
-        #reload         => [ \&reload, {}, 2 ],
         update_profile => [
             \&update_profile,
             {

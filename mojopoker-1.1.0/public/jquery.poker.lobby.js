@@ -96,7 +96,11 @@
 
             // auto match button
             $("#lobby-match").click(function() {
-                $("#poker-main").main("auto_match")
+               if ( $("#lobby-loginout").hasClass("login") ) {
+                  v.modal_message("Please login to play.");
+               } else {
+                  $("#poker-main").main("auto_match")
+               }
             });
 
             // logout button
@@ -124,11 +128,13 @@
             $("#social-form").submit(function(m) {
                 m.preventDefault();
                 var y = /^[\w\s\.\,\?!@#\$%^&\*\(\)_]{0,90}$/;
-                if (y.test(si.val())) {
-                    $("#poker-main").main("write_channel", {
-                        channel: 'main',
-                        message: si.val()
-                    })
+                if ( $("#lobby-loginout").hasClass("login") ) {
+                   v.modal_message("Please login to chat.");
+                } else if (y.test(si.val())) {
+                  $("#poker-main").main("write_channel", {
+                      channel: 'main',
+                      message: si.val()
+                  });
                 }
                 si.val("")
             });
@@ -252,7 +258,7 @@
                 j.eq(n.column).append('<span class="arro">' + m + "</span>")
             }))
         },
-        resizeLobby: function(g) {
+        resizeLobby: function() {
             var h = this.options,
                 //e = this.element,
                 newWidth = window.innerWidth * .9,
@@ -329,13 +335,12 @@
                 }
             });
         },
-        modal_message: function(t, title) {
+        modal_message: function(message) {
             var h = this;
 
-            title |= 'Attention';
-            $("#modal-text").empty().text(t);
+            $("#modal-box").empty().append( $("<p />").html(message) );
             $("#modal-box").dialog({
-                title: title,
+                title: "Alert",
                 position: {
                     my: "center",
                     at: "center",
@@ -343,9 +348,9 @@
                 },
                 modal: true,
                 buttons: [{
-                    text: "OK",
+                    text: "Okay",
                     click: function() {
-                        $("#modal-text").empty();
+                        $("#modal-box").empty();
                         $(this).dialog("close");
                     }
                 }]

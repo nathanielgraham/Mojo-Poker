@@ -86,18 +86,22 @@ before 'round2' => sub {
 #  $self->lobby_data->{game_tots} += 1;
 #};
 
+sub begin_auto_start {}
+
 sub auto_start_game {
   my ( $self, $delay ) = @_;
   return unless defined $delay;
   if ( $self->game_over
-    && $self->auto_start
-    && $self->auto_start_count >= $self->auto_start )
+    && $self->auto_start )
+#    && $self->auto_start_count >= $self->auto_start )
   {
-    $self->auto_start_event(
+      $self->auto_start_event(
       EV::timer $delay,
       0,
       sub {
+        $self->begin_auto_start;
         if ( $self->game_over
+          && $self->auto_start
           && $self->auto_start_count >= $self->auto_start )
         {
           $self->auto_start_code;
@@ -200,16 +204,18 @@ sub join {
 
   #my ( $self, $login, $cid, $player ) = @_;
   my ( $self, $login, $opts ) = @_;
+
   my $rv = { table_id => $self->table_id, };
+  for my $chair (@{ $self->chairs }) {
+     if ($chair->has_player && $chair->player->login->user->id eq $login->user->id) {
+        $rv->{success} = 0;
+        $rv->{message} = 'Already seated';
+        return $rv;
+     }
+  }
 
   my $cid = defined $opts->{chair} ? $opts->{chair} : $self->next_open_chair;
 
-#  my $cid =
-#    defined $opts->{chair} && $self->chairs->[ $opts->{chair} ]
-#    ? $opts->{chair}
-#    : $self->next_open_chair;
-#
-#  if ( !$self->chairs->[$cid] || $self->chairs->[$cid]->has_player ) {
   #unless ( defined $cid || !$self->chairs->[$cid]) {
   unless ( defined $cid ) {
     $rv->{success} = 0;
@@ -217,29 +223,6 @@ sub join {
     return $rv;
   }
   $rv->{chair} = $cid;
-
-  if ( $self->hydra_flag ) {
-    $rv->{hydra_chips} = 0;
-    my $ooe = $cid % 2;
-    my @hydra_chairs;
-    for my $chair ( @{ $self->chairs } ) {
-      if ($chair->index % 2 == $ooe) {
-        if ($chair->has_player) {
-          $rv->{success} = 0;
-          $rv->{message} = 'Chair occupied';
-          return $rv;
-        }
-        push @hydra_chairs, $chair->index;
-        $rv->{hydra_chips} += $opts->{chips};
-      }
-    }
-    $rv->{hydra_chairs} = [@hydra_chairs];
-    #$rv->{hydra_chairs} = [@hydra_chairs];
-    #$notify_res->{hydra_chairs} = $rv->{hydra_chairs};
-    #for my $c (@hydra_chairs) {
-    #  $self->sit($c, FB::Poker::Player->new( %$opts, login => $login ));
-    #}
-  }
 
   #my $player = FB::Poker::Player->new( %$opts, login => $login );
 
@@ -294,7 +277,7 @@ sub _unjoin {
       $self->timesup;
     }
 
-    elsif ( $self->legal_action('choice') || $lcc < 3 || $self->hydra_flag) {
+    elsif ( $self->legal_action('choice') || $lcc < 3 ) {
       $self->_unseat_chair( $chair, $login );
       $self->new_game_delay(0);
       $self->end_game;
@@ -416,7 +399,6 @@ sub _watch {
     ante        => $self->ante,
     small_blind => $self->small_blind,
     big_blind   => $self->big_blind,
-    hydra_flag  => $self->hydra_flag,
     success     => 1,
   };
 }
@@ -654,11 +636,6 @@ sub _update_players {
 before 'new_game' => sub {
   my $self = shift;
   my $r = { game_count => $self->game_count, };
-
-  # moved to Interface/Ring.pm
-  #$self->_notify_lobby_watch(
-  #  [ 'notify_lobby_update', $self->_fetch_lobby_update ]
-  #);
 
   $self->_notify_watch( [ 'new_game', $r ] );
   $self->chat->write( 'd', { message => 'New hand #' . $self->game_count, } );

@@ -44,9 +44,6 @@
 
 .table { 
   position: absolute;
-  display: block;
-  width: 40em;
-  height: 30em;
 }
 
 .table-mod {
@@ -181,7 +178,7 @@
   position: absolute;
   left: 1%;
   top: 1%;
-  font-size: 100%;
+  font-size: 110%;
   color: white;
 }
 
@@ -192,8 +189,8 @@
 
 .header-icon {
   position: absolute;
-  width: 3.75%;
-  height: 5%;
+  width: 5%;
+  height: 7%;
   top: .2%;
   cursor: pointer;
   background-size: 100%;
@@ -209,7 +206,7 @@
 }
 
 .header-icon-resize {
-  right: 5%;
+  right: 7%;
 }
 
 .header-icon-close {
@@ -714,6 +711,7 @@
   width: 6.375%;
   height: 8.5%;
   margin-left: 6%;
+  cursor: pointer;
   background-image: url("/img/open.png");
 }
 
@@ -960,8 +958,8 @@
 }
 .table[chair-count='6'] .seat[pos='1'] .chip, 
 .table[chair-count='6'] .seat[pos='1'] .size {
-  left: 23%;
-  top: 44%;
+  left: 21%;
+  top: 45%;
 }
 .table[chair-count='6'] .seat[pos='2'] .chip, 
 .table[chair-count='6'] .seat[pos='2'] .size {

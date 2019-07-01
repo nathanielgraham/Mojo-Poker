@@ -51,6 +51,7 @@ sub startup {
   $r->route('/privacy')->to( controller => 'main', action => 'privacy' );
   $r->route('/terms')->to( controller => 'main', action => 'terms' );
   $r->route('/leaderboard')->to( controller => 'main', action => 'leader' );
+  $r->route('/deletion')->to( controller => 'main', action => 'deletion' );
   $r->post('/delete')->to(controller => 'main', action => 'delete');
   $r->route('*')->to(cb => sub { shift->redirect_to('/') });
 }
