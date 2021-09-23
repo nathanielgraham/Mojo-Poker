@@ -1,6 +1,6 @@
-![Mojo Poker Logo](/mojopoker-1.1.0/public/img/logo.png)
+![Mojo Poker Logo](/mojopoker-1.1.1/public/img/logo.png)
 
-[![Build Status](https://api.travis-ci.org/nathanielgraham/Mojo-Poker.svg?branch=master)]
+[![Build Status](https://api.travis-ci.com/nathanielgraham/Mojo-Poker.svg?branch=master)]
 
 Mojo Poker is a web-based poker system that allows anyone to run their own private poker site.
 
@@ -34,18 +34,6 @@ To create a new six handed No-Limit Hold'em table for example, issue the followi
 
 See mpadmin.pl --help for a complete list of options. 
 
-##  Creating a robot opponent
-An example robot (bender) is included in the most recent release.  
-To launch bender on table 1, issue the following command:
-
-    /opt/mojopoker/script/bender.pl 1
-
-To stop bender:
-
-    sudo kill `cat bender.pid`
-
-See [Poker::Robot](https://metacpan.org/pod/Poker::Robot) for details. 
-
 ## Admin tool
 mpadmin.pl is a command-line ultility for creating and deleting ring games, editing player info, crediting chips, and other admin tasks.  For a complete list of options, type:
 
@@ -58,8 +46,8 @@ wsshell.pl is a command-line utility for sending JSON encoded WebSocket messages
 
 ## Running in production
 Additional steps to run a secure site:
+- [ ] Facebook login feature won't work without a registered domain 
 - [ ] Setup nginx as reverse proxy to provide SSL/TLS certificate
-- [ ] Logic to prevent remote login by admin account
 - [ ] Change admin password
 - [ ] Add firewall for DDOS protection
 - [ ] Anything else? 
